@@ -4,8 +4,15 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v14.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v15.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v15 (2026-11-13)
+
+- **Energy Well shows real molecules.** Dispersion is two methane molecules, dipole–dipole is two HCl molecules, the hydrogen bond is two water molecules, and ion–dipole is a sodium ion and a water molecule, with δ+ and δ− labels.
+- **Light adds the energy.** A lamp beside the pair sends beams at it, and the slider is now "Shine light to add energy". The lamp stands for any way of heating: energy the pair absorbs becomes kinetic energy.
+- **The pair moves.** With no light it sits still. Below the top of the well it rattles in and out while a dot rides the curve in step. Above the top the second molecule flies off, the dotted attraction fades with distance, and the label reads "pulled apart: each one still whole".
+- Students who set "reduce motion" get a still picture. The caption box keeps a fixed height so the slider does not jump.
 
 ## New in v14 (2026-11-13)
 

@@ -487,6 +487,8 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
 .simq-head b{display:block;font-family:var(--font-display);font-weight:600;font-size:1.05rem}.simq-head span{display:block;color:var(--muted);font-weight:700;font-size:.92rem}
 .simq-inline{border:0;padding:0;margin:0;background:none;box-shadow:none}
 .simq-inline>.part.current,.simq-inline>.feedback:not(#mxFeedback),.simq-inline>.ex-actions,.simq-inline>.ex-label,.simq-inline .lab-lock{display:none!important}
+#ewCaption{min-height:5em}@media(max-width:700px){#ewCaption{min-height:10.4em}}
+@keyframes ewbeam{to{stroke-dashoffset:-18}}.ew-beam{stroke-dasharray:10 8;animation:ewbeam .7s linear infinite}@media(prefers-reduced-motion:reduce){.ew-beam{animation:none}}
 @keyframes mxfall{from{transform:translate(var(--x0),var(--y0))}to{transform:none}}
 @keyframes mxtwo{0%{transform:translate(var(--x0),var(--y0))}45%{transform:translate(var(--x1),var(--y1))}100%{transform:none}}
 @keyframes mxin{from{transform:translate(var(--x0),var(--y0));opacity:.45}to{transform:none;opacity:1}}
@@ -3129,28 +3131,69 @@ function mkLab(cfg) {
 }
 
 /* ---------- Energy Well (§6.3): how much kinetic energy does it take to pull two molecules apart? ---------- */
-const ew = { well: 'dd', ke: 10 };
+const ew = { well: 'dd', ke: 10, g: null, raf: 0, t0: 0 };
+/* v15: the pair is drawn as real molecules, a lamp shines energy in, and the pair moves: it rattles in the well, or flies apart once the energy is above the top */
+const EWC = { C: '#8b93a7', H: '#ffffff', O: '#e5533d', Cl: '#5fbf74', Na: '#a47be0' };
+const EW_PAIR = { d: ['CH₄', 'CH₄', 'two methane molecules'], dd: ['HCl', 'HCl', 'two hydrogen chloride molecules'], hb: ['H₂O', 'H₂O', 'two water molecules'], id: ['Na⁺', 'H₂O', 'a sodium ion and a water molecule'] };
+function ewMol(kind, side) {   // drawn around (0,0). face = distance from the centre to the edge that faces the partner
+  const at = (el, x, y, r, t) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${EWC[el]}" stroke="#3d4a73" stroke-width="1.2"/>` + (t ? `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${t}</text>` : '');
+  const dl = (x, y, t) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="9.5" font-weight="800" fill="#4a3fb5">${t}</text>`;
+  const waterB = { svg: at('H', 6.6, -8.4, 4.8) + at('H', 6.6, 8.4, 4.8) + at('O', 0, 0, 8.5) + dl(-3, -13, 'δ−'), face: 8.5 };   // O faces the partner on its left
+  if (kind === 'd') return { svg: [45, 135, 225, 315].map(a => at('H', (10.4 * Math.cos(a * Math.PI / 180)).toFixed(1), (10.4 * Math.sin(a * Math.PI / 180)).toFixed(1), 4.6)).join('') + at('C', 0, 0, 8.5), face: 13 };
+  if (kind === 'dd') return { svg: at('H', -11, 0, 5) + at('Cl', 3, 0, 10) + dl(-12, -9, 'δ+') + dl(4, -14, 'δ−'), face: side === 'A' ? 13 : 16 };   // H–Cl ··· H–Cl
+  if (kind === 'id' && side === 'A') return { svg: at('Na', 0, 0, 10, '+'), face: 10 };
+  if (side === 'B') return waterB;
+  return { svg: at('H', -2.7, -10.2, 4.8) + at('H', 10.6, 0, 4.8) + at('O', 0, 0, 8.5) + dl(13, -8, 'δ+'), face: 15.4 };   // water with an O–H pointing at the partner
+}
 function ewSvg() {
   const W = WELLS.find(w => w.k === ew.well), D = W.depth, ke = ew.ke / 100 * 1.15, x0 = 46, x1 = 372, yTop = 22, yBot = 176, r0 = 0.82, r1 = 3, px = r => x0 + (r - r0) / (r1 - r0) * (x1 - x0), py = V => yTop + (0.18 - V) / 1.26 * (yBot - yTop), f1 = v => v.toFixed(1);
   let d = ''; for (let i = 0; i <= 120; i++) { const r = 0.9 + (r1 - 0.9) * i / 120, V = Math.min(0.18, wellV(D, r)); d += `${i ? 'L' : 'M'}${f1(px(r))} ${f1(py(V))}`; }
   const tp = wellTurn(D, ke), E = -D + ke, bound = !!tp, yE = py(Math.min(0.14, E));
   let h = `<path d="M${x0} ${yTop - 8}V${yBot + 6}" stroke="#54627a" stroke-width="1.8"/><path d="M${x0} ${f1(py(0))}H${x1}" stroke="#8a93ab" stroke-dasharray="4 4"/><text x="${x1}" y="${f1(py(0) - 5)}" text-anchor="end" font-size="10" font-weight="700" fill="#5c667f">far apart: no attraction</text><text transform="translate(16 ${(yTop + yBot) / 2}) rotate(-90)" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4f5a74">Potential energy</text><text x="${(x0 + x1) / 2}" y="${yBot + 22}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4f5a74">Distance between the two particles →</text>`;
   h += `<path d="${d}" fill="none" stroke="#3d4a73" stroke-width="3.2" stroke-linejoin="round"/>`;
-  h += `<path d="M${f1(px(1))} ${f1(py(-D))}V${f1(py(0))}" stroke="#c98a1b" stroke-width="2" stroke-dasharray="2 4"/><text x="${f1(px(1) + 9)}" y="${f1(py(-D) + 13)}" font-size="10" font-weight="800" fill="#7a5200">↕ well depth</text>`;
+  h += `<path d="M${f1(px(1))} ${f1(py(-D))}V${f1(py(0))}" stroke="#c98a1b" stroke-width="2" stroke-dasharray="2 4"/><text x="${f1(px(1) + 9)}" y="${f1(py(-D) + 13)}" font-size="10" font-weight="800" fill="#7a5200">↕︎ well depth</text>`;
   h += bound ? `<path d="M${f1(px(tp[0]))} ${f1(yE)}H${f1(px(Math.min(tp[1], r1)))}" stroke="#e0577f" stroke-width="4" stroke-linecap="round"/>` : `<path d="M${f1(px(0.95))} ${f1(yE)}H${x1 - 4}" stroke="#e0577f" stroke-width="4" stroke-linecap="round"/><path d="M${x1} ${f1(yE)}l-10-6v12z" fill="#e0577f"/>`;
-  h += `<text x="${x1}" y="${f1(yE - 7)}" text-anchor="end" font-size="10.5" font-weight="800" fill="#b83d63">kinetic energy</text>`;
-  /* the pair itself, drawn under the graph */
-  const yP = 232, ball = (x, lab) => `<circle cx="${f1(x)}" cy="${yP}" r="15" fill="#a9c4f5" stroke="#346cc3" stroke-width="2.5"/><text x="${f1(x)}" y="${yP + 4}" text-anchor="middle" font-size="10" font-weight="800" fill="#1f2a44">${lab}</text>`, xa = 110;
-  if (bound) { const xb = xa + 34 + 46 * (tp[1] - 1) / 1.2; h += ball(xa, ew.well === 'id' ? 'ion' : '') + ball(Math.min(xb, 300), '') + `<path d="M${xa + 17} ${yP}H${f1(Math.min(xb, 300) - 17)}" stroke="#346cc3" stroke-width="3" stroke-dasharray="2 5" stroke-linecap="round"/><text x="${(x0 + x1) / 2 + 60}" y="${yP + 4}" font-size="11.5" font-weight="800" fill="#23704f">held together</text>`; }
-  else h += ball(70, ew.well === 'id' ? 'ion' : '') + ball(340, '') + `<path d="M92 ${yP}h-0M318 ${yP}" stroke="none"/><path d="M48 ${yP}l10-6v12zM362 ${yP}l-10-6v12z" fill="#b83d63"/><text x="205" y="${yP + 4}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#b83d63">separated: each one still whole</text>`;
-  return `<svg class="cg-svg" viewBox="0 0 390 262" role="img" aria-label="Energy well for ${W.name.toLowerCase()}. The kinetic energy is ${bound ? 'below the top of the well, so the two particles stay together' : 'above the top of the well, so the two particles separate'}.">${h}</svg>`;
+  h += bound ? `<text x="${x1}" y="${f1(yE - 7)}" text-anchor="end" font-size="10.5" font-weight="800" fill="#b83d63">kinetic energy</text>` : `<text x="${f1(px(1.25))}" y="${f1(yE - 7)}" font-size="10.5" font-weight="800" fill="#b83d63">kinetic energy: above the top of the well</text>`;
+  h += `<circle id="ewDot" r="5.5" fill="#e0577f" stroke="#fff" stroke-width="2"/>`;   // rides the curve as the distance changes
+  /* the lamp, the light and the pair, under the graph */
+  const yP = 0, xa = 98, yRow = 262, A = ewMol(ew.well, 'A'), B = ewMol(ew.well, 'B'), P = EW_PAIR[ew.well], nb = ew.ke < 4 ? 0 : 1 + Math.floor(ew.ke / 34), lit = ew.ke / 100;
+  h += `<g transform="translate(0 ${yRow}) scale(1.4)">`;   // the row is drawn 1.4 times larger so the molecules are easy to see
+  h += `<circle cx="24" cy="${yP}" r="${f1(12 + lit * 9)}" fill="#ffd84d" opacity="${f1(0.15 + lit * 0.35)}"/><circle cx="24" cy="${yP}" r="10.5" fill="${nb ? '#ffc93c' : '#e7e2cf'}" stroke="#c98a1b" stroke-width="1.6"/>` + [0, 60, 120, 180, 240, 300].map(a => `<path d="M${f1(24 + 13.5 * Math.cos(a * Math.PI / 180))} ${f1(yP + 13.5 * Math.sin(a * Math.PI / 180))}L${f1(24 + 18 * Math.cos(a * Math.PI / 180))} ${f1(yP + 18 * Math.sin(a * Math.PI / 180))}" stroke="${nb ? '#e0a31b' : '#cfc9b4'}" stroke-width="2" stroke-linecap="round"/>`).join('');
+  h += `<text x="24" y="${yP + 36}" text-anchor="middle" font-size="10" font-weight="800" fill="#7a5200">${nb ? 'light in' : 'no light'}</text>`;
+  for (let b = 0; b < Math.min(nb, 3); b++) { const yb = yP + [0, -9, 9][b]; let w = `M46 ${yb}`; for (let x = 46; x < xa - 24; x += 6) w += `q3 ${(x / 6) % 2 ? -5 : 5} 6 0`; h += `<path class="ew-beam" d="${w}" fill="none" stroke="#f0a81e" stroke-width="2" stroke-linecap="round" style="animation-duration:${(0.9 - lit * 0.5).toFixed(2)}s"/>`; }
+  const K = 44, gap = 9, xb1 = xa + A.face + B.face + gap;
+  h += `<line id="ewLink" x1="${f1(xa + A.face + 1.5)}" y1="${yP}" x2="${f1(xb1 - B.face - 1.5)}" y2="${yP}" stroke="#2f5fb8" stroke-width="2.4" stroke-dasharray="2 4" stroke-linecap="round"/>`;
+  h += `<g transform="translate(${xa} ${yP})">${A.svg}<text y="36" text-anchor="middle" font-size="10.5" font-weight="800" fill="#26326a">${P[0]}</text></g>`;
+  h += `<g id="ewB" transform="translate(${f1(xb1)} ${yP})">${B.svg}<text y="36" text-anchor="middle" font-size="10.5" font-weight="800" fill="#26326a">${P[1]}</text></g>`;
+  h += `</g><text x="${x1}" y="${yRow - 46}" text-anchor="end" font-size="11.5" font-weight="800" fill="${bound ? '#23704f' : '#b83d63'}">${bound ? 'held together' : 'pulled apart: each one still whole'}</text>`;
+  ew.g = { D, tp, bound, px, py, r1, xa, yP, K, xb1, fa: A.face, fb: B.face };
+  return `<svg class="cg-svg" viewBox="0 0 390 322" role="img" aria-label="Energy well for ${W.name.toLowerCase()}, shown with ${P[2]}. A lamp shines light on the pair to add energy. The kinetic energy is ${bound ? 'below the top of the well, so the two particles rattle but stay together' : 'above the top of the well, so the two particles move apart'}.">${h}</svg>`;
 }
+/* put the pair (and the dot on the curve) at separation r */
+function ewPose(r, fade) {
+  const g = ew.g, B = $('ewB'), dot = $('ewDot'), link = $('ewLink'); if (!g || !B || !dot || !link) return;
+  const xb = g.xb1 + g.K * (r - 1), rr = Math.min(r, g.r1);
+  B.setAttribute('transform', `translate(${xb.toFixed(1)} ${g.yP})`); B.setAttribute('opacity', fade.toFixed(2));
+  dot.setAttribute('cx', g.px(rr).toFixed(1)); dot.setAttribute('cy', g.py(Math.min(0.18, wellV(g.D, rr))).toFixed(1)); dot.setAttribute('opacity', r > g.r1 ? Math.max(0, 1 - (r - g.r1) * 3).toFixed(2) : 1);
+  link.setAttribute('x2', (xb - g.fb - 1.5).toFixed(1)); link.setAttribute('opacity', Math.max(0, 1 - (r - 1) / 1.5).toFixed(2));   // the attraction fades as the distance grows
+}
+function ewStill() { const g = ew.g; if (!g) return; let calm = false; try { calm = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {} return ewLab.locked ? (ewPose(1, 1), true) : calm ? (ewPose(g.bound ? Math.min(g.tp[1], g.r1) : 3.7, 1), true) : false; }
+function ewTick(ts) {
+  const g = ew.g; if (!ewLab.open || !g || !$('ewB')) { ew.raf = 0; return; }
+  if (!ewStill()) {
+    const t = (ts - (ew.t0 || (ew.t0 = ts))) / 1000;
+    if (g.bound) { const hi = Math.min(g.tp[1], g.r1), T = 1 + 0.55 * (hi - g.tp[0]); ewPose(g.tp[0] + (hi - g.tp[0]) * (1 - Math.cos(2 * Math.PI * t / T)) / 2, 1); }
+    else { const u = t % 4.4, p = Math.min(1, u / 2); ewPose(0.95 + 3.05 * (1 - Math.pow(1 - p, 2)), u > 3.7 ? Math.max(0, 1 - (u - 3.7) / 0.5) : 1); }
+  }
+  ew.raf = requestAnimationFrame(ewTick);
+}
+function ewRun() { ewStill(); if (!ew.raf) ew.raf = requestAnimationFrame(ewTick); }
 const ewLab = mkLab({ key: 'ew', title: 'Energy Well', label: 'Energy Well · a teaching model', topic: 'welllab', video: 'p1', preds: WELL_PRED,
-  side: `<fieldset><legend>Attraction</legend><div class="lab-mols" id="ewWells"></div></fieldset><fieldset><legend>Kinetic energy (temperature)</legend><input type="range" id="ewKE" min="0" max="100" step="1" aria-label="Kinetic energy of the pair"><div class="lab-temp"><small>cold</small><small>hot</small></div></fieldset><div class="hc-read cl-read" style="grid-template-columns:1fr"><div><small>The pair is</small><b id="ewState"></b></div></div>`,
-  note: 'A teaching model. The curve shows how the energy of two particles changes with the distance between them: the dip is the attraction. Well depths are relative, for particles of similar size, and dispersion wells get deeper as molecules get bigger.',
+  side: `<fieldset><legend>Attraction</legend><div class="lab-mols" id="ewWells"></div></fieldset><fieldset><legend>Shine light to add energy</legend><input type="range" id="ewKE" min="0" max="100" step="1" aria-label="Light shining on the pair, which sets its kinetic energy"><div class="lab-temp"><small>dark, cold</small><small>bright, hot</small></div></fieldset><div class="hc-read cl-read" style="grid-template-columns:1fr"><div><small>The pair is</small><b id="ewState"></b></div></div>`,
+  note: 'A teaching model. The curve shows how the energy of two particles changes with the distance between them: the dip is the attraction. Well depths are relative, for particles of similar size, and dispersion wells get deeper as molecules get bigger. The lamp stands for any way of heating: energy the pair absorbs becomes motion (kinetic energy). The dot on the curve and the molecules below it show the same distance.',
   init: () => { OPTS.course = state.course; $('ewWells').innerHTML = forCourse(WELLS).map(w => `<button type="button" data-ewwell="${w.k}">${w.name}</button>`).join(''); },
   preset: pr => { ew.well = pr.well; ew.ke = pr.ke; },
-  paint: () => { const W = WELLS.find(w => w.k === ew.well), bound = wellBound(W.depth, ew.ke / 100 * 1.15); $('ewFig').innerHTML = ewSvg(); $('ewKE').value = ew.ke; $('ewState').textContent = bound ? 'Held together' : 'Separated'; document.querySelectorAll('#ewWells button').forEach(b => { b.classList.toggle('on', b.dataset.ewwell === ew.well); b.setAttribute('aria-pressed', b.dataset.ewwell === ew.well); }); $('ewCaption').textContent = `${W.name} (${W.eg}): ` + (bound ? 'the kinetic energy is below the top of the well, so the pair rattles back and forth but stays together.' : 'the kinetic energy is above the top of the well, so the pair escapes. Each particle is still whole.'); },
+  paint: () => { const W = WELLS.find(w => w.k === ew.well), bound = wellBound(W.depth, ew.ke / 100 * 1.15); $('ewFig').innerHTML = ewSvg(); if (ew.wasBound !== bound) { ew.wasBound = bound; ew.t0 = 0; } ewRun(); $('ewKE').value = ew.ke; $('ewState').textContent = bound ? 'Held together' : 'Pulled apart'; document.querySelectorAll('#ewWells button').forEach(b => { b.classList.toggle('on', b.dataset.ewwell === ew.well); b.setAttribute('aria-pressed', b.dataset.ewwell === ew.well); }); $('ewCaption').textContent = `${W.name} (${EW_PAIR[W.k][2]}): ` + (ew.ke < 4 ? 'no light, so the pair sits still at the bottom of the well.' : bound ? 'the light adds kinetic energy, but it is still below the top of the well. The pair rattles back and forth and stays together.' : 'the light has added more kinetic energy than the well is deep, so the pair moves apart. As the distance grows the attraction fades. Each particle is still whole.'); },
   click: e => { const b = e.target.closest('[data-ewwell]'); if (b) { ew.well = b.dataset.ewwell; ewLab.paint(); } },
   input: e => { if (e.target.id === 'ewKE') { ew.ke = +e.target.value; ewLab.paint(); } } });
 
