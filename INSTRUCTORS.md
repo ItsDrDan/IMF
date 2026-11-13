@@ -4,8 +4,17 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v13.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v14.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v14 (2026-11-13)
+
+- **Mixing Beaker is animated.** The particles drop into the liquid. When the forces match, solvent molecules close in around each one, then the dashed ring, the hydrogen-bond dashes and the label appear. NaCl sinks as a lattice, splits into ions, and water closes in. Gases dip in and bubble back out. Layers and solid salt settle where they belong. Loose solvent drifts the whole time.
+- **Replay the drop** button under the beaker. The drop also plays again when the beaker scrolls into view, in case it started off screen.
+- A Mixing Beaker question shows its own particles waiting above its own solvent while it is locked.
+- Students who set "reduce motion" on their device get the still drawing and no Replay button.
+- A simulation question that is replaced before the student tries it (picking another tile makes a new question) no longer uses up the "first question is a simulation" slot.
+- It is still a scripted teaching animation, not a physics model.
 
 ## New in v13 (2026-11-13)
 

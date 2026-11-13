@@ -487,6 +487,14 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
 .simq-head b{display:block;font-family:var(--font-display);font-weight:600;font-size:1.05rem}.simq-head span{display:block;color:var(--muted);font-weight:700;font-size:.92rem}
 .simq-inline{border:0;padding:0;margin:0;background:none;box-shadow:none}
 .simq-inline>.part.current,.simq-inline>.feedback:not(#mxFeedback),.simq-inline>.ex-actions,.simq-inline>.ex-label,.simq-inline .lab-lock{display:none!important}
+@keyframes mxfall{from{transform:translate(var(--x0),var(--y0))}to{transform:none}}
+@keyframes mxtwo{0%{transform:translate(var(--x0),var(--y0))}45%{transform:translate(var(--x1),var(--y1))}100%{transform:none}}
+@keyframes mxin{from{transform:translate(var(--x0),var(--y0));opacity:.45}to{transform:none;opacity:1}}
+@keyframes mxfade{from{opacity:0}to{opacity:1}}
+@keyframes mxjig{from{transform:translate(0,0)}to{transform:translate(var(--jx),var(--jy))}}
+.mx-fall{animation:mxfall 1.1s cubic-bezier(.45,0,.55,1) both}.mx-two{animation:mxtwo 2.4s ease-in-out both}.mx-in{animation:mxin 1s ease-out both}.mx-fade{animation:mxfade .5s ease-out both}.mx-jig{animation:mxjig 3s ease-in-out infinite alternate}
+@media(prefers-reduced-motion:reduce){.mx-fall,.mx-two,.mx-in,.mx-fade,.mx-jig{animation:none}}
+.simq-locked #mxAsk{display:none}.mx-replay{margin-top:8px}
 .simq-inline.simq-locked .lab-lock{display:grid!important}.simq-locked .lab-side,.simq-locked fieldset,.simq-locked .lab-btns{opacity:.55}
 .chip .ctag{background:#e7edff;color:#3c47b8;border-radius:99px;padding:0 6px;font-size:.72rem;font-weight:800}
 </style>
@@ -2312,6 +2320,7 @@ let lastTopic = null, sinceSim = 2;
 function makeQuestion() {
   OPTS.course = state.course;
   if (state.ch) return generate(state.ch.plan[state.ch.i]);
+  if (state.q && state.q.sim && !state.done && !state.tries) sinceSim = 2;
   let pool = [...state.sel]; const labs = pool.filter(t => TOPICS[t].lab);
   if (labs.length && labs.length < pool.length && sinceSim >= 2) pool = labs;
   else if (pool.length > 1 && lastTopic) pool = pool.filter(t => t !== lastTopic || chance(0.3));
@@ -3172,10 +3181,17 @@ const cfLab = mkLab({ key: 'cf', title: 'Electron Coin-Flip', label: 'Electron C
 /* ---------- Mixing Beaker (§6.6): predict before every drop ---------- */
 const mx = { open: false, solvent: 'water', item: null, shown: false, key: 'mx' };
 function mxSvg() {
-  /* v13: particles are drawn as small molecules, and a dissolved particle is shown with solvent molecules around it */
+  /* v13: particles are drawn as small molecules, and a dissolved particle is shown with solvent molecules around it.
+     v14: the drop is animated with CSS (mx-fall, mx-two, mx-in, mx-fade) and the loose solvent drifts (mx-jig). No motion if the reader asks for reduced motion. */
   const S = MIXLAB[mx.solvent], it = mx.item, f1 = v => v.toFixed(1), rad = d => d * Math.PI / 180, used = {};
   const COL = { C: '#8b93a7', H: '#ffffff', O: '#e5533d', F: '#5fbf74', Na: '#a47be0', Cl: '#3fa66b' }, KEY = { Na: 'Na⁺', Cl: 'Cl⁻' };
   const rnd = i => { const v = Math.sin(i * 12.9898 + 4.1) * 43758.5453; return v - Math.floor(v); };
+  let calm = false; try { calm = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  const still = calm || !mx.shown;
+  const mv = (cls, g, x0, y0, d, dur, x1, y1) => still ? g : `<g class="${cls}" style="--x0:${f1(x0)}px;--y0:${f1(y0)}px;${x1 == null ? '' : `--x1:${f1(x1)}px;--y1:${f1(y1)}px;`}animation-delay:${d.toFixed(2)}s${dur ? `;animation-duration:${dur}s` : ''}">${g}</g>`;
+  const fade = (g, d) => still ? g : `<g class="mx-fade" style="animation-delay:${d.toFixed(2)}s">${g}</g>`;
+  const jig = (g, n) => calm ? g : `<g class="mx-jig" style="--jx:${f1((rnd(n + 7) - 0.5) * 5)}px;--jy:${f1((rnd(n + 17) - 0.5) * 5)}px;animation-delay:-${(rnd(n + 27) * 3).toFixed(2)}s;animation-duration:${(2.2 + rnd(n + 37) * 2).toFixed(2)}s">${g}</g>`;
+  const drop = i => 110 + 170 * ((i % 5) + 0.5) / 5;   // where particle i waits above the liquid
   const px = (x, d, a) => x + d * Math.cos(rad(a)), py = (y, d, a) => y + d * Math.sin(rad(a));
   const atom = (el, x, y, r) => { used[el] = 1; return `<circle cx="${f1(x)}" cy="${f1(y)}" r="${r}" fill="${COL[el]}" stroke="#3d4a73" stroke-width=".8"/>`; };
   const hs = (x, y, a, list) => list.map(d => atom('H', px(x, 5.8, a + d), py(y, 5.8, a + d), 2.6)).join('');
@@ -3198,44 +3214,48 @@ function mxSvg() {
     for (let y = y0 + mym, row = 0; y <= y1 - mym + 0.5; y += sy, row++) for (let x = x0 + mxm + (row % 2 ? sx / 2 : 0); x <= x1 - mxm + 0.5; x += sx) {
       n++; const X = x + (rnd(n) - 0.5) * (wat ? 7 : 6), Y = y + (rnd(n + 50) - 0.5) * (wat ? 6 : 3);
       if ((avoid || []).some(p => Math.hypot(X - p[0], Y - p[1]) < p[2] + (wat ? 7 : 12))) continue;
-      s += solvG(X, Y, wat ? rnd(n + 99) * 360 : (rnd(n + 99) - 0.5) * 44);
+      s += jig(solvG(X, Y, wat ? rnd(n + 99) * 360 : (rnd(n + 99) - 0.5) * 44), n);
     }
     return `<g opacity=".45">${s}</g>`;
   };
   /* one dissolved particle with its shell of solvent molecules */
-  const shell = (k, x, y, i) => {
-    const a = i * 67 + 20, halo = mx.solvent === 'water' ? 29 : k === 'C5H12' ? 23 : 25; let s = `<circle cx="${x}" cy="${y}" r="${halo}" fill="#ffffff70" stroke="#2f5fb8" stroke-width="1" stroke-dasharray="3 3"/>`;
-    if (k === 'Na' || k === 'Cl') { const R = k === 'Na' ? 15.5 : 18.5; for (let j = 0; j < 5; j++) { const th = a + j * 72; s += G.H2O(px(x, R, th), py(y, R, th), k === 'Na' ? th : th + 180 - 52); } return s + ion(k, x, y, k === 'Na' ? 6 : 7.6); }   // O toward Na⁺, an H toward Cl⁻
+  const shell = (k, x, y, i, st, T) => {
+    const a = i * 67 + 20, halo = mx.solvent === 'water' ? 29 : k === 'C5H12' ? 23 : 25; T = T || 1.25;
+    const sv = (g, wx, wy, j) => mv('mx-in', g, (wx - x) * 0.9 + (rnd(i * 11 + j) - 0.5) * 8, (wy - y) * 0.9 + (rnd(i * 13 + j) - 0.5) * 8, T + i * 0.05 + j * 0.04);
+    const so = g => !st ? g : st.mid ? mv('mx-two', g, st.x - x, st.y - y, i * 0.07, 2.2, st.mid[0] - x, st.mid[1] - y) : mv('mx-fall', g, st.x - x, st.y - y, i * 0.08);
+    const W = (wx, wy, ang, j) => sv(G.H2O(wx, wy, ang), wx, wy, j), Hx = (wx, wy, ang, j) => sv(G.C6H14(wx, wy, ang), wx, wy, j);
+    let s = fade(`<circle cx="${x}" cy="${y}" r="${halo}" fill="#ffffff70" stroke="#2f5fb8" stroke-width="1" stroke-dasharray="3 3"/>`, T + 1);
+    if (k === 'Na' || k === 'Cl') { const R = k === 'Na' ? 15.5 : 18.5; for (let j = 0; j < 5; j++) { const th = a + j * 72; s += W(px(x, R, th), py(y, R, th), k === 'Na' ? th : th + 180 - 52, j); } return s + so(ion(k, x, y, k === 'Na' ? 6 : 7.6)); }   // O toward Na⁺, an H toward Cl⁻
     if (mx.solvent === 'water' && k === 'CH3OH') {
       const cx = px(x, -6, a), cy = py(y, -6, a), ox = px(cx, 8, a), oy = py(cy, 8, a), hx = px(ox, 5.4, a + 55), hy = py(oy, 5.4, a + 55);
       const w1 = [px(ox, 15.5, a - 50), py(oy, 15.5, a - 50)], w2 = [px(hx, 11.5, a + 55), py(hy, 11.5, a + 55)];
-      s += G.H2O(w1[0], w1[1], a - 50 + 180 - 52) + G.H2O(w2[0], w2[1], a + 55);
-      [150, 215, 280].forEach((d, j) => { s += G.H2O(px(x, 20.5, a + d), py(y, 20.5, a + d), rnd(i * 7 + j) * 360); });
-      return s + hl(G.CH3OH(cx, cy, a)) + dash(px(w1[0], 5.4, a - 50 + 180), py(w1[1], 5.4, a - 50 + 180), ox, oy, 2.7, 4.4) + dash(hx, hy, w2[0], w2[1], 2.6, 4.6);   // dashed lines: hydrogen bonds
+      s += W(w1[0], w1[1], a - 50 + 180 - 52, 0) + W(w2[0], w2[1], a + 55, 1);
+      [150, 215, 280].forEach((d, j) => { s += W(px(x, 20.5, a + d), py(y, 20.5, a + d), rnd(i * 7 + j) * 360, j + 2); });
+      return s + so(hl(G.CH3OH(cx, cy, a))) + fade(dash(px(w1[0], 5.4, a - 50 + 180), py(w1[1], 5.4, a - 50 + 180), ox, oy, 2.7, 4.4) + dash(hx, hy, w2[0], w2[1], 2.6, 4.6), T + 1.1);   // dashed lines: hydrogen bonds
     }
-    if (mx.solvent === 'water' && k === 'CH3F') { const fx = px(x, 7.6, a), fy = py(y, 7.6, a); [-40, 40].forEach(d => { s += G.H2O(px(fx, 13, a + d), py(fy, 13, a + d), a + d + 180 - 52); }); [150, 215].forEach((d, j) => { s += G.H2O(px(x, 18, a + d), py(y, 18, a + d), rnd(i * 5 + j) * 360); }); return s + hl(G.CH3F(x, y, a)); }
-    if (k === 'CH4') { for (let j = 0; j < 3; j++) { const th = a + j * 120; s += G.C6H14(px(x, 14, th), py(y, 14, th), th + 90); } return s + hl(G.CH4(x, y, a)); }
-    if (k === 'C5H12') { const b = (rnd(i) - 0.5) * 50; [-10, 10].forEach(d => { s += G.C6H14(px(x, d, b + 90), py(y, d, b + 90), b); }); return s + hl(G.C5H12(x, y, b)); }
-    return s + G[k](x, y, a);
+    if (mx.solvent === 'water' && k === 'CH3F') { const fx = px(x, 7.6, a), fy = py(y, 7.6, a); [-40, 40].forEach((d, j) => { s += W(px(fx, 13, a + d), py(fy, 13, a + d), a + d + 180 - 52, j); }); [150, 215].forEach((d, j) => { s += W(px(x, 18, a + d), py(y, 18, a + d), rnd(i * 5 + j) * 360, j + 2); }); return s + so(hl(G.CH3F(x, y, a))); }
+    if (k === 'CH4') { for (let j = 0; j < 3; j++) { const th = a + j * 120; s += Hx(px(x, 14, th), py(y, 14, th), th + 90, j); } return s + so(hl(G.CH4(x, y, a))); }
+    if (k === 'C5H12') { const b = (rnd(i) - 0.5) * 50; [-10, 10].forEach((d, j) => { s += Hx(px(x, d, b + 90), py(y, d, b + 90), b, j); }); return s + so(hl(G.C5H12(x, y, b))); }
+    return s + so(G[k](x, y, a));
   };
   const P6 = [[108, 122], [195, 118], [282, 122], [108, 204], [195, 208], [282, 204]], L = { x0: 63, x1: 327, y0: 78, y1: 244 };
-  const label = (t, col) => `<text x="195" y="14" text-anchor="middle" font-size="12" font-weight="800" fill="${col}">${t}</text>`;
-  const row = (k, y, n, x0, x1, seed) => { let s = ''; for (let i = 0; i < n; i++) s += G[k](x0 + (x1 - x0) * (i + 0.5) / n, y + (rnd(seed + i) - 0.5) * 4, k === 'H2O' ? rnd(seed + i + 9) * 360 : k === 'CH3OH' ? (i % 2 ? 180 : 0) + (rnd(seed + i + 9) - 0.5) * 50 : (rnd(seed + i + 9) - 0.5) * 40); return s; };
+  const label = (t, col, d) => { const g = `<text x="195" y="14" text-anchor="middle" font-size="12" font-weight="800" fill="${col}">${t}</text>`; return d == null ? g : fade(g, d); };
+  const row = (k, y, n, x0, x1, seed, fy, d0, dur) => { let s = ''; for (let i = 0; i < n; i++) { const X = x0 + (x1 - x0) * (i + 0.5) / n, Y = y + (rnd(seed + i) - 0.5) * 4, g = G[k](X, Y, k === 'H2O' ? rnd(seed + i + 9) * 360 : k === 'CH3OH' ? (i % 2 ? 180 : 0) + (rnd(seed + i + 9) - 0.5) * 50 : (rnd(seed + i + 9) - 0.5) * 40); s += fy == null ? g : mv('mx-fall', g, 110 + 170 * (i + 0.5) / n - X, fy - Y, d0 + i * 0.05, dur); } return s; };
   let h = `<path d="M60 30v205a12 12 0 0 0 12 12h246a12 12 0 0 0 12-12V30" fill="#fff" stroke="#3d4a73" stroke-width="3"/><path d="M50 30h290" stroke="#3d4a73" stroke-width="3" stroke-linecap="round"/><rect x="63" y="78" width="264" height="166" rx="8" fill="${S.color}"/>`, body = '';
   const sol = it && it.k;
   if (!it) body = bulk(L.x0, L.y0, L.x1, L.y1);
   else if (!mx.shown) body = bulk(L.x0, L.y0, L.x1, L.y1) + (sol === 'NaCl' ? lattice(195, 46, 5, 2) : row(sol, 54, sol === 'C6H14' || sol === 'C5H12' ? 4 : 5, 110, 280, 3)) + label(`${it.name}, ${it.f} ↓`, '#b83d63');
-  else if (it.look === 'mix') { const av = P6.map(p => [p[0], p[1], mx.solvent === 'water' ? 28 : 22]); body = bulk(L.x0, L.y0, L.x1, L.y1, av) + P6.map((p, i) => shell(sol, p[0], p[1], i)).join('') + label(`mixed evenly: ${S.name} surrounds each ${it.name} molecule`, '#23704f'); }
-  else if (it.look === 'ions') { const av = P6.map(p => [p[0], p[1], 28]); body = bulk(L.x0, L.y0, L.x1, L.y1, av) + P6.map((p, i) => shell(i % 2 ? 'Cl' : 'Na', p[0], p[1], i)).join('') + label('dissolved: water surrounds each Na⁺ and Cl⁻ ion', '#23704f'); }
-  else if (it.look === 'top') body = `<rect x="63" y="78" width="264" height="36" fill="#fbeebd" stroke="#c9a94a"/>` + row(sol, 88, 6, 68, 322, 1) + row(sol, 103, 6, 68, 322, 20) + bulk(L.x0, 114, L.x1, L.y1) + label(`${it.name} floats on top as its own layer`, '#7a5200');
+  else if (it.look === 'mix') { const av = P6.map(p => [p[0], p[1], mx.solvent === 'water' ? 28 : 22]); body = bulk(L.x0, L.y0, L.x1, L.y1, av) + P6.map((p, i) => shell(sol, p[0], p[1], i, { x: drop(i), y: 54 })).join('') + label(`mixed evenly: ${S.name} surrounds each ${it.name} molecule`, '#23704f', 2.5); }
+  else if (it.look === 'ions') { const av = P6.map(p => [p[0], p[1], 28]); body = bulk(L.x0, L.y0, L.x1, L.y1, av) + P6.map((p, i) => { const lx = 195 + ((i % 3) - 1) * 11, ly = Math.floor(i / 3) * 11; return shell(i % 2 ? 'Cl' : 'Na', p[0], p[1], i, { x: lx, y: 46 + ly, mid: [lx, 156 + ly] }, 2.4); }).join('') + label('dissolved: water surrounds each Na⁺ and Cl⁻ ion', '#23704f', 3.6); }
+  else if (it.look === 'top') body = fade(`<rect x="63" y="78" width="264" height="36" fill="#fbeebd" stroke="#c9a94a"/>`, 0.7) + bulk(L.x0, 114, L.x1, L.y1) + row(sol, 88, 6, 68, 322, 1, 54, 0, 1) + row(sol, 103, 6, 68, 322, 20, 54, 0.2, 1.1) + label(`${it.name} floats on top as its own layer`, '#7a5200', 1.5);
   else if (it.look === 'bottom') {
     const some = it.v === 'some', up = some ? [[120, 130], [250, 150]] : [];
-    body = `<rect x="63" y="202" width="264" height="42" rx="8" fill="${sol === 'H2O' ? '#bcdcf5' : '#f5d0dc'}" stroke="#8a93ab"/>` + bulk(L.x0, L.y0, L.x1, 202, up.map(p => [p[0], p[1], 9])) + up.map((p, i) => hl(G[sol](p[0], p[1], i * 140 + 30))).join('') + row(sol, 213, sol === 'CH3OH' ? 7 : 9, 68, 322, 1) + row(sol, 233, sol === 'CH3OH' ? 7 : 9, 68, 322, 30) + label(some ? `only a little ${it.name} mixes in. The rest is its own layer` : `${it.name} stays together as its own layer`, '#4f5a74');
+    body = fade(`<rect x="63" y="202" width="264" height="42" rx="8" fill="${sol === 'H2O' ? '#bcdcf5' : '#f5d0dc'}" stroke="#8a93ab"/>`, 1.5) + bulk(L.x0, L.y0, L.x1, 202, up.map(p => [p[0], p[1], 9])) + up.map((p, i) => mv('mx-fall', hl(G[sol](p[0], p[1], i * 140 + 30)), drop(i * 3) - p[0], 54 - p[1], 0.3 + i * 0.2, 1.3)).join('') + row(sol, 233, sol === 'CH3OH' ? 7 : 9, 68, 322, 30, 54, 0, 1.7) + row(sol, 213, sol === 'CH3OH' ? 7 : 9, 68, 322, 1, 54, 0.35, 1.7) + label(some ? `only a little ${it.name} mixes in. The rest is its own layer` : `${it.name} stays together as its own layer`, '#4f5a74', 2.4);
   }
-  else if (it.look === 'crystal') body = bulk(L.x0, L.y0, L.x1, 200) + bulk(L.x0, 200, 150, L.y1, null, 300) + bulk(240, 200, L.x1, L.y1, null, 400) + lattice(195, 208, 6, 3) + label('solid NaCl stays on the bottom', '#4f5a74');
+  else if (it.look === 'crystal') body = bulk(L.x0, L.y0, L.x1, 200) + bulk(L.x0, 200, 150, L.y1, null, 300) + bulk(240, 200, L.x1, L.y1, null, 400) + mv('mx-fall', lattice(195, 208, 6, 3), 0, 46 - 208, 0, 1.6) + label('solid NaCl stays on the bottom', '#4f5a74', 1.8);
   else {   // a gas that bubbles out
     const some = it.v === 'some', in1 = some ? [[150, 190]] : [], bub = [[110, 52], [160, 44], [215, 56], [270, 46], [130, 100], [250, 108]];
-    body = bulk(L.x0, L.y0, L.x1, L.y1, bub.slice(4).map(p => [p[0], p[1], 12]).concat(in1.map(p => [p[0], p[1], 28]))) + in1.map((p, i) => shell(sol, p[0], p[1], i + 2)).join('') + bub.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="12.5" fill="#ffffffb8" stroke="#e0577f" stroke-width="1.8"/>` + G[sol](p[0], p[1], i * 50)).join('') + label(some ? `only a little ${it.name} dissolves. Most leaves as gas` : `${it.name} leaves as gas`, '#b83d63');
+    body = bulk(L.x0, L.y0, L.x1, L.y1, bub.slice(4).map(p => [p[0], p[1], 12]).concat(in1.map(p => [p[0], p[1], 28]))) + in1.map((p, i) => shell(sol, p[0], p[1], i + 2, { x: drop(2), y: 54 })).join('') + bub.map((p, i) => mv('mx-two', fade(`<circle cx="${p[0]}" cy="${p[1]}" r="12.5" fill="#ffffffb8" stroke="#e0577f" stroke-width="1.8"/>`, 1.2 + i * 0.07) + G[sol](p[0], p[1], i * 50), drop(i) - p[0], 54 - p[1], i * 0.07, 2.6, (rnd(i + 40) - 0.5) * 30, 150 + rnd(i + 60) * 50 - p[1])).join('') + label(some ? `only a little ${it.name} dissolves. Most leaves as gas` : `${it.name} leaves as gas`, '#b83d63', 2.9);
   }
   h += body + `<text x="195" y="264" text-anchor="middle" font-size="12" font-weight="800" fill="#26326a">${S.name}, ${S.f}</text>`;
   const ks = ['C', 'H', 'O', 'F', 'Na', 'Cl'].filter(e => used[e]), kw = 40, k0 = 195 - ks.length * kw / 2;
@@ -3243,9 +3263,11 @@ function mxSvg() {
   return `<svg class="cg-svg" viewBox="22 0 346 292" role="img" aria-label="A beaker of ${S.name}${!it ? '' : mx.shown ? `: ${it.name} ${it.v === 'yes' ? 'has mixed in evenly, and each particle is surrounded by ' + S.name + ' molecules' : it.v === 'some' ? 'has mixed in only a little' : 'has stayed separate'}` : ` with ${it.name} about to be added`}. Particles are drawn as small molecules.">${h}</svg>`;
 }
 function mxPaint() {
-  const S = MIXLAB[mx.solvent]; $('mxFig').innerHTML = mxSvg();
+  const S = MIXLAB[mx.solvent]; $('mxFig').innerHTML = mxSvg(); mx.pending = !!(mx.item && mx.shown) && !mx.seen;
   document.querySelectorAll('#mxSolv button').forEach(b => { b.classList.toggle('on', b.dataset.mxsolv === mx.solvent); b.setAttribute('aria-pressed', b.dataset.mxsolv === mx.solvent); });
   $('mxItems').innerHTML = S.items.map(it => `<button type="button" data-mxitem="${it.k}" class="${mx.item && mx.item.k === it.k ? 'on' : ''}" aria-pressed="${!!(mx.item && mx.item.k === it.k)}">${it.f}</button>`).join('');
+  let calmMx = false; try { calmMx = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  $('mxReplay').hidden = !(mx.item && mx.shown) || calmMx;
   $('mxAsk').hidden = !mx.item || mx.shown; if (mx.item && !mx.shown) $('mxQ').innerHTML = `Will <b>${mx.item.name}</b> mix well with <b>${S.name}</b>?`;
   if (!mx.item) { $('mxCaption').textContent = 'Pick a liquid for the beaker, then pick something to drop in.'; $('mxFeedback').className = 'feedback'; $('mxFeedback').innerHTML = ''; }
 }
@@ -3261,12 +3283,13 @@ function openMX() {
 mx.close = () => { mx.open = false; $('mxBox').hidden = true; };
 function mountMX() {
   $('playArea').insertAdjacentHTML('beforebegin', `<section id="mxBox" class="example" hidden><span class="ex-label">Mixing Beaker · a teaching model</span>
-   <div class="lab-grid cl-grid"><div><div class="lab-stage pd-stage"><div class="figure" id="mxFig"></div></div><p class="lab-caption" id="mxCaption" aria-live="polite"></p></div>
+   <div class="lab-grid cl-grid"><div><div class="lab-stage pd-stage"><div class="figure" id="mxFig"></div></div><p class="lab-caption" id="mxCaption" aria-live="polite"></p><button type="button" class="btn mx-replay" id="mxReplay" hidden>Replay the drop</button></div>
    <div class="lab-side" id="mxSide"><fieldset><legend>1. Liquid in the beaker</legend><div class="lab-mols" id="mxSolv"><button type="button" data-mxsolv="water">Water</button><button type="button" data-mxsolv="hexane">Hexane</button></div></fieldset><fieldset><legend>2. Drop in</legend><div class="lab-mols" id="mxItems"></div></fieldset>
    <fieldset id="mxAsk" hidden><legend>3. Predict</legend><p id="mxQ" style="margin:0 0 8px;font-weight:700"></p><div class="lab-btns"><button type="button" class="btn primary" data-mxguess="1">Mixes well</button><button type="button" class="btn primary" data-mxguess="0">Does not mix well</button></div></fieldset></div></div>
    <div class="feedback" id="mxFeedback" role="status" aria-live="polite"></div>
-   <p class="note-small">A teaching model of “like dissolves like”. Matching forces mix; mismatched forces stay apart. Hexane floats on water because it is less dense. A gold outline marks what was dropped in, and a dashed ring marks the solvent molecules around a dissolved particle. Molecules are drawn flat and far larger than real ones, and the H atoms on hexane and pentane chains are left out.</p></section>`);
-  $('mxBox').addEventListener('click', e => { const s = e.target.closest('[data-mxsolv]'); if (s) { mx.solvent = s.dataset.mxsolv; mx.item = null; mx.shown = false; return mxPaint(); } const i = e.target.closest('[data-mxitem]'); if (i) { mx.item = MIXLAB[mx.solvent].items.find(x => x.k === i.dataset.mxitem); mx.shown = false; $('mxFeedback').className = 'feedback'; $('mxFeedback').innerHTML = ''; $('mxCaption').textContent = 'Make your prediction to drop it in.'; return mxPaint(); } const g = e.target.closest('[data-mxguess]'); if (g) mxGuess(g.dataset.mxguess === '1'); });
+   <p class="note-small">A teaching model of “like dissolves like”. Matching forces mix; mismatched forces stay apart. Hexane floats on water because it is less dense. Watch the particles drop in: when the forces match, solvent molecules close in around each one. A gold outline marks what was dropped in, and a dashed ring marks the solvent molecules around a dissolved particle. Molecules are drawn flat and far larger than real ones, and the H atoms on hexane and pentane chains are left out.</p></section>`);
+  try { new IntersectionObserver(es => es.forEach(en => { mx.seen = en.intersectionRatio >= 0.6; if (mx.seen && mx.pending) { mx.pending = false; $('mxFig').innerHTML = mxSvg(); } }), { threshold: [0, 0.6, 1] }).observe($('mxFig')); } catch (e) { mx.seen = true; }
+  $('mxBox').addEventListener('click', e => { if (e.target.closest('#mxReplay')) return mxPaint(); const s = e.target.closest('[data-mxsolv]'); if (s) { mx.solvent = s.dataset.mxsolv; mx.item = null; mx.shown = false; return mxPaint(); } const i = e.target.closest('[data-mxitem]'); if (i) { mx.item = MIXLAB[mx.solvent].items.find(x => x.k === i.dataset.mxitem); mx.shown = false; $('mxFeedback').className = 'feedback'; $('mxFeedback').innerHTML = ''; $('mxCaption').textContent = 'Make your prediction to drop it in.'; return mxPaint(); } const g = e.target.closest('[data-mxguess]'); if (g) mxGuess(g.dataset.mxguess === '1'); });
 }
 /* one list of every lab, for the menu, the URL and closing */
 const LABS = [
@@ -3312,7 +3335,7 @@ function showSimInline(sim, locked) {
   const keep = { ch: state.ch, q: state.q, learn: state.learn, title: $('playTitle').textContent, skip: $('skipBtn').hidden, modes: Object.assign({}, P.modes) };
   SIM_FORCE = sim.id || '~none~'; try { L.open(); } finally { SIM_FORCE = null; }
   Object.assign(state, { ch: keep.ch, q: keep.q, learn: keep.learn }); P.modes = keep.modes; $('playTitle').textContent = keep.title; $('skipBtn').hidden = keep.skip; $('playArea').hidden = false;
-  if (!locked) LAB_UNLOCK[sim.k](sim); inlineLab = sim.k;
+  if (!locked) LAB_UNLOCK[sim.k](sim); else if (sim.k === 'mx') { mx.solvent = sim.solvent; mx.item = MIXLAB[sim.solvent].items.find(x => x.k === sim.item); mx.shown = false; mxPaint(); $('mxCaption').textContent = 'Answer the question above to drop it in.'; } inlineLab = sim.k;
   const slot = $('simSlot'), box = $(sim.k + 'Box'); slot.innerHTML = simHead(L, sim, locked); box.classList.add('simq-inline'); box.classList.toggle('simq-locked', !!locked); box.inert = !!locked; slot.appendChild(box); slot.hidden = false;
   renderChooser(); setVideoFor(TOPICS[state.q.topic].video);
 }
