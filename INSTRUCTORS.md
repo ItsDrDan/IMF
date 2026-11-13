@@ -4,8 +4,14 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v17.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v18.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v18 (2026-11-13)
+
+- **"Dispersion, size and shape" is now in all three courses** (it was CHEM 1A only), at Dr. Dan's request. CHEM 3A and 3B get 8 of its 10 questions; the two that use the word "polarizable" stay in 1A.
+- The Sticky Sheet's "Dispersion and molar mass" tables (halogens, noble gases, hydrocarbons) now show in CHEM 3B too.
+- The topic's Professor Tip now names molar mass first.
 
 ## New in v17 (2026-11-13)
 
@@ -17,7 +23,7 @@ Dr. Dan's decisions after the v16 audit: use handbook values, keep the hint rule
   - Chlorine boils at −34 °C, 239 K (was −35 °C, 238 K).
   - The H-Bond Lab sets methanol's stickiness from its boiling point (338 K), like NH₃ and HF. The ranking water > methanol > HF > NH₃ > CH₄ = 0 still holds from −20 to 60 °C.
 - **A ± key** beside the freezing or boiling point box, because the iPhone number keypad has no minus key.
-- **Seventeen more questions** in the small banks: osmosis (3), protein folding (3), membranes and colloids (3), dispersion (3), fatty acids (1, arachidonic acid), heating-curve predictions (2), phase-diagram predictions (2), Protein Fold Lab (1). With v16's nine, 26 questions are new since v15; all are listed under "Values that still need Dr. Dan's review".
+- **Eighteen more questions** in the small banks: osmosis (3), protein folding (3), membranes and colloids (3), dispersion (3), fatty acids (1, arachidonic acid), heating-curve predictions (2), phase-diagram predictions (2), Protein Fold Lab (1). With v16's nine, 27 questions are new since v15; all are listed under "Values that still need Dr. Dan's review", and Dr. Dan approved them on 2026-11-13.
 - **Mole fraction of an ionic solute** now says to count whole formula units.
 - **Hinted answers** keep the v16 rule: 6 XP, and they do not count toward mastery.
 
@@ -32,7 +38,7 @@ From a full audit of the game. Every correction, the tests and the open question
 - **Answer checking.** Units typed after a number and superscript exponents are read. A correctly rounded answer with too few sig figs gets a nudge and is not a miss. Wrong-method values for mole fraction and Raoult's law are no longer accepted.
 - **Chemistry fixes.** HCl feedback, pair-specific boiling point hints, phase-diagram points moved off the lines, urea replaced by mannitol, fatty-acid melting points matched to the CHEM 3B book, solubility limits on the colligative problems. PH₃ left "Polar or nonpolar?" and CCl₄ vs CH₃OH left "Which boils higher?".
 - **Nine new questions:** ion–dipole (2), sugars (2), surface tension and viscosity (2), Energy Well (2), Electron Coin-Flip (1).
-- **Decided in v17:** pentane is now 512 torr, a hinted answer stays at 6 XP, and butane stays at 273 K. The new questions still need a read.
+- **Decided in v17:** pentane is now 512 torr, a hinted answer stays at 6 XP, and butane stays at 273 K. Dr. Dan read and approved the new questions on 2026-11-13.
 
 ## New in v15 (2026-11-13)
 
@@ -102,7 +108,7 @@ Four changes Dr. Dan asked for after v8 went live.
 | | Forces in organic families | | | ✓ |
 | Boiling Point Battles | Which boils higher? (pick, then say why) | ✓ | ✓ | |
 | | Rank three | ✓ | ✓ | |
-| | Dispersion, size and shape | | ✓ | |
+| | Dispersion, size and shape | ✓ | ✓ | ✓ |
 | | Organic boiling points | | | ✓ |
 | | Fatty acids: melting points | | | ✓ |
 | Liquids & Mixing | Like dissolves like | ✓ | ✓ | ✓ |
@@ -128,7 +134,7 @@ Four changes Dr. Dan asked for after v8 went live.
 
 Each tile also has lab topics (v9): hydrogen bonds and the energy well in Spot the Forces, the electron coin-flip in Boiling Point Battles, the mixing beaker in Liquids & Mixing, the heating curve and phase diagram in Phase Changes, cells in a bath in Cells & Osmosis, solutions in Colligative Properties, and protein folding in Biomolecules. They follow each lab's courses.
 
-41 topics in all, 9 of them lab topics: 20 in 3A, 32 in 1A, 17 in 3B.
+41 topics in all, 9 of them lab topics: 21 in 3A, 32 in 1A, 18 in 3B.
 
 ## Labs
 
@@ -183,7 +189,7 @@ These are standard values recalled from memory, not copied from a course source.
 - **Mercury's surface tension** is explained by metallic bonding.
 - **Butane** is shown as 273 K (−0.5 °C) in the hydrocarbon series.
 - **Mannitol** replaced urea in the osmotic pressure questions, because urea crosses the red-cell membrane.
-- **Questions added in v16 and v17, written from general knowledge:**
+- **Questions added in v16 and v17, written from general knowledge. Dr. Dan read all 27 on 2026-11-13 and approved them as written** (full text in `REVIEW-NEW-QUESTIONS.md`):
   - Ion–dipole: Na⁺ vs Mg²⁺; which pair is ion–dipole.
   - Sugars: what holds a sucrose crystal together; why cotton soaks up water.
   - Surface tension and viscosity: water beading on a waxed car; motor oil vs gasoline (about 5 to 12 carbons vs 20 or more).
