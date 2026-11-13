@@ -4,12 +4,12 @@ ItsDrDan study game on **intermolecular forces, phase changes and colligative pr
 
 Live at https://itsdrdan.github.io/IMF/
 
-Current version: v8
+Current version: v9
 
 - `index.html`: the whole game (standalone; no build step). It loads the brand kit (`games/brand/itsdrdan.css`, `icons.js`, `embed.js`) and `games/track.js` for anonymous stats, and reads its art from `assets/`.
 - `?course=3A` (default), `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden.
 - 7 tiles: Spot the Forces, Boiling Point Battles, Liquids & Mixing, Phase Changes, Cells & Osmosis, Colligative Properties (1A), Biomolecules (3B). Modes: Learn, Practice, Challenge (10 mixed, no hints) and Daily 5.
-- 9 predict-first labs: H-Bond Lab, Energy Well, Electron Coin-Flip, Mixing Beaker, Heating Curve Lab, Phase Diagram Explorer, Solutions Lab, Cell Lab, Protein Fold Lab.
+- 9 predict-first labs: H-Bond Lab, Energy Well, Electron Coin-Flip, Mixing Beaker, Heating Curve Lab, Phase Diagram Explorer, Solutions Lab, Cell Lab, Protein Fold Lab. Their predictions also come up as practice questions, and the lab opens under the question.
 - Direct links: `?mode=daily`, `?mode=challenge`, `?mode=lab`, `?mode=well`, `?mode=coin`, `?mode=mix`, `?mode=curve`, `?mode=diagram`, `?mode=solutions`, `?mode=cell`, `?mode=fold`.
 
 ## Layout
@@ -33,7 +33,7 @@ Art notes are in [assets/ART-NOTES.md](assets/ART-NOTES.md).
 ## Still to do
 
 - Dr. Dan reviews the values listed under "Values that still need Dr. Dan's review" in `INSTRUCTORS.md`.
-- Add a question-bank sampler in `ItsDrDan/questionbank`.
+- Confirm the nightly question-bank build keeps working with `tools/samplers/IMF.js` in `ItsDrDan/questionbank`.
 
 ## Rules
 

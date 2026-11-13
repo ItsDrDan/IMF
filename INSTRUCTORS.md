@@ -4,15 +4,25 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v8.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v9.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v9 (2026-11-12)
+
+Four changes Dr. Dan asked for after v8 went live.
+
+- **Molar mass beside electron count.** Wherever size decides a comparison, the game now shows and argues both: cards read "160 g/mol · 70 electrons", and the size reason reads "has a higher molar mass (more electrons), so its dispersion forces are stronger". Hints say "Similar molar mass? Compare the type of force. Same type of force? The higher molar mass wins." The Sticky Sheet's dispersion tables gained a molar mass column. One pair was removed (CH₃F vs ethane: 34 vs 30 g/mol is not "similar molar mass").
+- **Lab questions in practice.** Each lab's predictions are also practice topics, marked "lab" in the topic picker. They come up in Practice, Challenge and Daily 5. After the student answers, the lab opens under the question, already unlocked on that scenario, with a "Now test it" line.
+- **Fewer buttons, clearer directions.** Daily 5 moved into the mode row (Learn, Practice, Challenge, Daily 5). All nine labs and the Thermochemistry link sit in one collapsed "Labs and more" box. A collapsed "How to use this game" box has five short directions, and the mode row has a step 2 heading.
+- **Hints and feedback everywhere.** Every step of every question has a hint (the test script fails if one is missing). A wrong typed answer with no recognized slip shows the step's hint. The final "correct" message repeats the explanation.
 
 ## What students see
 
 1. Pick one or more tiles, or narrow to specific topics.
 2. Choose Learn (Professor Tips and a worked example), Practice (hints and feedback on every wrong choice), or Challenge (10 mixed questions, no hints, then a study plan).
-3. Daily 5 gives 2 easy, 2 medium and 1 hard question and shares the ItsDrDan day streak.
-4. Labs open from their own menu. Every lab starts with a prediction; the controls unlock after the student answers.
+3. Daily 5 (in the same row) gives 2 easy, 2 medium and 1 hard question and shares the ItsDrDan day streak.
+4. Lab questions come up in practice: the student predicts, then the lab opens under the question.
+5. Every lab can also be opened on its own from the collapsed "Labs and more" box. There it starts with a prediction, and the controls unlock after the student answers.
 
 ## Tiles and topics
 
@@ -51,7 +61,9 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 | | Sugars, starch and cellulose | | | ✓ |
 | | Membranes, soaps and colloids | | | ✓ |
 
-32 topics in all: 15 in 3A, 24 in 1A, 13 in 3B.
+Each tile also has lab topics (v9): hydrogen bonds and the energy well in Spot the Forces, the electron coin-flip in Boiling Point Battles, the mixing beaker in Liquids & Mixing, the heating curve and phase diagram in Phase Changes, cells in a bath in Cells & Osmosis, solutions in Colligative Properties, and protein folding in Biomolecules. They follow each lab's courses.
+
+41 topics in all, 9 of them lab topics: 20 in 3A, 32 in 1A, 17 in 3B.
 
 ## Labs
 
@@ -71,7 +83,8 @@ Each is labeled on screen as a teaching model, with its simplifications stated. 
 
 ## Conventions to know
 
-- **Feedback:** every wrong choice has its own explanation and a named slip.
+- **Feedback:** every wrong choice has its own explanation and a named slip. Every correct answer shows its explanation too.
+- **Hints:** every step has one.
 - **Multi-step questions:** a question counts as correct only when every step is right on the first try. In Challenge a missed step shows the student's answer, the reason and the correct answer.
 - **Typed numbers:** accepted within 1% of the unrounded answer, so rounding in earlier steps is not punished. E notation (`7.84E0`) and `×10^` are accepted. A decimal comma gets a "use a period" message.
 - **Sig figs:** a numerically correct answer with the wrong number of sig figs is marked correct with a yellow "Close, but fix your sig figs" notice. Trailing zeros with no decimal point do not count (100 has 1 sig fig; `100.` has 3), so the game displays such answers as `100.`.
@@ -110,6 +123,7 @@ These are standard values recalled from memory, not copied from a course source.
 - **Two extra IV fluids:** 5% glucose (isotonic) and 0.45% NaCl (hypotonic) were added to the spec's four baths.
 - **Osmosis chamber** is a static picture in 1A, not an interactive piston.
 - **Polar side chains:** the spec lists dipole–dipole as its own rule. The game uses Peptide Party's four interactions, and every polar pair asked about has O–H or N–H, so the answer is hydrogen bond.
+- **Standalone labs have no Hint button** on their prediction step. The same predictions asked in practice do.
 - **Reduce-motion checkbox** exists in the H-Bond Lab and Cell Lab. The Heating Curve Lab and Phase Diagram Explorer follow the device's reduced-motion setting only. The other labs have no continuous animation.
 - **Heating-curve calculations** are not rebuilt here. The game links to the Thermochemistry game, as the spec asks.
 - **The spec's two optional art touch-ups** (Critical Thinker meniscus, Surface Skater legs) are not done.
@@ -157,8 +171,8 @@ Added by the game:
 
 ## How it was tested
 
-- **Answer keys:** a script generates 400 questions for every topic in every course (20,800 in all) and checks one correct choice per step, a reason and slip on every wrong choice, and that every displayed numeric answer passes its own check and sig-fig rule.
-- **Data checks:** every boiling-point pair is in the stated order with the stated reason; every Lewis drawing has the right electron count and matches its formula; every molar mass matches the atomic masses; the spec's hand-worked numbers (KBr, glucose, ethylene glycol, pentane and hexane) are reproduced.
+- **Answer keys:** a script generates 400 questions for every topic in every course (27,600 in all) and checks one correct choice per step, a hint on every step, a reason and slip on every wrong choice, and that every displayed numeric answer passes its own check and sig-fig rule.
+- **Data checks:** every boiling-point pair is in the stated order with the stated reason, and every size comparison has molar mass and electron count agreeing; every Lewis drawing has the right electron count and matches its formula; every molar mass matches the atomic masses; the spec's hand-worked numbers (KBr, glucose, ethylene glycol, pentane and hexane) are reproduced.
 - **Models:** the H-bond model ranks water > methanol > HF > NH₃ > CH₄ = 0 from −33 °C up; the heating-curve box returns all 18 molecules to the lattice after a full heat-and-cool cycle; all twelve cell-and-bath combinations end in the right state.
 - **Browser:** every topic, Learn, Challenge, Daily 5 and every lab clicked through at desktop and phone width in all three courses, with no console errors, no sideways scrolling and no undersized buttons.
 
@@ -172,4 +186,4 @@ Added by the game:
 
 ## Not done yet
 
-- Question bank export: a sampler in `ItsDrDan/questionbank` so the Daily 5 on the hub can draw from this game.
+- Confirm the nightly question-bank build keeps working with `tools/samplers/IMF.js` (added 2026-11-12 in `ItsDrDan/questionbank`), which lets the hub's Daily 5 draw from this game.

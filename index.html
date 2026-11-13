@@ -465,6 +465,26 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
 #flKey span{width:auto;height:auto;border-radius:0;margin-right:0;display:inline-flex;align-items:center}
 #cgTabs button,#cgPairs button{font-size:.92rem}
 </style>
+<style id="v9style">
+.howuse{margin:10px 0 4px;background:#fff;border:2px solid var(--line2);border-radius:16px;box-shadow:0 3px 0 var(--line2)}
+.howuse>summary{list-style:none;cursor:pointer;padding:10px 16px;min-height:46px;display:flex;align-items:center;font-family:var(--font-display);font-weight:600;font-size:1.02rem}
+.howuse>summary::-webkit-details-marker{display:none}.howuse>summary::after{content:'▾';margin-left:auto;color:var(--faint)}.howuse[open]>summary::after{transform:rotate(180deg)}
+.howuse ul{margin:0;padding:0 18px 14px 34px;display:grid;gap:6px;line-height:1.4}
+.pick-title.step2{margin-top:18px}
+.mode-switch{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:900px){.mode-switch{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.morebox{margin-top:14px}
+.morebox .specials{display:block;margin-top:0;padding:2px 16px 16px}
+.morebox .linkcard{margin-top:12px;max-width:520px}
+.labs{margin-top:0}
+#simSlot{margin-top:14px}
+.simq-head{display:flex;gap:10px;align-items:flex-start;border:2px solid #cfd8ee;background:linear-gradient(135deg,#f6f9ff,#fbf6ff);border-radius:14px;padding:10px 14px;margin-bottom:8px}
+.simq-head .ui{width:1.4em;height:1.4em;color:#3c47b8;margin-top:2px}
+.simq-head b{display:block;font-family:var(--font-display);font-weight:600;font-size:1.05rem}.simq-head span{display:block;color:var(--muted);font-weight:700;font-size:.92rem}
+.simq-inline{border:0;padding:0;margin:0;background:none;box-shadow:none}
+.simq-inline>.part.current,.simq-inline>.feedback:not(#mxFeedback),.simq-inline>.ex-actions,.simq-inline>.ex-label,.simq-inline .lab-lock{display:none!important}
+.chip .ctag{background:#e7edff;color:#3c47b8;border-radius:99px;padding:0 6px;font-size:.72rem;font-weight:800}
+</style>
 <script src="https://itsdrdan.github.io/games/brand/icons.js" defer></script>
 <script src="https://itsdrdan.github.io/games/brand/embed.js" defer></script>
 <script src="https://itsdrdan.github.io/games/track.js" defer></script>
@@ -483,23 +503,25 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
   <h1><span class="t1">Sticky</span> <span class="t2">Molecules</span></h1>
   <p class="lede">Intermolecular forces: what makes molecules stick, and what that does to boiling points and mixing.</p>
  </div></div>
- <ul class="howto"><li><i>1</i>Pick a tile</li><li><i>2</i>Learn, Practice or Challenge</li><li><i>3</i>Tap to answer</li></ul>
+ <details class="howuse"><summary>How to use this game</summary><ul><li><b>Pick your course</b> at the top, then tap one or more tiles.</li><li><b>Learn</b> shows a worked example. <b>Practice</b> gives hints and feedback. <b>Challenge</b> and <b>Daily 5</b> are short quizzes.</li><li><b>Lab questions:</b> make a prediction, and the lab opens under the question so you can test it.</li><li><b>Stuck?</b> Tap Hint, then Show answer. The Sticky Sheet (top right) has the rules and the data.</li><li><b>Want to explore?</b> Open “Labs and more” below the practice modes.</li></ul></details>
 
  <section class="chooser" aria-labelledby="pickTitle">
   <h2 class="pick-title" id="pickTitle"><span class="stepnum">1</span>What do you want to work on? <small>Pick one or more.</small></h2>
   <div class="cats" id="cats"></div>
   <details class="topicbox" id="chipsWrap" hidden><summary>Focus on specific topics <small id="topicCount"></small></summary><div class="chips" id="chips"></div></details>
-  <div class="mode-switch" id="modes" role="group" aria-label="Mode">
+  <h2 class="pick-title step2" id="modeTitle"><span class="stepnum">2</span>How do you want to practice?</h2>
+  <div class="mode-switch" id="modes" role="group" aria-labelledby="modeTitle">
    <button type="button" data-mode="learn"><span class="ms-ico" data-icon="book" aria-hidden="true"></span><span><b>Learn</b><small>Professor Tips and a worked example, one step at a time.</small></span></button>
    <button type="button" data-mode="practice"><span class="ms-ico" data-icon="pencil" aria-hidden="true"></span><span><b>Practice</b><small>Your topics, with hints and feedback on every slip.</small></span></button>
    <button type="button" data-mode="challenge"><span class="ms-ico" data-icon="target" aria-hidden="true"></span><span><b>Challenge</b><small>10 mixed questions from every tile. No hints.</small></span></button>
+   <button type="button" data-mode="daily"><span class="ms-ico" data-icon="calendar" aria-hidden="true"></span><span><b>Daily 5</b><small id="dailySmall">2 easy, 2 medium, 1 hard.</small></span></button>
   </div>
-  <div class="specials" id="specials"></div>
+  <details class="topicbox morebox" id="moreBox"><summary>Labs and more <small>explore the simulations freely</small></summary><div class="specials" id="specials"></div></details>
  </section>
 
  <main class="panel" id="play">
   <div class="play-head"><div class="play-left"><span id="playMascot"></span><h2 class="play-title" id="playTitle">Practice</h2></div><button type="button" id="skipBtn" class="btn">New question <span data-icon="arrow" aria-hidden="true"></span></button></div>
-  <div class="empty" id="emptyBox"><span data-icon="arrow" aria-hidden="true"></span> Pick a tile above to get started.</div>
+  <div class="empty" id="emptyBox"><span data-icon="arrow" aria-hidden="true"></span> Pick a tile in step 1 to get started. Not sure where to begin? Tap the first tile, then Learn.</div>
   <section id="learnBox" class="example" hidden></section>
   <section id="reportBox" class="example" hidden></section>
   <section id="labBox" class="example" hidden>
@@ -662,6 +684,7 @@ const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { cons
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const BAGS = {};
 function drawBag(key, arr) {
+  if (SIM_FORCE) { const f = arr.find(x => x && x.id === SIM_FORCE); if (f) return f; }
   let b = BAGS[key];
   if (!b || !b.length) { b = BAGS[key] = shuffle(arr.map((_, i) => i)); if (b.length > 1 && b[b.length - 1] === BAGS[key + '#last']) [b[0], b[b.length - 1]] = [b[b.length - 1], b[0]]; }
   const i = b.pop(); BAGS[key + '#last'] = i; return arr[i];
@@ -677,8 +700,8 @@ const SLIP = {
   'hbond-is-covalent': 'A hydrogen bond is an attraction <b>between</b> molecules, with no shared electrons. It is much weaker than a covalent bond.',
   'any-h-hbonds': 'The H must be bonded <b>directly to N, O or F</b>. An H on carbon (or on Cl, S, P) does not hydrogen bond.',
   'polar-bonds-polar-molecule': 'Polar bonds do not always make a polar molecule. In a symmetric shape the bond dipoles cancel, leaving dispersion forces only.',
-  'type-always-wins': 'Hydrogen bonding beats dispersion only for molecules of <b>similar size</b>. A molecule with many more electrons can have stronger total attractions from dispersion alone.',
-  'size-ignores-type': 'When two molecules are about the same size, check the <b>type</b> of force first. Bigger does not automatically mean higher boiling.',
+  'type-always-wins': 'Hydrogen bonding beats dispersion only for molecules of <b>similar size</b>. A molecule with a much higher molar mass (many more electrons) can have stronger total attractions from dispersion alone.',
+  'size-ignores-type': 'When two molecules have about the same molar mass, check the <b>type</b> of force first. Higher molar mass decides only when the type of force is the same.',
   'vp-backwards': 'Strong forces hold molecules in the liquid, so fewer escape: strong forces → <b>low</b> vapor pressure.',
   'missed-dipole': 'A polar molecule has a δ+ end and a δ− end, so its molecules also attract by dipole–dipole forces.',
   'missed-hbond': 'Look for an H bonded directly to N, O or F. That molecule can hydrogen bond, which is stronger than ordinary dipole–dipole attraction.',
@@ -686,7 +709,7 @@ const SLIP = {
   'no-ions': 'Ion–dipole needs an <b>ion</b>. A pure molecular substance has no ions.',
   'like-dissolves-like': 'Like dissolves like: polar mixes with polar (or ionic), nonpolar mixes with nonpolar.',
   'kinks-pack-poorly': 'A cis double bond puts a kink in the chain. Kinked chains cannot pack closely, so dispersion forces are weaker and the melting point is lower.',
-  'chain-length': 'A longer chain has more electrons and more surface touching its neighbors, so dispersion forces are stronger.',
+  'chain-length': 'A longer chain has a higher molar mass: more electrons and more surface touching its neighbors, so dispersion forces are stronger.',
   'rank-reversed': 'That order is backwards. Start with the one that has the <b>weakest</b> attractions.',
   'rank-order': 'One of those is out of place.',
   'endo-exo-swap': 'Breaking attractions takes heat in (melting, vaporization, sublimation). Forming attractions releases heat (freezing, condensation, deposition).',
@@ -848,7 +871,7 @@ function molSvg(m, o = {}) {
 /* one molecule as a figure: Lewis drawing when we have one, condensed formula otherwise */
 function molCard(m, o = {}) {
   const pic = m.d && !o.plain ? molSvg(m, { maxW: o.maxW || 300 }) : `<div class="cformula">${F(m.cf || m.f)}</div>`;
-  return `<figure class="molcard">${pic}<figcaption><b>${cap(m.name)}</b>${m.d && !o.plain ? ', ' + F(m.f) : ''}${o.fam && m.fam ? `<br><small>${m.fam}</small>` : ''}${o.e ? `<br><small>${m.e} electrons</small>` : ''}</figcaption></figure>`;
+  return `<figure class="molcard">${pic}<figcaption><b>${cap(m.name)}</b>${m.d && !o.plain ? ', ' + F(m.f) : ''}${o.fam && m.fam ? `<br><small>${m.fam}</small>` : ''}${o.e ? `<br><small>${mmTxt(m)} · ${m.e} electrons</small>` : ''}</figcaption></figure>`;
 }
 const figure = (...cards) => `<div class="figure molrow">${cards.join('')}</div>`;
 
@@ -1040,7 +1063,7 @@ const PAIRS = [
   ['CH3NH2', 'C2H6', 'hbond', ['3A', '1A', '3B']], ['C3H7OH', 'C4H10', 'hbond', ['3A', '1A', '3B']], ['C2H5OH', 'C3H8', 'hbond', ['3A', '1A', '3B']],
   ['C2H4O2', 'C3H6O', 'hbond', ['1A', '3B']], ['N2H4', 'C2H6', 'hbond', ['1A']], ['H2O', 'CH4', 'hbond', ['3A', '1A']],
   ['C3H7OH', 'C3H6O_al', 'hbond', ['3B']], ['C3H7NH2', 'C3H9N', 'hbond', ['3B']], ['C3H7OH', 'C4H10O', 'hbond', ['3B']],
-  ['HCl', 'F2', 'dipole', ['3A', '1A']], ['ICl', 'Br2', 'dipole', ['1A']], ['CH3F', 'C2H6', 'dipole', ['3A', '1A']],
+  ['HCl', 'F2', 'dipole', ['3A', '1A']], ['ICl', 'Br2', 'dipole', ['1A']],
   ['C3H6O', 'C4H10', 'dipole', ['1A', '3B']], ['CH2O', 'C2H6', 'dipole', ['3A', '1A']], ['CH3OCH3', 'C3H8', 'dipole', ['3A', '1A', '3B']],
   ['C3H6O_al', 'C4H10', 'dipole', ['3B']],
   ['CBr4', 'CF4', 'size', ['3A', '1A']], ['Cl2', 'F2', 'size', ['3A', '1A']], ['Br2', 'Cl2', 'size', ['3A', '1A']], ['I2', 'Br2', 'size', ['3A', '1A']],
@@ -1052,13 +1075,13 @@ const PAIRS = [
 ];
 /* pentane isomers (OpenStax Figure 10.7) */
 const ISO = [{ name: 'pentane', cf: 'CH3CH2CH2CH2CH3', bp: 36, shape: 'a long, straight chain' }, { name: 'isopentane', cf: '(CH3)2CHCH2CH3', bp: 27, shape: 'one branch' }, { name: 'neopentane', cf: 'C(CH3)4', bp: 9.5, shape: 'compact and nearly spherical' }];
-const eLine = (a, b) => `${cap(a.name)} has ${a.e} electrons and ${b.name} has ${b.e}`;
+const eLine = (a, b) => `${cap(a.name)} has ${a.e} electrons (${mmTxt(a)}) and ${b.name} has ${b.e} (${mmTxt(b)})`;
 const bpLine = (a, b) => `Boiling points: ${a.name} ${degC(a.bp)}, ${b.name} ${degC(b.bp)}.`;
 function pairWhy(W, L, r) {
-  if (r === 'hbond') return `${eLine(W, L)}, so their dispersion forces are similar. Only ${W.name} has an H on ${donorAtom(W)}, so only it can hydrogen bond. ${bpLine(W, L)}`;
-  if (r === 'dipole') return `${eLine(W, L)}, so their dispersion forces are similar. ${cap(W.name)} is polar and ${L.name} is not, so ${W.name} adds dipole–dipole attractions. ${bpLine(W, L)}`;
-  if (r === 'size') return `Both have the same kinds of forces (${allForces(W)}). ${eLine(W, L)}: more electrons → a bigger, more polarizable cloud → stronger dispersion forces. ${bpLine(W, L)}`;
-  return `${eLine(W, L)}. With that many more electrons, ${W.name}’s dispersion forces add up to more than all of ${L.name}’s attractions${L.donor ? ', hydrogen bonds included' : ''}. ${bpLine(W, L)}`;
+  if (r === 'hbond') return `${eLine(W, L)}. ${sizeNote(W, L)} Only ${W.name} has an H on ${donorAtom(W)}, so only it can hydrogen bond, and that decides it. ${bpLine(W, L)}`;
+  if (r === 'dipole') return `${eLine(W, L)}. ${sizeNote(W, L)} ${cap(W.name)} is polar and ${L.name} is not, so ${W.name} adds dipole–dipole attractions. ${bpLine(W, L)}`;
+  if (r === 'size') return `Both have the same kinds of forces (${allForces(W)}). ${eLine(W, L)}. Higher molar mass means more electrons → a bigger, more polarizable cloud → stronger dispersion forces. ${bpLine(W, L)}`;
+  return `${eLine(W, L)}. With a molar mass that much higher (many more electrons), ${W.name}’s dispersion forces add up to more than all of ${L.name}’s attractions${L.donor ? ', hydrogen bonds included' : ''}. ${bpLine(W, L)}`;
 }
 function reasonOptions(W, L, r) {
   const o = [];
@@ -1066,17 +1089,17 @@ function reasonOptions(W, L, r) {
   o.push(opt(`Only ${W.name} can hydrogen bond`, r === 'hbond', r === 'hbond' ? `${cap(W.name)} has an H on ${donorAtom(W)}. ${cap(L.name)} does not.` : both ? `Both can hydrogen bond, so that cannot be the difference.` : neither ? `Neither one has an H on N, O or F, so neither hydrogen bonds.` : `${cap(W.name)} has no H on N, O or F. ${cap(L.name)} is the one that can hydrogen bond, and it still boils lower.`, 'any-h-hbonds'));
   if (!(r === 'hbond' && !L.polar)) o.push(opt(`Only ${W.name} has dipole–dipole attractions`, r === 'dipole', r === 'dipole' ? `${cap(W.name)} is polar. ${cap(L.name)} is nonpolar.` : W.polar && L.polar ? 'Both molecules are polar, so both have dipole–dipole attractions.' : !W.polar ? `${cap(W.name)} is nonpolar. ${W.pw || ''}` : `True, but that is not the main reason here.`, W.trap ? 'polar-bonds-polar-molecule' : 'polarity'));
   const bigger = r === 'size' || r === 'sizewins';
-  o.push(opt(`${cap(W.name)} has more electrons, so its dispersion forces are stronger`, bigger, bigger ? `${eLine(W, L)}.` : `${eLine(W, L)}. ${W.e > L.e ? 'That is close' : W.e === L.e ? 'Same number' : 'Fewer'}, so dispersion cannot explain it. Look at the type of force.`, 'size-ignores-type'));
+  o.push(opt(`${cap(W.name)} has a higher molar mass (more electrons), so its dispersion forces are stronger`, bigger, bigger ? `${eLine(W, L)}. Higher molar mass → more electrons → stronger dispersion.` : `${eLine(W, L)}. ${W.e < L.e - 2 ? cap(W.name) + ' is actually the smaller one' : 'That is about the same size'}, so size cannot explain it. Look at the type of force.`, 'size-ignores-type'));
   o.push(opt(`The covalent bonds inside ${W.name} are stronger`, false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'));
   return o;
 }
 function pairQ(topic, W, L, r, vp) {
   const [A, B] = shuffle([W, L]), ansH = vp ? L : W;
   const s1slip = r === 'hbond' || r === 'dipole' ? 'size-ignores-type' : r === 'sizewins' ? 'type-always-wins' : 'dispersion-size';
-  const wrongWhy = vp ? `${SLIP['vp-backwards']} ${cap(W.name)} has the stronger attractions, so ${L.name} escapes more easily.` : r === 'sizewins' ? `${SLIP['type-always-wins']} ${eLine(W, L)}.` : r === 'size' ? `They have the same kinds of forces, so count electrons. ${eLine(W, L)}.` : `${SLIP['size-ignores-type']} ${eLine(W, L)}: compare the type of force.`;
+  const wrongWhy = vp ? `${SLIP['vp-backwards']} ${cap(W.name)} has the stronger attractions, so ${L.name} escapes more easily.` : r === 'sizewins' ? `${SLIP['type-always-wins']} ${eLine(W, L)}.` : r === 'size' ? `They have the same kinds of forces, so compare molar mass: more mass means more electrons. ${eLine(W, L)}.` : `${SLIP['size-ignores-type']} ${eLine(W, L)}: compare the type of force.`;
   const ask = vp ? 'At the same temperature, which has the <b>higher vapor pressure</b>?' : 'Which has the <b>higher boiling point</b>?';
-  const p1 = choicePart(ask, [A, B].map(m => opt(`${cap(m.name)}, ${fo(m)}`, m === ansH, m === ansH ? (vp ? `${cap(L.name)} has the weaker attractions, so more of its molecules escape. ${bpLine(W, L)}` : bpLine(W, L)) : wrongWhy, vp ? 'vp-backwards' : s1slip)), { keep: true, solution: vp ? `${cap(L.name)}: weaker attractions → more molecules escape → higher vapor pressure. ${bpLine(W, L)}` : pairWhy(W, L, r), hint: vp ? 'First decide which liquid holds its molecules more tightly. That one has the LOWER vapor pressure.' : 'Similar number of electrons? Then compare the type of force. Same type of force? Then count electrons.' });
-  const p2 = choicePart(`Why are the attractions between ${W.name} ${unit(W)} stronger?`, reasonOptions(W, L, r), { solution: pairWhy(W, L, r), hint: 'Check each molecule: polar? H on N, O or F? How many electrons?' });
+  const p1 = choicePart(ask, [A, B].map(m => opt(`${cap(m.name)}, ${fo(m)}`, m === ansH, m === ansH ? (vp ? `${cap(L.name)} has the weaker attractions, so more of its molecules escape. ${bpLine(W, L)}` : bpLine(W, L)) : wrongWhy, vp ? 'vp-backwards' : s1slip)), { keep: true, solution: vp ? `${cap(L.name)}: weaker attractions → more molecules escape → higher vapor pressure. ${bpLine(W, L)}` : pairWhy(W, L, r), hint: vp ? 'First decide which liquid holds its molecules more tightly. That one has the LOWER vapor pressure.' : 'Similar molar mass (similar number of electrons)? Then compare the type of force. Same type of force? Then the higher molar mass wins.' });
+  const p2 = choicePart(`Why are the attractions between ${W.name} ${unit(W)} stronger?`, reasonOptions(W, L, r), { solution: pairWhy(W, L, r), hint: 'Check each molecule: polar? H on N, O or F? What is its molar mass (how many electrons)?' });
   return { topic, tag: `${F(A.f)} vs ${F(B.f)}`, stem: figure(molCard(A, { e: true, maxW: 230 }), molCard(B, { e: true, maxW: 230 })), tip: vp ? 'Vapor pressure runs opposite to boiling point: weak forces → easy escape → high vapor pressure.' : 'Boiling separates molecules. Stronger attractions between molecules → higher boiling point.', parts: [p1, p2] };
 }
 function genBpPair() {
@@ -1087,15 +1110,15 @@ function genOrgBp() { return chance(0.3) ? genTriple('orgbp') : genBpPair(); }
 
 /* rank three by boiling point */
 const FAMILIES = [
-  { keys: ['He', 'Ne', 'Ar', 'Kr', 'Xe'], why: 'Noble gases are single atoms with dispersion forces only. More electrons → stronger dispersion → higher boiling point.', for: ['3A', '1A'] },
-  { keys: ['F2', 'Cl2', 'Br2', 'I2'], why: 'The halogens are nonpolar, so only dispersion matters. More electrons → stronger dispersion → higher boiling point.', for: ['3A', '1A'] },
-  { keys: ['CH4', 'C2H6', 'C3H8', 'C4H10', 'C5H12', 'C6H14', 'C8H18'], why: 'Alkanes are nonpolar. A longer chain has more electrons and more surface, so dispersion forces are stronger.', for: ['3A', '1A', '3B'] },
-  { keys: ['HCl', 'HBr', 'HI'], why: 'All three are polar with no hydrogen bonding. The differences come from dispersion: more electrons → higher boiling point.', for: ['1A'] },
-  { keys: ['CF4', 'CCl4', 'CBr4'], why: 'All three are nonpolar (tetrahedral). More electrons → stronger dispersion → higher boiling point.', for: ['1A'] },
-  { keys: ['CH3OH', 'C2H5OH', 'C3H7OH'], why: 'All three hydrogen bond through one O–H. The longer chain adds dispersion, so the boiling point rises.', for: ['1A', '3B'] }
+  { keys: ['He', 'Ne', 'Ar', 'Kr', 'Xe'], why: 'Noble gases are single atoms with dispersion forces only. Higher molar mass means more electrons → stronger dispersion → higher boiling point.', for: ['3A', '1A'] },
+  { keys: ['F2', 'Cl2', 'Br2', 'I2'], why: 'The halogens are nonpolar, so only dispersion matters. Higher molar mass means more electrons → stronger dispersion → higher boiling point.', for: ['3A', '1A'] },
+  { keys: ['CH4', 'C2H6', 'C3H8', 'C4H10', 'C5H12', 'C6H14', 'C8H18'], why: 'Alkanes are nonpolar. A longer chain has a higher molar mass, more electrons and more surface, so dispersion forces are stronger.', for: ['3A', '1A', '3B'] },
+  { keys: ['HCl', 'HBr', 'HI'], why: 'All three are polar with no hydrogen bonding. The differences come from dispersion: higher molar mass (more electrons) → higher boiling point.', for: ['1A'] },
+  { keys: ['CF4', 'CCl4', 'CBr4'], why: 'All three are nonpolar (tetrahedral). Higher molar mass means more electrons → stronger dispersion → higher boiling point.', for: ['1A'] },
+  { keys: ['CH3OH', 'C2H5OH', 'C3H7OH'], why: 'All three hydrogen bond through one O–H. The longer chain has a higher molar mass and adds dispersion, so the boiling point rises.', for: ['1A', '3B'] }
 ];
 const TRIPLES = [
-  { keys: ['C3H8', 'CH3OCH3', 'C2H5OH'], why: 'All three have about the same number of electrons. Propane: dispersion only. Dimethyl ether: polar (dipole–dipole). Ethanol: O–H, so hydrogen bonding.', for: ['3A', '1A', '3B'] },
+  { keys: ['C3H8', 'CH3OCH3', 'C2H5OH'], why: 'All three have about the same molar mass and number of electrons. Propane: dispersion only. Dimethyl ether: polar (dipole–dipole). Ethanol: O–H, so hydrogen bonding.', for: ['3A', '1A', '3B'] },
   { keys: ['C4H10', 'C3H6O', 'C3H7OH'], why: 'Similar size. Butane: dispersion only. Acetone: polar C=O (dipole–dipole). 1-Propanol: O–H, so hydrogen bonding.', for: ['3A', '1A', '3B'] },
   { keys: ['C2H6', 'CH3F', 'CH3OH'], why: 'All have 18 electrons. Ethane: dispersion only. Fluoromethane: polar, but its H atoms are on carbon. Methanol: O–H, so hydrogen bonding.', for: ['3A', '1A'] },
   { keys: ['F2', 'HCl', 'CH3OH'], why: 'All have 18 electrons. F₂: dispersion only. HCl: dipole–dipole. Methanol: hydrogen bonding.', for: ['1A'] },
@@ -1108,22 +1131,22 @@ function genTriple(topic = 'bprank') {
   let keys = T.keys; if (keys.length > 3) { const idx = shuffle(keys.map((_, i) => i)).slice(0, 3).sort((a, b) => a - b); keys = idx.map(i => keys[i]); }
   const sorted = K(keys).slice().sort((a, b) => a.bp - b.bp), items = shuffle(sorted).map(m => ({ html: fo(m), aria: m.name, m }));
   const p = rankPart('Tap them in order, <b>lowest → highest boiling point</b>.', items, sorted.map(m => items.findIndex(i => i.m === m)), {
-    hint: fam ? 'Same kind of force in all three, so count electrons.' : 'They are about the same size, so sort by type of force: dispersion only, then dipole–dipole, then hydrogen bonding.',
-    orderHint: fam ? 'More electrons → higher boiling point.' : 'Dispersion only &lt; dipole–dipole &lt; hydrogen bonding.',
+    hint: fam ? 'Same kind of force in all three, so compare molar mass: more mass means more electrons.' : 'They are about the same size, so sort by type of force: dispersion only, then dipole–dipole, then hydrogen bonding.',
+    orderHint: fam ? 'Higher molar mass → higher boiling point.' : 'Dispersion only &lt; dipole–dipole &lt; hydrogen bonding.',
     solution: `${T.why} ${sorted.map(m => `${fo(m)} ${degC(m.bp)}`).join(' · ')}.` });
-  return { topic, tag: fam ? 'same family' : 'similar size', stem: `<div class="figure molrow">${items.map(i => molCard(i.m, { e: true, plain: true })).join('')}</div>`, tip: 'Similar size → the type of force decides. Same type of force → the number of electrons decides.', parts: [p] };
+  return { topic, tag: fam ? 'same family' : 'similar size', stem: `<div class="figure molrow">${items.map(i => molCard(i.m, { e: true, plain: true })).join('')}</div>`, tip: 'Similar molar mass → the type of force decides. Same type of force → the higher molar mass (more electrons) wins.', parts: [p] };
 }
 const genBpRank = () => genTriple('bprank');
 
 /* dispersion, polarizability and shape (CHEM 1A) */
 const T_DISP = [
   { q: 'Which halogen has the most polarizable electron cloud?', c: [['I₂', true, 'I₂ has the most electrons, held farthest from the nuclei, so its cloud distorts most easily. That is why I₂ is a solid at room temperature.'], ['F₂', false, 'F₂ has the fewest electrons, held tightly. It is the least polarizable.'], ['Cl₂', false, 'Cl₂ has more electrons than F₂ but far fewer than I₂.'], ['Br₂', false, 'Close, but I₂ has even more electrons.']] },
-  { q: 'At room temperature F₂ and Cl₂ are gases, Br₂ is a liquid and I₂ is a solid. Why?', c: [['Dispersion forces get stronger as the number of electrons grows', true, 'All four are nonpolar. More electrons → more polarizable → stronger dispersion (OpenStax Table 10.1: 85, 238, 332, 457 K).'], ['The I–I covalent bond is the strongest', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'], ['I₂ is polar and F₂ is not', false, 'All the halogens are nonpolar: two identical atoms share electrons equally.', 'polarity'], ['I₂ can hydrogen bond', false, 'There is no hydrogen in I₂.', 'any-h-hbonds']] },
+  { q: 'At room temperature F₂ and Cl₂ are gases, Br₂ is a liquid and I₂ is a solid. Why?', c: [['Dispersion forces get stronger as molar mass and the number of electrons grow', true, 'All four are nonpolar. Higher molar mass → more electrons → more polarizable → stronger dispersion (OpenStax Table 10.1: 85, 238, 332, 457 K).'], ['The I–I covalent bond is the strongest', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'], ['I₂ is polar and F₂ is not', false, 'All the halogens are nonpolar: two identical atoms share electrons equally.', 'polarity'], ['I₂ can hydrogen bond', false, 'There is no hydrogen in I₂.', 'any-h-hbonds']] },
   { q: 'Pentane boils at 36 °C and its isomer neopentane boils at 9.5 °C. Both are C₅H₁₂. Why the difference?', art: () => isoFig([0, 2]), c: [['Long pentane molecules touch over more surface than compact, ball-shaped neopentane', true, 'Same electrons, different shape. More contact area → stronger dispersion forces.'], ['Pentane has more electrons', false, 'They are isomers: same formula, same 42 electrons.'], ['Pentane is polar', false, 'Both are nonpolar hydrocarbons.', 'polarity'], ['Neopentane has weaker C–H bonds', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds']] },
   { q: 'Which C₅H₁₂ isomer has the lowest boiling point?', art: () => isoFig([0, 1, 2]), c: [['Neopentane, C(CH₃)₄', true, 'It is the most compact, so its molecules touch the least: 9.5 °C, vs 27 °C and 36 °C.'], ['Isopentane', false, 'One branch lowers it to 27 °C, but neopentane is more compact still (9.5 °C).'], ['Pentane', false, 'The straight chain has the most contact and the highest boiling point (36 °C).'], ['They are all the same', false, 'Same formula, but shape changes how well the molecules touch.']] },
   { q: 'What does “polarizability” describe?', c: [['How easily an electron cloud is distorted into a temporary dipole', true, 'Big, loosely held clouds are easy to distort, which gives strong dispersion forces.'], ['How polar a bond is', false, 'That is bond polarity (electronegativity difference). Polarizability is about how squishy the electron cloud is.'], ['How easily a molecule loses an electron', false, 'That is ionization energy.'], ['How many hydrogen bonds a molecule can make', false, 'Polarizability relates to dispersion forces, not hydrogen bonding.']] },
   { q: 'Which noble gas has the <b>lowest</b> boiling point?', c: [['He', true, 'Only 2 electrons, so the weakest dispersion forces of all: it boils at 4.2 K.'], ['Ne', false, 'Ne (27 K) has 10 electrons. He has only 2.'], ['Ar', false, 'Ar boils at 87 K.'], ['Xe', false, 'Xe has the most electrons of these and the highest boiling point (165 K).']] },
-  { q: 'CH₄ boils at 112 K and C₅H₁₂ at 309 K. Neither is polar. What explains the 197 K gap?', c: [['Pentane has more electrons and more surface, so stronger dispersion forces', true, 'Hydrocarbon boiling points climb steadily with chain length: 112, 185, 231, 274, 309 K for C1 to C5.'], ['Pentane can hydrogen bond', false, 'Its H atoms are all on carbon.', 'any-h-hbonds'], ['Pentane has dipole–dipole forces', false, 'Hydrocarbons are nonpolar.', 'polarity'], ['Pentane has more covalent bonds to break', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds']] }
+  { q: 'CH₄ boils at 112 K and C₅H₁₂ at 309 K. Neither is polar. What explains the 197 K gap?', c: [['Pentane has a higher molar mass (more electrons) and more surface, so stronger dispersion forces', true, 'Hydrocarbon boiling points climb steadily with chain length: 112, 185, 231, 274, 309 K for C1 to C5.'], ['Pentane can hydrogen bond', false, 'Its H atoms are all on carbon.', 'any-h-hbonds'], ['Pentane has dipole–dipole forces', false, 'Hydrocarbons are nonpolar.', 'polarity'], ['Pentane has more covalent bonds to break', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds']] }
 ];
 function isoFig(idx) { return `<div class="molrow">${idx.map(i => `<figure class="molcard"><div class="cformula">${F(ISO[i].cf)}</div><figcaption><b>${cap(ISO[i].name)}</b><br><small>${ISO[i].shape}</small></figcaption></figure>`).join('')}</div>`; }
 function genDisp() { const it = drawBag('disp', T_DISP); return staticQ('disp', Object.assign({}, it, { art: it.art ? it.art() : '', tip: 'Dispersion grows with the number of electrons and with how much surface the molecules can touch.' })); }
@@ -1143,9 +1166,9 @@ function genFatsCore() {
   }
   const [W, L, r] = drawBag('fa', faPairs()), [A, B] = shuffle([W, L]);
   const why = r === 'len' ? `Both are saturated, so both pack well. ${cap(W.name)} has ${W.c} carbons and ${L.name} has ${L.c}: ${SLIP['chain-length'].toLowerCase()} Melting points: ${degC(W.mp)} and ${degC(L.mp)}.` : `Both have ${W.c} carbons. ${cap(L.name)} has ${L.db} cis double bond${L.db > 1 ? 's' : ''} and ${W.name} has ${W.db || 'none'}. ${SLIP['kinks-pack-poorly']} Melting points: ${degC(W.mp)} and ${degC(L.mp)}.`;
-  const p1 = choicePart('Which has the <b>higher melting point</b>?', [A, B].map(a => opt(faLabel(a), a === W, a === W ? `${degC(W.mp)} vs ${degC(L.mp)}.` : r === 'len' ? SLIP['chain-length'] : SLIP['kinks-pack-poorly'], r === 'len' ? 'chain-length' : 'kinks-pack-poorly')), { keep: true, solution: why, hint: r === 'len' ? 'Both are saturated. Which chain is longer?' : 'Same length. Which one has fewer kinks?' });
+  const p1 = choicePart('Which has the <b>higher melting point</b>?', [A, B].map(a => opt(faLabel(a), a === W, a === W ? why : r === 'len' ? SLIP['chain-length'] : SLIP['kinks-pack-poorly'], r === 'len' ? 'chain-length' : 'kinks-pack-poorly')), { keep: true, solution: why, hint: r === 'len' ? 'Both are saturated. Which chain is longer?' : 'Same length. Which one has fewer kinks?' });
   const p2 = choicePart(`Why do ${W.name} molecules stick together better?`, [
-    opt('Longer chain: more electrons and more surface, so stronger dispersion forces', r === 'len', r === 'len' ? why : `They have the same number of carbons (${W.c}).`, 'chain-length'),
+    opt('Longer chain: higher molar mass, more electrons and more surface, so stronger dispersion forces', r === 'len', r === 'len' ? why : `They have the same number of carbons (${W.c}).`, 'chain-length'),
     opt('Fewer cis double bonds: straighter chains pack closer, so dispersion forces are stronger', r === 'kink', r === 'kink' ? why : 'Both are saturated: neither has a C=C.', 'kinks-pack-poorly'),
     opt('It forms more hydrogen bonds', false, 'Each fatty acid has one –COOH group. The difference is in the long nonpolar tails, which attract by dispersion.', 'any-h-hbonds'),
     opt('Its covalent bonds are stronger', false, 'Melting separates molecules from each other. No covalent bond breaks.', 'boil-breaks-bonds')
@@ -1949,7 +1972,7 @@ const FOLD_PRED = [
   { id: 'core', T: 25, q: 'This short protein chain folds up in water. Where will its nonpolar side chains (Leu, Val, Phe, Ile) end up?', test: 'Find the four nonpolar side chains in the folded shape.', c: [['Packed together in the middle, away from water', true, 'Nonpolar side chains cannot attract water, so they cluster together (hydrophobic interactions).'], ['On the outside, facing the water', false, 'The polar and charged side chains face the water. Nonpolar ones hide inside.', 'like-dissolves-like'], ['Spread evenly along the chain', false, 'Water pushes the nonpolar groups together, which is what drives the folding.', 'like-dissolves-like']] },
   { id: 'heat', T: 25, q: 'The folded protein is heated. Which links will let go?', test: 'Raise the temperature slowly and watch which links disappear and which stay.', c: [['The attractions: the hydrogen bond, the salt bridge and the hydrophobic contacts', true, 'These are attractions between groups, so heat can shake them apart. The protein unfolds (denatures), but the chain itself stays in one piece.'], ['The peptide bonds along the chain', false, 'Peptide bonds are covalent. Heating unfolds the protein without cutting the chain. ' + SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'], ['Every link, including the disulfide bond', false, SLIP['disulfide-is-covalent'], 'disulfide-is-covalent']] },
   { id: 'ss', T: 25, q: 'Which link between side chains will still be there after heating, because it is a covalent bond?', test: 'Heat it all the way and see which side-chain link is left.', c: [['The disulfide bond between the two cysteines', true, SLIP['disulfide-is-covalent']], ['The salt bridge between Lys and Asp', false, 'A salt bridge is an ionic attraction between charged groups. Heat can separate them.', 'disulfide-is-covalent'], ['The hydrogen bond between Ser and Gln', false, SLIP['hbond-is-covalent'], 'hbond-is-covalent']] },
-  { id: 'salt', T: 25, q: 'Which two side chains in this chain can form a salt bridge?', test: 'Find the + and − side chains in the folded shape.', c: [['Lys (–NH₃⁺) and Asp (–COO⁻)', true, 'Opposite charges attract.'], ['The two Cys side chains', false, 'Two cysteines form a covalent disulfide bond, –S–S–.', 'disulfide-is-covalent'], ['Leu and Val', false, 'Those are nonpolar and uncharged. They make hydrophobic contacts.', 'side-chain-salt']] },
+  { id: 'salt', T: 25, q: 'Which two side chains in this chain can form a salt bridge?', test: 'Find the + and − side chains in the folded shape.', c: [['Lys (–NH₃⁺) and Asp (–COO⁻)', true, 'Lysine’s side chain is positive and aspartic acid’s is negative. Opposite charges attract, which makes a salt bridge.'], ['The two Cys side chains', false, 'Two cysteines form a covalent disulfide bond, –S–S–.', 'disulfide-is-covalent'], ['Leu and Val', false, 'Those are nonpolar and uncharged. They make hydrophobic contacts.', 'side-chain-salt']] },
   { id: 'cool', T: 95, q: 'This protein has been heated and has unfolded. If it is cooled gently, what can happen?', test: 'Lower the temperature and watch.', c: [['It can fold back up, because no covalent bond was broken', true, 'The sequence is intact, so the same attractions can form again. (Many real proteins tangle instead, like a cooked egg.)'], ['Nothing: the amino acids have been destroyed', false, 'Heating did not break any covalent bond. The chain is whole.', 'boil-breaks-bonds'], ['The chain falls apart into amino acids', false, 'That would need the peptide bonds to break (hydrolysis). Cooling does not do that.', 'boil-breaks-bonds']] }
 ];
 function genFats() { const q = genFatsCore(); q.stem += `<div class="figure">${packFig()}</div>`; return q; }
@@ -1994,6 +2017,55 @@ const MIXLAB = {
     { k: 'NaCl', f: 'NaCl', name: 'sodium chloride', v: 'no', look: 'crystal', why: 'Nonpolar hexane has no partial charges to pull the ions out of the crystal, so the salt sits on the bottom.' }] }
 };
 
+/* ================= v9: molar mass beside electron count; every lab also asks its predictions as practice questions; a hint on every step ================= */
+const AW = { H: 1.008, He: 4.003, B: 10.81, C: 12.01, N: 14.01, O: 16.00, F: 19.00, Ne: 20.18, Na: 22.99, Si: 28.09, P: 30.97, S: 32.06, Cl: 35.45, Ar: 39.95, K: 39.10, Br: 79.90, Kr: 83.80, I: 126.90, Xe: 131.29 };
+function molarMass(f) { let m = 0; String(f).replace(/([A-Z][a-z]?)(\d*)/g, (x, el, k) => { if (AW[el] == null) throw new Error('no mass for ' + el); m += AW[el] * (k ? +k : 1); }); return m; }
+Object.keys(M).forEach(k => { M[k].mm = molarMass(M[k].f); });
+const mmTxt = m => (m.mm < 100 ? m.mm.toFixed(1) : m.mm.toFixed(0)) + ' g/mol';
+/* how two molecules compare in size, in words */
+const sizeNote = (W, L) => W.e < L.e - 2 ? `${cap(W.name)} is the smaller molecule (lower molar mass, fewer electrons), so dispersion alone would favor ${L.name}.` : 'They are about the same size (similar molar mass and number of electrons), so their dispersion forces are similar.';
+
+/* a starting hint for every topic whose questions do not carry their own */
+const TOPIC_HINT = {
+  concept: 'Forces <b>between</b> molecules (dispersion, dipole–dipole, hydrogen bonding) are much weaker than the covalent bonds <b>inside</b> a molecule. Melting and boiling only overcome the forces between molecules.',
+  liquids: 'Stronger attractions make a liquid harder to pull apart at the surface (surface tension), slower to flow (viscosity) and harder to evaporate (lower vapor pressure).',
+  endoexo: 'Are the molecules moving apart (heat goes in) or coming together (heat comes out)?',
+  osmosis: 'Water crosses the membrane toward the side with <b>more</b> dissolved particles. The solute cannot cross.',
+  iondipole: 'An ion has a full charge. It attracts the oppositely charged end of a polar molecule: δ− toward positive ions, δ+ toward negative ions.',
+  disp: 'Dispersion forces grow with molar mass (more electrons, a more polarizable cloud) and with how much surface the molecules can touch.',
+  vapor: 'Vapor pressure counts the molecules that escape the liquid. Weaker attractions or a higher temperature → more escape.',
+  colligq: 'Count the dissolved particles: molality × i. More particles → lower vapor pressure, lower freezing point and higher boiling point.',
+  vanthoff: 'Ionic compound: count the ions in the formula, keeping polyatomic ions whole. Molecular compound: i = 1.',
+  mixing: 'Classify each substance as polar, nonpolar or ionic. Like dissolves like.',
+  folding: 'Hydrogen bonds between backbone C=O and N–H give the helix and sheet (secondary). Side-chain interactions fold the whole chain (tertiary). Heat breaks attractions, not covalent bonds.',
+  dna: 'A pairs with T through 2 hydrogen bonds; G pairs with C through 3. Each strand’s own backbone is covalent.',
+  carbs: 'Count the –OH groups. Each one can hydrogen bond, to water or to a neighboring chain.',
+  colloid: 'Look for a water-loving (polar or charged) end and a water-fearing (nonpolar) end. For mixtures, think about how big the particles are.'
+};
+
+/* ---------- lab questions: each lab's predictions, asked in Practice. After the answer the lab opens under the question. ---------- */
+let SIM_FORCE = null;   // the UI sets this to make a lab load one particular prediction (see drawBag)
+const SIMQ = {
+  simhb: { k: 'lab', lab: 'H-Bond Lab', list: () => LAB_PRED, hint: 'A hydrogen bond needs an H on N, O or F in one molecule <b>and</b> a lone pair on N, O or F in the next. Heat makes molecules move faster.' },
+  simwell: { k: 'ew', lab: 'Energy Well', list: () => WELL_PRED, hint: 'A deeper well is a stronger attraction. The pair separates when its kinetic energy is more than the depth of the well.' },
+  simcoin: { k: 'cf', lab: 'Electron Coin-Flip', list: () => COIN_PRED, hint: 'Each electron is equally likely to be on either side. More electrons (a higher molar mass) means more ways to be uneven.' },
+  simcurve: { k: 'hc', lab: 'Heating Curve Lab', list: () => HC_PRED, hint: 'On a flat part of the curve the heat breaks or forms attractions, so the temperature holds. Pulling molecules apart takes heat in.' },
+  simpd: { k: 'pd', lab: 'Phase Diagram Explorer', list: () => PD_PRED, hint: 'Find the starting point on the diagram, then follow the path. Crossing a line is a phase change.' },
+  simcell: { k: 'cl', lab: 'Cell Lab', list: () => CELL_PRED, hint: 'Water moves toward the side with more dissolved solute.' },
+  simsol: { k: 'cg', lab: 'Solutions Lab', list: () => CG_PRED, hint: 'Count particles: find i for each solute. For two liquids, each one contributes its mole fraction times its own vapor pressure.' },
+  simfold: { k: 'fl', lab: 'Protein Fold Lab', list: () => FOLD_PRED, hint: 'Heat breaks attractions (hydrogen bonds, salt bridges, hydrophobic contacts). Covalent bonds stay.' }
+};
+const SIM_TIP = 'Predict first. After you answer, the lab opens right under this question so you can test it.';
+function genSim(topic) {
+  const S = SIMQ[topic], pr = drawBag('simq' + topic + OPTS.course, forCourse(S.list())), opts = pr.c.map(([h, ok, why, slip]) => opt(h, ok, why, slip));
+  return { topic, tag: S.lab, stem: '', tip: SIM_TIP, sim: { k: S.k, id: pr.id, test: pr.test }, parts: [choicePart(pr.q, opts, { solution: opts.find(o => o.ok).why, hint: S.hint })] };
+}
+function genSimMix() {
+  const sv = pick(['water', 'hexane']), S = MIXLAB[sv], it = drawBag('simmix' + sv, S.items), yes = it.v === 'yes';
+  return { topic: 'simmix', tag: 'Mixing Beaker', stem: `<div class="datacard"><b>${cap(it.name)}, ${it.f}</b>, is dropped into a beaker of <b>${S.name}, ${S.f}</b>.</div>`, tip: SIM_TIP, sim: { k: 'mx', solvent: sv, item: it.k, test: 'Watch what it did, then drop in something else.' },
+    parts: [choicePart(`Will ${it.name} mix well with ${S.name}?`, [opt('Mixes well', yes, it.why, 'like-dissolves-like'), opt('Does not mix well', !yes, it.why, 'like-dissolves-like')], { keep: true, solution: it.why, hint: 'Classify both as polar, nonpolar or ionic. Matching forces mix; mismatched forces stay apart.' })] };
+}
+
 /* ---------- topics and tiles ---------- */
 const ALL = ['3A', '1A', '3B'];
 const TOPICS = {
@@ -2028,30 +2100,39 @@ const TOPICS = {
   folding: { label: 'Protein folding', tile: 't7', gen: genFolding, video: 'p3', courses: ['3B'] },
   dna: { label: 'DNA base pairs', tile: 't7', gen: genDNA, video: 'p3', courses: ['3B'] },
   carbs: { label: 'Sugars, starch and cellulose', tile: 't7', gen: genCarbs, video: 'p3', courses: ['3B'] },
-  colloid: { label: 'Membranes, soaps and colloids', tile: 't7', gen: genColloid, video: 'p3', courses: ['3B'] }
+  colloid: { label: 'Membranes, soaps and colloids', tile: 't7', gen: genColloid, video: 'p3', courses: ['3B'] },
+  simhb: { label: 'Lab: hydrogen bonds', tile: 't1', gen: () => genSim('simhb'), video: 'p3', courses: ALL, lab: true },
+  simwell: { label: 'Lab: energy well', tile: 't1', gen: () => genSim('simwell'), video: 'p1', courses: ['3A', '1A'], lab: true },
+  simcoin: { label: 'Lab: electron coin-flip', tile: 't2', gen: () => genSim('simcoin'), video: 'p2', courses: ['1A'], lab: true },
+  simmix: { label: 'Lab: mixing beaker', tile: 't3', gen: genSimMix, video: 'p3', courses: ['1A', '3B'], lab: true },
+  simcurve: { label: 'Lab: heating curve', tile: 't4', gen: () => genSim('simcurve'), video: 'phase', courses: ['3A', '1A'], lab: true },
+  simpd: { label: 'Lab: phase diagram', tile: 't4', gen: () => genSim('simpd'), video: 'phase', courses: ['3A', '1A'], lab: true },
+  simcell: { label: 'Lab: cells in a bath', tile: 't5', gen: () => genSim('simcell'), video: 'collig', courses: ALL, lab: true },
+  simsol: { label: 'Lab: solutions', tile: 't6', gen: () => genSim('simsol'), video: 'collig', courses: ['1A'], lab: true },
+  simfold: { label: 'Lab: protein folding', tile: 't7', gen: () => genSim('simfold'), video: 'p3', courses: ['3B'], lab: true }
 };
 const TILES = [
-  { id: 't1', title: 'Spot the Forces', blurb: 'Polar? H on N, O or F? Name every force.', topics: ['concept', 'polar', 'hbond', 'strongest', 'forces', 'organic', 'iondipole'],
+  { id: 't1', title: 'Spot the Forces', blurb: 'Polar? H on N, O or F? Name every force.', topics: ['concept', 'polar', 'hbond', 'simhb', 'strongest', 'forces', 'organic', 'iondipole', 'simwell'],
     ideas: ['Intermolecular forces act <b>between</b> molecules. Covalent bonds act inside them and are much stronger.', '<b>Dispersion</b>: everything has it. <b>Dipole–dipole</b>: polar molecules. <b>Hydrogen bonding</b>: H bonded directly to N, O or F.', 'Polar bonds cancel in symmetric shapes (CO₂, CCl₄, BF₃), leaving dispersion only.', 'Boiling and melting separate whole molecules. No covalent bond breaks.'] },
-  { id: 't2', title: 'Boiling Point Battles', blurb: 'Stronger attractions → higher boiling point.', topics: ['bppair', 'bprank', 'disp', 'orgbp', 'fats'],
-    ideas: ['Similar size? The <b>type</b> of force decides: dispersion &lt; dipole–dipole &lt; hydrogen bonding.', 'Same type of force? The <b>number of electrons</b> decides: more electrons → stronger dispersion.', 'A much bigger molecule can win on dispersion alone: octane (126 °C) boils above water (100 °C).', 'Shape matters too: long molecules touch more than compact ones.'] },
-  { id: 't3', title: 'Liquids & Mixing', blurb: 'Like dissolves like. Vapor pressure, surface tension, viscosity.', topics: ['mixing', 'liquids', 'vapor'],
+  { id: 't2', title: 'Boiling Point Battles', blurb: 'Stronger attractions → higher boiling point.', topics: ['bppair', 'bprank', 'disp', 'simcoin', 'orgbp', 'fats'],
+    ideas: ['Similar molar mass? The <b>type</b> of force decides: dispersion &lt; dipole–dipole &lt; hydrogen bonding.', 'Same type of force? <b>Molar mass</b> decides: a higher molar mass means more electrons → stronger dispersion.', 'A much heavier molecule can win on dispersion alone: octane (114 g/mol, 126 °C) boils above water (18 g/mol, 100 °C).', 'Shape matters too: long molecules touch more than compact ones.'] },
+  { id: 't3', title: 'Liquids & Mixing', blurb: 'Like dissolves like. Vapor pressure, surface tension, viscosity.', topics: ['mixing', 'simmix', 'liquids', 'vapor'],
     ideas: ['<b>Like dissolves like</b>: polar with polar (or ionic), nonpolar with nonpolar.', 'Strong forces → high boiling point, surface tension and viscosity.', 'Strong forces → <b>low</b> vapor pressure, because fewer molecules escape.'] },
-  { id: 't4', title: 'Phase Changes', blurb: 'Name the change. Heat in or out? Heating curves and phase diagrams.', topics: ['phasename', 'endoexo', 'curve', 'pdiagram'],
+  { id: 't4', title: 'Phase Changes', blurb: 'Name the change. Heat in or out? Heating curves and phase diagrams.', topics: ['phasename', 'endoexo', 'curve', 'simcurve', 'pdiagram', 'simpd'],
     ideas: ['Six changes: melting ⇄ freezing, vaporization ⇄ condensation, sublimation ⇄ deposition.', 'Pulling molecules apart takes heat <b>in</b> (endothermic). Letting them come together gives heat <b>out</b> (exothermic).', 'During a phase change the temperature holds still: the heat breaks attractions instead of speeding molecules up.', 'A phase change separates whole molecules. No covalent bond breaks.', 'On a phase diagram, crossing a line is a phase change. Triple point: all three phases. Critical point: liquid and gas become one.'] },
-  { id: 't5', title: 'Cells & Osmosis', blurb: 'Hypotonic, isotonic, hypertonic: which way does the water go?', topics: ['osmosis', 'tonicity', 'osmoticp'],
+  { id: 't5', title: 'Cells & Osmosis', blurb: 'Hypotonic, isotonic, hypertonic: which way does the water go?', topics: ['osmosis', 'tonicity', 'simcell', 'osmoticp'],
     ideas: ['Osmosis: water crosses a semipermeable membrane toward the side with <b>more solute</b>.', '<b>Isotonic</b> (0.9% NaCl, 5% glucose): no net flow, the cell keeps its shape.', '<b>Hypotonic</b> (pure water): water enters, a red blood cell swells and bursts (hemolysis).', '<b>Hypertonic</b> (3% NaCl, seawater): water leaves, a red blood cell shrinks (crenation).'] },
-  { id: 't6', title: 'Colligative Properties', blurb: 'Count particles: vapor pressure, freezing point, boiling point.', topics: ['colligq', 'vanthoff', 'conc', 'fpbp', 'raoult'],
+  { id: 't6', title: 'Colligative Properties', blurb: 'Count particles: vapor pressure, freezing point, boiling point.', topics: ['colligq', 'vanthoff', 'simsol', 'conc', 'fpbp', 'raoult'],
     ideas: ['Colligative properties depend on <b>how many</b> particles are dissolved, not what they are.', 'i counts particles per formula unit: glucose 1, NaCl 2, CaCl₂ 3, K₃PO₄ 4.', 'ΔT<sub>f</sub> = i K<sub>f</sub> m and ΔT<sub>b</sub> = i K<sub>b</sub> m, with <b>molality</b> (mol per kg of solvent). Freezing points go down; boiling points go up.', 'Raoult’s law: P = X<sub>solvent</sub> × P°. Use the mole fraction of the liquid that is evaporating.'] },
-  { id: 't7', title: 'Biomolecules', blurb: 'The same forces shape proteins, DNA, membranes and fibers.', topics: ['sidechain', 'folding', 'dna', 'carbs', 'colloid'],
+  { id: 't7', title: 'Biomolecules', blurb: 'The same forces shape proteins, DNA, membranes and fibers.', topics: ['sidechain', 'folding', 'simfold', 'dna', 'carbs', 'colloid'],
     ideas: ['Side chains: nonpolar + nonpolar → hydrophobic interaction. O–H or N–H groups → hydrogen bond. Opposite charges → salt bridge. Two cysteines → disulfide bond (covalent).', 'Secondary structure (α-helix, β-sheet): hydrogen bonds between <b>backbone</b> C=O and N–H. Tertiary structure: <b>side-chain</b> interactions.', 'DNA: A pairs with T (2 hydrogen bonds), G pairs with C (3).', 'Membranes and soaps: polar heads face water, nonpolar tails hide from it.', 'Heat breaks attractions, not covalent bonds: proteins unfold and DNA strands separate, but the chains stay whole.'] }
 ];
 const topicsFor = (tile, c = OPTS.course) => tile.topics.filter(t => TOPICS[t].courses.includes(c));
 const tilesFor = (c = OPTS.course) => TILES.filter(t => topicsFor(t, c).length);
-const generate = t => { const q = TOPICS[t].gen(); q.topic = q.topic || t; return q; };
+const generate = t => { const q = TOPICS[t].gen(); q.topic = q.topic || t; q.parts.forEach(p => { if (!p.hint) p.hint = TOPIC_HINT[q.topic] || TOPIC_HINT[t] || ''; }); return q; };
 /* Daily 5 tiers: 2 easy → 2 medium → 1 hard */
-const TIER = { easy: ['concept', 'hbond', 'polar', 'liquids', 'mixing', 'phasename', 'osmosis', 'colligq', 'vanthoff', 'folding', 'carbs', 'colloid'], medium: ['strongest', 'bppair', 'organic', 'iondipole', 'disp', 'vapor', 'fats', 'endoexo', 'curve', 'tonicity', 'conc', 'sidechain', 'dna'], hard: ['forces', 'bprank', 'orgbp', 'pdiagram', 'osmoticp', 'fpbp', 'raoult'] };
-if (typeof module !== 'undefined') module.exports = { M, PAIRS, FAMILIES, TRIPLES, FA, faPairs, TOPICS, TILES, TIER, OPTS, generate, strongest, electrons, checkRank, spec, topicsFor, tilesFor, LIQ, MIX, MIXK, ALL, SIM_MOLS, SIM, makeSim, stepSim, simPerMol, simMaxBonds, dhaAngle, sitePos, LAB_PRED, forCourse, PHASE, HC, HC_SEG, HC_PRED, hcState, hcX, hcY, curveSvg, makePhaseSim, phaseSync, iceSites, simRelease, PD, PD_PRED, PD_ARROWS, PD_STATES, PD_CHANGE, phaseAt, pdCross, pdVap, pdSub, pdMelt, pdSvg, pdInv, pdX, pdYp, parseNum, countSF, fmtSF, checkNum, BATHS, CELLM, cellConc, cellStep, cellStatus, CELL_PRED, OSM_SOLUTES, RGAS, COLL, VH, PAIRS_V, PW, FPL, fpDrop, CG_PRED, KF, KB, AAS, FOLD_SEQ, FOLD_LINKS, FOLD_PRED, foldState, dnaH, T_FOLD, T_DNA, T_CARB, T_COLL, WELLS, wellV, wellBound, wellTurn, WELL_PRED, evenSplit, NOBLE, COIN_PRED, MIXLAB };
+const TIER = { easy: ['concept', 'hbond', 'polar', 'liquids', 'mixing', 'phasename', 'osmosis', 'colligq', 'vanthoff', 'folding', 'carbs', 'colloid', 'simhb', 'simcell', 'simmix', 'simfold'], medium: ['strongest', 'bppair', 'organic', 'iondipole', 'disp', 'vapor', 'fats', 'endoexo', 'curve', 'tonicity', 'conc', 'sidechain', 'dna', 'simwell', 'simcoin', 'simcurve', 'simpd', 'simsol'], hard: ['forces', 'bprank', 'orgbp', 'pdiagram', 'osmoticp', 'fpbp', 'raoult'] };
+if (typeof module !== 'undefined') module.exports = { M, PAIRS, FAMILIES, TRIPLES, FA, faPairs, TOPICS, TILES, TIER, OPTS, generate, strongest, electrons, checkRank, spec, topicsFor, tilesFor, LIQ, MIX, MIXK, ALL, SIM_MOLS, SIM, makeSim, stepSim, simPerMol, simMaxBonds, dhaAngle, sitePos, LAB_PRED, forCourse, PHASE, HC, HC_SEG, HC_PRED, hcState, hcX, hcY, curveSvg, makePhaseSim, phaseSync, iceSites, simRelease, PD, PD_PRED, PD_ARROWS, PD_STATES, PD_CHANGE, phaseAt, pdCross, pdVap, pdSub, pdMelt, pdSvg, pdInv, pdX, pdYp, parseNum, countSF, fmtSF, checkNum, BATHS, CELLM, cellConc, cellStep, cellStatus, CELL_PRED, OSM_SOLUTES, RGAS, COLL, VH, PAIRS_V, PW, FPL, fpDrop, CG_PRED, KF, KB, AAS, FOLD_SEQ, FOLD_LINKS, FOLD_PRED, foldState, dnaH, T_FOLD, T_DNA, T_CARB, T_COLL, WELLS, wellV, wellBound, wellTurn, WELL_PRED, evenSplit, NOBLE, COIN_PRED, MIXLAB, AW, molarMass, mmTxt, TOPIC_HINT, SIMQ, genSim, genSimMix };
 /*LOGIC-END*/
 </script>
 <script>
@@ -2166,13 +2247,13 @@ function renderChooser() {
   $('chipsWrap').hidden = !open.length;
   const nOn = open.reduce((n, c) => n + tTopics(c).filter(t => state.sel.has(t)).length, 0), nAll = open.reduce((n, c) => n + tTopics(c).length, 0);
   $('topicCount').textContent = nOn === nAll ? `· all ${nAll} topics on` : `· ${nOn} of ${nAll} topics on`;
-  $('chips').innerHTML = (nOn < nAll ? `<button type="button" class="resetsel" data-allon="1">Turn all topics back on</button>` : '') + open.map(c => `<div class="chip-row" style="${tileVars(c.id)}"><span>${c.title}</span>${tTopics(c).map(t => { const s = P.topic[t], T = TOPICS[t]; return `<button type="button" class="chip${state.sel.has(t) ? ' on' : ''}" data-topic="${t}" aria-pressed="${state.sel.has(t)}">${T.label}${s && s.a ? ` <span class="cstat">${s.c}/${s.a}</span>` : ''}</button>`; }).join('')}</div>`).join('');
-  const curMode = (LABS.find(L => L.on()) || {}).k || (state.ch ? state.ch.kind : state.mode);
+  $('chips').innerHTML = (nOn < nAll ? `<button type="button" class="resetsel" data-allon="1">Turn all topics back on</button>` : '') + open.map(c => `<div class="chip-row" style="${tileVars(c.id)}"><span>${c.title}</span>${tTopics(c).map(t => { const s = P.topic[t], T = TOPICS[t]; return `<button type="button" class="chip${state.sel.has(t) ? ' on' : ''}" data-topic="${t}" aria-pressed="${state.sel.has(t)}">${T.label}${T.lab ? ' <span class="ctag">lab</span>' : ''}${s && s.a ? ` <span class="cstat">${s.c}/${s.a}</span>` : ''}</button>`; }).join('')}</div>`).join('');
+  const curMode = (inlineLab ? '' : (LABS.find(L => L.on()) || {}).k) || (state.ch ? state.ch.kind : state.mode);
   document.querySelectorAll('#modes button').forEach(b => { b.classList.toggle('active', b.dataset.mode === curMode); b.setAttribute('aria-pressed', b.dataset.mode === curMode); });
   const doneToday = P.dailyLast === today(), st = P.dailyLast === today() || P.dailyLast === yesterday() ? P.dailyStreak || 0 : 0;
-  $('specials').innerHTML = `<button type="button" class="special${curMode === 'daily' ? ' on' : ''}" data-round="daily"><span class="ms-ico" data-icon="calendar" aria-hidden="true"></span><span><b>Daily 5</b><small>${doneToday ? 'Done today. ' : ''}2 easy, 2 medium, 1 hard${st ? ` · ${st}-day streak` : ''}.</small></span></button>`
-    + `<a class="special linkcard" href="https://itsdrdan.github.io/thermochemistry/" target="_blank" rel="noopener noreferrer"><span class="ms-ico" data-icon="calc" aria-hidden="true"></span><span><b>Heating-curve math ↗</b><small>Heat of fusion and vaporization problems live in the Thermochemistry game.</small></span></a>`
-    + `<div class="labs"><h3 class="labs-title">Labs <small>Predict first, then explore.</small></h3><div class="labgrid">${labsFor().map(L => `<button type="button" class="labcard${curMode === L.k ? ' on' : ''}" data-openlab="${L.k}" aria-pressed="${curMode === L.k}"><span class="ms-ico" data-icon="${L.icon}" aria-hidden="true"></span><span><b>${L.name}</b><small>${L.blurb}</small></span></button>`).join('')}</div></div>`;
+  $('specials').innerHTML = `<div class="labs"><h3 class="labs-title">Labs <small>Predict first, then explore. These also come up as questions in Practice.</small></h3><div class="labgrid">${labsFor().map(L => `<button type="button" class="labcard${curMode === L.k ? ' on' : ''}" data-openlab="${L.k}" aria-pressed="${curMode === L.k}"><span class="ms-ico" data-icon="${L.icon}" aria-hidden="true"></span><span><b>${L.name}</b><small>${L.blurb}</small></span></button>`).join('')}</div></div>`
+    + `<a class="special linkcard" href="https://itsdrdan.github.io/thermochemistry/" target="_blank" rel="noopener noreferrer"><span class="ms-ico" data-icon="calc" aria-hidden="true"></span><span><b>Heating-curve math ↗</b><small>Heat of fusion and vaporization problems live in the Thermochemistry game.</small></span></a>`;
+  const ds = $('dailySmall'); if (ds) ds.textContent = `${doneToday ? 'Done today. ' : ''}2 easy, 2 medium, 1 hard${st ? ` · ${st}-day streak` : ''}.`;
   paintIcons($('specials'));
 }
 function toggleCat(id) { const c = TILES.find(x => x.id === id); if (catOn(c)) tTopics(c).forEach(t => state.sel.delete(t)); else tTopics(c).forEach(t => state.sel.add(t)); afterSelect(); }
@@ -2197,7 +2278,7 @@ const strict = () => !!(state.ch && ROUND[state.ch.kind].strict);
 function markMode(m) { P.modes = Object.assign({}, P.modes, { [m]: 1 }); }
 function setMode(m) {
   if (m === 'learn') markMode('learn');
-  if (m === 'challenge') { startRound('challenge'); return; }
+  if (m === 'challenge' || m === 'daily') { startRound(m); return; }
   state.mode = m; state.ch = null; save(); renderChooser(); refresh(); scrollToPlay();
 }
 function refresh() {
@@ -2285,7 +2366,7 @@ function checkCurrent() {
   if (p.kind === 'nums') {
     const msgs = []; let slip = '', sf = null;
     for (const f of p.fields) { const raw = $('in-' + f.key).value.trim(); if (!raw) return setFeedback('info', 'Type an answer in every box first.'); if (/^-?\d+,\d+$/.test(raw) && !/^-?\d{1,3}(,\d{3})+$/.test(raw)) return setFeedback('info', 'Use a period for decimals (2.5), not a comma.'); if (!Number.isFinite(parseNum(raw))) return setFeedback('info', 'Type a number, like 7.84 or 7.84E0.'); }
-    p.fields.forEach(f => { const r = checkNum(f, $('in-' + f.key).value), box = $('field-' + f.key); box.classList.toggle('good', r.ok); box.classList.toggle('bad', !r.ok); if (!r.ok) { slip = slip || r.slip; msgs.push(r.why); } else if (r.sf) sf = f; });
+    p.fields.forEach(f => { const r = checkNum(f, $('in-' + f.key).value), box = $('field-' + f.key); box.classList.toggle('good', r.ok); box.classList.toggle('bad', !r.ok); if (!r.ok) { slip = slip || r.slip; msgs.push(r.why + (r.slip === 'calc' && p.hint ? ' <b>Hint:</b> ' + p.hint : '')); } else if (r.sf) sf = f; });
     if (msgs.length) return wrong(slip, msgs.join('<br>'));
     state.sfNote = sf ? `<div class="sfnote">Close, but fix your sig figs: the answer should have ${sf.sf}, so write ${sf.show}.</div>` : '';
     return right(sf ? `${p.solution || ''}${state.sfNote}` : '');
@@ -2322,7 +2403,8 @@ function givenText(p) {
 }
 function right(why) {
   const p = state.q.parts[state.pi];
-  setFeedback('good', `<b>${pick(['Correct!', 'Nice!', 'Yes!', 'Exactly right!'])}</b> ${why || p.solution || ''}`);
+  state.lastWhy = why || p.solution || '';
+  setFeedback('good', `<b>${pick(['Correct!', 'Nice!', 'Yes!', 'Exactly right!'])}</b> ${state.lastWhy}`);
   setMood('correct', 1600);
   advancePart(false);
 }
@@ -2345,12 +2427,13 @@ function finishQuestion() {
   P.xp += xp;
   if (state.ch) state.ch.results.push({ topic: q.topic, tag: q.tag, ok, steps: q.parts.length, missed: (state.missed || []).slice() });
   const many = q.parts.length > 1;
-  setFeedback(ok ? 'good' : 'info', ok ? `<b>${pick(['Stuck the landing!', 'Nailed it!', 'That one stuck!', 'Strong attraction!'])}</b> <span class="xp-pop">+${xp} XP</span> The explanation is above.${state.sfNote || ''}` : `<b>Done.</b> <span class="xp-pop">+${xp} XP</span> ${strict() && many && state.missed.length ? `Every step has to be right for the question to count, and step ${state.missed.join(' and ')} of ${q.parts.length} was missed. ` : ''}Read the explanation above${strict() ? '.' : ', then try another one like it to lock it in.'}`);
+  setFeedback(ok ? 'good' : 'info', ok ? `<b>${pick(['Stuck the landing!', 'Nailed it!', 'That one stuck!', 'Strong attraction!'])}</b> <span class="xp-pop">+${xp} XP</span> ${many ? 'Every step was right. ' : ''}${/sfnote/.test(state.lastWhy || '') ? state.lastWhy : (state.lastWhy || '') + (state.sfNote || '')}` : `<b>Done.</b> <span class="xp-pop">+${xp} XP</span> ${strict() && many && state.missed.length ? `Every step has to be right for the question to count, and step ${state.missed.join(' and ')} of ${q.parts.length} was missed. ` : ''}Read the explanation above${strict() ? '.' : ', then try another one like it to lock it in.'}`);
   if (ok) setMood(P.streak && P.streak % 5 === 0 ? 'victory' : 'correct');
   if (state.ch) $('skipBtn').hidden = true;
   $('nextBtn').hidden = false; $('nextBtn').innerHTML = (state.ch && state.ch.i === state.ch.plan.length - 1 ? 'See my results ' : 'Next question ') + ico('arrow');
   if (!coarse()) try { $('nextBtn').focus({ preventScroll: true }); } catch (e) {}
   save(); renderStats(); checkAch(); renderChooser();
+  if (q.sim) showSimInline(q.sim);
 }
 function setFeedback(kind, html) { const f = $('feedback'); f.className = 'feedback' + (kind ? ' ' + kind : ''); f.innerHTML = html; }
 function showStep() {
@@ -2404,6 +2487,7 @@ function renderLearn(TS, tile, topics) {
 
 /* ---------- rounds ---------- */
 function showReport() {
+  closeLab();
   const z = state.ch, R = ROUND[z.kind], n = z.results.length, score = z.results.filter(r => r.ok).length, frac = score / n;
   let extra = '';
   if (z.kind === 'challenge') P.bestCh = Math.max(P.bestCh || 0, score);
@@ -2450,9 +2534,9 @@ function renderSheet() {
   const c = state.course, row = (a, b, d) => `<tr><th scope="row">${a}</th><td>${b}</td><td>${d}</td></tr>`;
   const tbl = (head, rows) => `<div class="tbl-scroll"><table class="sheet"><thead><tr>${head.map(h => `<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((x, i) => i ? `<td>${x}</td>` : `<th scope="row">${x}</th>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   let h = `<h3>Which forces does it have?</h3><ol class="flow"><li><b>Everything</b> has dispersion forces.</li><li><b>Polar molecule?</b> Add dipole–dipole. (Polar bonds that cancel in a symmetric shape do not count.)</li><li><b>H bonded directly to N, O or F?</b> Add hydrogen bonding.</li>${c === '1A' ? '<li><b>An ion with a polar molecule?</b> That is ion–dipole.</li>' : ''}</ol>
-   <h3>Force ladder (similar size)</h3><div class="ladder"><span>Dispersion</span><i>&lt;</i><span>Dipole–dipole</span><i>&lt;</i><span>Hydrogen bonding</span>${c === '1A' ? '<i>&lt;</i><span>Ion–dipole</span>' : ''}</div><p class="note-small">All of these are much weaker than a covalent bond. Dispersion grows with the number of electrons, so a big molecule can out-stick a small one.</p>
+   <h3>Force ladder (similar size)</h3><div class="ladder"><span>Dispersion</span><i>&lt;</i><span>Dipole–dipole</span><i>&lt;</i><span>Hydrogen bonding</span>${c === '1A' ? '<i>&lt;</i><span>Ion–dipole</span>' : ''}</div><p class="note-small">All of these are much weaker than a covalent bond. Dispersion grows with molar mass (more electrons), so a heavy molecule can out-stick a light one.</p>
    <h3>What stronger forces do</h3>${tbl(['Property', 'Stronger forces →'], [['Boiling and melting point', 'higher'], ['Surface tension', 'higher'], ['Viscosity', 'higher'], ['Vapor pressure', '<b>lower</b>']])}`;
-  if (c !== '3B') h += `<h3>Dispersion and size</h3>${tbl(['Halogen', 'Electrons', 'Boiling point'], [['F₂', 18, '85 K'], ['Cl₂', 34, '238 K'], ['Br₂', 70, '332 K'], ['I₂', 106, '457 K']])}${tbl(['Noble gas', 'Electrons', 'Boiling point'], [['He', 2, '4.2 K'], ['Ne', 10, '27 K'], ['Ar', 18, '87 K'], ['Kr', 36, '120 K'], ['Xe', 54, '165 K']])}${tbl(['Hydrocarbon', 'Electrons', 'Boiling point'], [['CH₄', 10, '112 K'], ['C₂H₆', 18, '185 K'], ['C₃H₈', 26, '231 K'], ['C₄H₁₀', 34, '274 K'], ['C₅H₁₂', 42, '309 K']])}`;
+  if (c !== '3B') h += `<h3>Dispersion and molar mass</h3>${tbl(['Halogen', 'Molar mass', 'Electrons', 'Boiling point'], [['F₂', '38 g/mol', 18, '85 K'], ['Cl₂', '71 g/mol', 34, '238 K'], ['Br₂', '160 g/mol', 70, '332 K'], ['I₂', '254 g/mol', 106, '457 K']])}${tbl(['Noble gas', 'Molar mass', 'Electrons', 'Boiling point'], [['He', '4.0 g/mol', 2, '4.2 K'], ['Ne', '20.2 g/mol', 10, '27 K'], ['Ar', '39.9 g/mol', 18, '87 K'], ['Kr', '83.8 g/mol', 36, '120 K'], ['Xe', '131.3 g/mol', 54, '165 K']])}${tbl(['Hydrocarbon', 'Molar mass', 'Electrons', 'Boiling point'], [['CH₄', '16.0 g/mol', 10, '112 K'], ['C₂H₆', '30.1 g/mol', 18, '185 K'], ['C₃H₈', '44.1 g/mol', 26, '231 K'], ['C₄H₁₀', '58.1 g/mol', 34, '274 K'], ['C₅H₁₂', '72.2 g/mol', 42, '309 K']])}<p class="note-small">Higher molar mass → more electrons → stronger dispersion forces → higher boiling point.</p>`;
   if (c === '1A') h += `<h3>Liquids at 25 °C</h3>${tbl(['Liquid', 'Surface tension, mN m⁻¹', 'Viscosity, mPa·s'], [['Water', '71.99', '0.890'], ['Ethylene glycol', '47.99', '16.1'], ['Ethanol', '21.97', '1.074'], ['Octane', '21.14', '0.508'], ['Mercury', '458.48', '1.526']])}<h3>Alcohol vapor pressures at 20 °C</h3>${tbl(['Alcohol', 'Vapor pressure, kPa'], [['Methanol', '11.9'], ['Ethanol', '5.95'], ['Propanol', '2.67'], ['Butanol', '0.56']])}`;
   if (c === '3B') h += `<h3>Organic families</h3>${tbl(['Family', 'Strongest force between its molecules'], [['Alkane, alkene', 'Dispersion'], ['Ether, aldehyde, ketone', 'Dipole–dipole (can accept H-bonds from water)'], ['3° amine', 'Dipole–dipole (no N–H)'], ['Alcohol, 1° or 2° amine', 'Hydrogen bonding'], ['Carboxylic acid, amide', 'Hydrogen bonding (strong: two sites)']])}<h3>Fatty acids</h3>${tbl(['Fatty acid', 'Carbons : C=C', 'Melting point'], FA.map(a => [cap(a.name), `${a.c}:${a.db}`, degC(a.mp)]))}<p class="note-small">Longer chain → higher melting point. Each cis double bond adds a kink → lower melting point.</p>`;
   if (c !== '3B') h += `<h3>Phase changes</h3>${tbl(['Change', 'From → to', 'Heat'], PHASE.map(p => [phFull(p), p.from + ' → ' + p.to, p.endo ? 'in (endothermic)' : 'out (exothermic)']))}<h3>Water</h3>${tbl(['Quantity', 'Value'], [['ΔH<sub>fus</sub>', '6.02 kJ mol⁻¹ (334.16 J g⁻¹)'], ['ΔH<sub>vap</sub> at 100 °C', '40.70 kJ mol⁻¹ (2259 J g⁻¹)'], ['Specific heat: ice, liquid, steam', '2.06, 4.184, 2.02 J g⁻¹ °C⁻¹']])}<h3>Phase diagram points</h3>${tbl(['Substance', 'Triple point', 'Critical point'], pdSubs().map(k => [cap(PD[k].name), fmtT(PD[k].tp[0]) + ', ' + fmtP(PD[k].tp[1]), fmtT(PD[k].cp[0]) + ', ' + fmtP(PD[k].cp[1])]))}<p class="note-small">Triple point: all three phases together. Critical point: liquid and gas become one phase. CO₂ sublimes at −78.5 °C at 1 atm.</p>`;
@@ -2467,7 +2551,7 @@ function renderSheet() {
 const lab = { open: false, sim: null, pred: null, locked: true, paused: false, reduce: false, labels: true, mol: 'H2O', TC: 25, raf: 0, last: 0, acc: 0, shown: 0, cap: '' };
 const LAB_F = { H2O: 'H₂O', NH3: 'NH₃', HF: 'HF', CH3OH: 'CH₃OH', CH4: 'CH₄' };
 const LAB_BP = { H2O: 100, NH3: -33, HF: 20, CH3OH: 65, CH4: -162 };
-function closeLab() { if (lab.open) { lab.open = false; cancelAnimationFrame(lab.raf); $('labBox').hidden = true; } if (hc.open) { hc.open = false; cancelAnimationFrame(hc.raf); $('hcBox').hidden = true; } if (pd.open) { pd.open = false; pdStop(); $('pdBox').hidden = true; } if (cl.open) { cl.open = false; cancelAnimationFrame(cl.raf); $('clBox').hidden = true; } if (cg.open) { cg.open = false; $('cgBox').hidden = true; } if (fl.open) { fl.open = false; $('flBox').hidden = true; } GEN_LABS.forEach(L => { if (L.open) L.close(); }); if (mx.open) mx.close(); }
+function closeLab() { if (lab.open) { lab.open = false; cancelAnimationFrame(lab.raf); $('labBox').hidden = true; } if (hc.open) { hc.open = false; cancelAnimationFrame(hc.raf); $('hcBox').hidden = true; } if (pd.open) { pd.open = false; pdStop(); $('pdBox').hidden = true; } if (cl.open) { cl.open = false; cancelAnimationFrame(cl.raf); $('clBox').hidden = true; } if (cg.open) { cg.open = false; $('cgBox').hidden = true; } if (fl.open) { fl.open = false; $('flBox').hidden = true; } GEN_LABS.forEach(L => { if (L.open) L.close(); }); if (mx.open) mx.close(); detachInline(); }
 function labSize() { const st = $('labCanvas').parentElement, W = Math.max(280, Math.min(520, Math.round(st.clientWidth))), H = W < 400 ? 300 : 330; return { W, H, n: W < 400 ? 8 : 12 }; }
 function labBuild() {
   const z = labSize(), cv = $('labCanvas'), dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -3068,7 +3152,7 @@ function cfSvg() {
 }
 const cfLab = mkLab({ key: 'cf', title: 'Electron Coin-Flip', label: 'Electron Coin-Flip · a teaching model', topic: 'coinlab', video: 'p2', preds: COIN_PRED,
   side: `<fieldset><legend>Atom</legend><div class="lab-mols" id="cfAtoms">${NOBLE.map(g => `<button type="button" data-cfn="${g.e}">${g.f}</button>`).join('')}</div></fieldset><div class="lab-btns"><button type="button" class="btn" data-cfflip="1">Flip once</button><button type="button" class="btn" data-cfflip="100">Flip 100 times</button></div><div class="hc-read cl-read" style="grid-template-columns:1fr"><div><small>Chance of an exactly even split</small><b id="cfP"></b></div></div>`,
-  note: 'A teaching model. Real electrons are not coins, but the idea holds: at any instant an electron cloud is slightly lopsided, which makes a temporary dipole. Bigger clouds are lopsided more often and by more, so dispersion forces grow with the number of electrons.',
+  note: 'A teaching model. Real electrons are not coins, but the idea holds: at any instant an electron cloud is slightly lopsided, which makes a temporary dipole. Bigger clouds are lopsided more often and by more, so dispersion forces grow with the number of electrons, which goes up with molar mass.',
   preset: pr => { cf.n = pr.n; cf.flips = 0; cf.even = 0; cf.sides = Array.from({ length: cf.n }, (_, i) => i % 2 === 0); cf.left = cf.sides.filter(x => x).length; },
   paint: () => { $('cfFig').innerHTML = cfSvg(); $('cfP').textContent = (evenSplit(cf.n) * 100).toFixed(1) + '%'; document.querySelectorAll('#cfAtoms button').forEach(b => { b.classList.toggle('on', +b.dataset.cfn === cf.n); b.setAttribute('aria-pressed', +b.dataset.cfn === cf.n); }); const g = NOBLE.find(x => x.e === cf.n); $('cfCaption').textContent = `${g.f}: ${cf.n} electrons. An exactly even split happens ${(evenSplit(cf.n) * 100).toFixed(1)}% of the time, so the cloud is lopsided the other ${(100 - evenSplit(cf.n) * 100).toFixed(1)}%. ${g.f} boils at ${g.bpK} K.`; },
   click: e => { const a = e.target.closest('[data-cfn]'); if (a) { cf.n = +a.dataset.cfn; cf.flips = 0; cf.even = 0; cf.sides = Array.from({ length: cf.n }, (_, i) => i % 2 === 0); cf.left = cf.n / 2; return cfLab.paint(); } const f = e.target.closest('[data-cfflip]'); if (f) { cfFlip(+f.dataset.cfflip); cfLab.paint(); } } });
@@ -3129,6 +3213,34 @@ const LABS = [
 ];
 const labsFor = () => LABS.filter(L => L.courses.includes(state.course));
 
+/* ---------- a lab shown under a practice question, already unlocked on that question's prediction ---------- */
+let inlineLab = null;
+const LAB_UNLOCK = {
+  lab: () => { lab.locked = false; labControls(); labRun(); },
+  hc: () => { hc.locked = false; hc.dir = hc.reduce ? 0 : hc.pred.dir; hcControls(); hcPaint(); hcRun(); },
+  pd: () => { pd.locked = false; pdControls(); },
+  cl: () => { cl.locked = false; clControls(); clRun(); },
+  cg: () => { cg.locked = false; cgControls(); },
+  fl: () => { fl.locked = false; flControls(); },
+  ew: () => { ewLab.locked = false; ewLab.lock(); ewLab.paint(); },
+  cf: () => { cfLab.locked = false; cfLab.lock(); cfLab.paint(); },
+  mx: sim => { mx.solvent = sim.solvent; mx.item = MIXLAB[sim.solvent].items.find(x => x.k === sim.item); mx.shown = true; $('mxFeedback').className = 'feedback'; $('mxFeedback').innerHTML = ''; mxPaint(); $('mxCaption').textContent = `${cap(mx.item.name)} in ${MIXLAB[sim.solvent].name}: ${mx.item.v === 'yes' ? 'mixes well. The forces match.' : mx.item.v === 'some' ? 'only a little mixes. The forces only partly match.' : 'stays apart. The forces do not match.'}`; }
+};
+function detachInline() {
+  const slot = $('simSlot'); if (!slot || !inlineLab) return;
+  [...slot.querySelectorAll('section.example')].forEach(b => { b.classList.remove('simq-inline'); b.hidden = true; $('playArea').before(b); });
+  slot.hidden = true; slot.innerHTML = ''; inlineLab = null;
+}
+function showSimInline(sim) {
+  const L = LABS.find(x => x.k === sim.k); if (!L || !L.courses.includes(state.course)) return;
+  const keep = { ch: state.ch, q: state.q, learn: state.learn, title: $('playTitle').textContent, skip: $('skipBtn').hidden, modes: Object.assign({}, P.modes) };
+  SIM_FORCE = sim.id || '~none~'; try { L.open(); } finally { SIM_FORCE = null; }
+  Object.assign(state, { ch: keep.ch, q: keep.q, learn: keep.learn }); P.modes = keep.modes; $('playTitle').textContent = keep.title; $('skipBtn').hidden = keep.skip; $('playArea').hidden = false;
+  LAB_UNLOCK[sim.k](sim); inlineLab = sim.k;
+  const slot = $('simSlot'), box = $(sim.k + 'Box'); slot.innerHTML = `<div class="simq-head">${ico('flask')}<div><b>Now test it: ${L.name}</b><span>${sim.test || ''}</span></div></div>`; box.classList.add('simq-inline'); slot.appendChild(box); slot.hidden = false;
+  renderChooser(); setVideoFor(TOPICS[state.q.topic].video);
+}
+
 /* ---------- events ---------- */
 function bind() {
   $('course').addEventListener('click', e => { const b = e.target.closest('button[data-course]'); if (b && b.dataset.course !== state.course) setCourse(b.dataset.course); });
@@ -3168,7 +3280,7 @@ function init() {
   let c = null; try { c = (new URLSearchParams(location.search).get('course') || '').toUpperCase().replace('CHEM', '').trim(); } catch (e) {}
   if (!COURSES.includes(c)) { try { c = JSON.parse(localStorage.getItem(STORE) || '{}').last; } catch (e) {} }
   if (!COURSES.includes(c)) c = '3A';
-  bind(); bindLab(); bindHC(); bindPD(); bindCL(); bindCG(); bindFL(); GEN_LABS.forEach(L => L.mount()); mountMX(); $('clChamberFig').innerHTML = OSMO_SVG; setCourse(c); paintIcons();
+  bind(); bindLab(); bindHC(); bindPD(); bindCL(); bindCG(); bindFL(); GEN_LABS.forEach(L => L.mount()); mountMX(); $('feedback').insertAdjacentHTML('afterend', '<div id="simSlot" hidden></div>'); $('clChamberFig').innerHTML = OSMO_SVG; setCourse(c); paintIcons();
   let m = ''; try { m = (new URLSearchParams(location.search).get('mode') || '').toLowerCase(); } catch (e) {}
   if (['daily', 'challenge'].includes(m)) startRound(m); else if (m === 'lab') openLab(); else if (m === 'curve' && TOPICS.curve.courses.includes(state.course)) openHC(); else if (m === 'diagram' && TOPICS.curve.courses.includes(state.course)) openPD(); else if (m === 'cell') openCL(); else if (m === 'solutions' && state.course === '1A') openCG(); else if (m === 'fold' && state.course === '3B') openFL(); else if (LABS.some(x => x.url === m && x.courses.includes(state.course))) LABS.find(x => x.url === m).open(); else if (m === 'learn' || m === 'practice') setMode(m);
 }
