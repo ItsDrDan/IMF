@@ -4,8 +4,14 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v9.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v10.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v10 (2026-11-13)
+
+- **"Go to your question" button.** After a tile is picked, the question appears below the tiles, the topic picker and the practice modes. On a phone that is more than a screen away, and inside Canvas the embedded game is about 4,000 px tall, so nothing visible changed. A button now appears right under the tiles and jumps to the question (or to the lesson in Learn).
+- **In Canvas (Fall 2026):** the game has its own page in CHEM 1A (listed under Study Game in Chapters 10 and 11) and in both CHEM 3A sections (Chapter 6, Chapters 7 and 10: Properties of Liquids, and Chapter 7: Solids, Liquids, and Phase Changes).
+- **Phone check:** done in a browser's phone emulation with real taps (tiles, hints, answers, a lab opening under its question, dragging the phase diagram point). Not yet tried on a physical phone.
 
 ## New in v9 (2026-11-12)
 
@@ -18,7 +24,7 @@ Four changes Dr. Dan asked for after v8 went live.
 
 ## What students see
 
-1. Pick one or more tiles, or narrow to specific topics.
+1. Pick one or more tiles, or narrow to specific topics. A "Go to your question" button appears under the tiles.
 2. Choose Learn (Professor Tips and a worked example), Practice (hints and feedback on every wrong choice), or Challenge (10 mixed questions, no hints, then a study plan).
 3. Daily 5 (in the same row) gives 2 easy, 2 medium and 1 hard question and shares the ItsDrDan day streak.
 4. Lab questions come up in practice: the student predicts, then the lab opens under the question.

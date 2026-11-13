@@ -466,6 +466,9 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
 #cgTabs button,#cgPairs button{font-size:.92rem}
 </style>
 <style id="v9style">
+.go-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:14px 0 2px}
+.go-row .btn{min-height:50px;padding:0 22px;font-size:1.05rem}
+.go-note{color:var(--muted);font-weight:700;font-size:.9rem}
 .howuse{margin:10px 0 4px;background:#fff;border:2px solid var(--line2);border-radius:16px;box-shadow:0 3px 0 var(--line2)}
 .howuse>summary{list-style:none;cursor:pointer;padding:10px 16px;min-height:46px;display:flex;align-items:center;font-family:var(--font-display);font-weight:600;font-size:1.02rem}
 .howuse>summary::-webkit-details-marker{display:none}.howuse>summary::after{content:'▾';margin-left:auto;color:var(--faint)}.howuse[open]>summary::after{transform:rotate(180deg)}
@@ -503,11 +506,12 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
   <h1><span class="t1">Sticky</span> <span class="t2">Molecules</span></h1>
   <p class="lede">Intermolecular forces: what makes molecules stick, and what that does to boiling points and mixing.</p>
  </div></div>
- <details class="howuse"><summary>How to use this game</summary><ul><li><b>Pick your course</b> at the top, then tap one or more tiles.</li><li><b>Learn</b> shows a worked example. <b>Practice</b> gives hints and feedback. <b>Challenge</b> and <b>Daily 5</b> are short quizzes.</li><li><b>Lab questions:</b> make a prediction, and the lab opens under the question so you can test it.</li><li><b>Stuck?</b> Tap Hint, then Show answer. The Sticky Sheet (top right) has the rules and the data.</li><li><b>Want to explore?</b> Open “Labs and more” below the practice modes.</li></ul></details>
+ <details class="howuse"><summary>How to use this game</summary><ul><li><b>Pick your course</b> at the top, then tap one or more tiles. Tap <b>Go to your question</b> to jump down to it.</li><li><b>Learn</b> shows a worked example. <b>Practice</b> gives hints and feedback. <b>Challenge</b> and <b>Daily 5</b> are short quizzes.</li><li><b>Lab questions:</b> make a prediction, and the lab opens under the question so you can test it.</li><li><b>Stuck?</b> Tap Hint, then Show answer. The Sticky Sheet (top right) has the rules and the data.</li><li><b>Want to explore?</b> Open “Labs and more” below the practice modes.</li></ul></details>
 
  <section class="chooser" aria-labelledby="pickTitle">
   <h2 class="pick-title" id="pickTitle"><span class="stepnum">1</span>What do you want to work on? <small>Pick one or more.</small></h2>
   <div class="cats" id="cats"></div>
+  <div class="go-row" id="goRow" hidden><button type="button" class="btn primary" id="goPlay">Go to your question <span aria-hidden="true">↓</span></button><span class="go-note">It is ready below. Step 2 changes how you practice.</span></div>
   <details class="topicbox" id="chipsWrap" hidden><summary>Focus on specific topics <small id="topicCount"></small></summary><div class="chips" id="chips"></div></details>
   <h2 class="pick-title step2" id="modeTitle"><span class="stepnum">2</span>How do you want to practice?</h2>
   <div class="mode-switch" id="modes" role="group" aria-labelledby="modeTitle">
@@ -2248,6 +2252,7 @@ function renderChooser() {
   const nOn = open.reduce((n, c) => n + tTopics(c).filter(t => state.sel.has(t)).length, 0), nAll = open.reduce((n, c) => n + tTopics(c).length, 0);
   $('topicCount').textContent = nOn === nAll ? `· all ${nAll} topics on` : `· ${nOn} of ${nAll} topics on`;
   $('chips').innerHTML = (nOn < nAll ? `<button type="button" class="resetsel" data-allon="1">Turn all topics back on</button>` : '') + open.map(c => `<div class="chip-row" style="${tileVars(c.id)}"><span>${c.title}</span>${tTopics(c).map(t => { const s = P.topic[t], T = TOPICS[t]; return `<button type="button" class="chip${state.sel.has(t) ? ' on' : ''}" data-topic="${t}" aria-pressed="${state.sel.has(t)}">${T.label}${T.lab ? ' <span class="ctag">lab</span>' : ''}${s && s.a ? ` <span class="cstat">${s.c}/${s.a}</span>` : ''}</button>`; }).join('')}</div>`).join('');
+  $('goRow').hidden = !state.sel.size; $('goPlay').firstChild.textContent = state.mode === 'learn' && !state.ch ? 'Go to the lesson ' : 'Go to your question ';
   const curMode = (inlineLab ? '' : (LABS.find(L => L.on()) || {}).k) || (state.ch ? state.ch.kind : state.mode);
   document.querySelectorAll('#modes button').forEach(b => { b.classList.toggle('active', b.dataset.mode === curMode); b.setAttribute('aria-pressed', b.dataset.mode === curMode); });
   const doneToday = P.dailyLast === today(), st = P.dailyLast === today() || P.dailyLast === yesterday() ? P.dailyStreak || 0 : 0;
@@ -3265,7 +3270,7 @@ function bind() {
   document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.closest && e.target.closest('#parts input')) { e.preventDefault(); checkCurrent(); } });
   /* in a round, Skip reveals the rest of the question and counts it as missed; it never re-rolls a round slot */
   $('skipBtn').onclick = () => { if (state.ch) { if (state.q && !state.done) { while (!state.done) showStep(); } return; } newQuestion(true); scrollToPlay(); };
-  $('nextBtn').onclick = next;
+  $('nextBtn').onclick = next; $('goPlay').onclick = scrollToPlay;
   $('hintBtn').onclick = showHint; $('solBtn').onclick = showStep;
   $('sheetBtn').onclick = () => { renderSheet(); try { $('sheetDialog').showModal(); } catch (e) { $('sheetDialog').setAttribute('open', ''); } };
   $('closeSheet').onclick = () => $('sheetDialog').close();
