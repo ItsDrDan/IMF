@@ -4,8 +4,21 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v15.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v16.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v16 (2026-11-13)
+
+From a full audit of the game. Every correction, the tests and the open questions are in `AUDIT-2026-11-13.md`.
+
+- **Hints in two steps.** The first hint gives the idea. The second rules out one choice, shows the setup with the last number left as "?", or gives the first item in a ranking.
+- **Topic mastery.** Three in a row with no hint and no miss masters a topic. Dots on the topic buttons and a count on each tile show it.
+- **Second look.** A topic missed in Practice comes back about three questions later. A second miss offers the worked example.
+- **XP.** A correct answer that used a hint earns 6 XP (10 without). The streak neither grows nor resets.
+- **Answer checking.** Units typed after a number and superscript exponents are read. A correctly rounded answer with too few sig figs gets a nudge and is not a miss. Wrong-method values for mole fraction and Raoult's law are no longer accepted.
+- **Chemistry fixes.** HCl feedback, pair-specific boiling point hints, phase-diagram points moved off the lines, urea replaced by mannitol, fatty-acid melting points matched to the CHEM 3B book, solubility limits on the colligative problems. PH₃ left "Polar or nonpolar?" and CCl₄ vs CH₃OH left "Which boils higher?".
+- **Nine new questions:** ion–dipole (2), sugars (2), surface tension and viscosity (2), Energy Well (2), Electron Coin-Flip (1).
+- **Still for Dr. Dan to decide:** pentane's 425 torr at 25 °C (handbook is about 512), the nine new questions, 6 XP for a hinted answer, and butane at 273 K.
 
 ## New in v15 (2026-11-13)
 

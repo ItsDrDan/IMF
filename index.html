@@ -499,6 +499,14 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
 .simq-locked #mxAsk{display:none}.mx-replay{margin-top:8px}
 .simq-inline.simq-locked .lab-lock{display:grid!important}.simq-locked .lab-side,.simq-locked fieldset,.simq-locked .lab-btns{opacity:.55}
 .chip .ctag{background:#e7edff;color:#3c47b8;border-radius:99px;padding:0 6px;font-size:.72rem;font-weight:800}
+.choice.right::before{content:'✓ ';font-weight:900}.choice.wrong::before{content:'✗ ';font-weight:900}
+.choice.out{opacity:.6;text-decoration:line-through}
+.pips{display:inline-flex;gap:3px;vertical-align:middle}.pips i{width:8px;height:8px;border-radius:50%;border:1.5px solid #7c86aa;background:#fff}.pips i.on{background:#23804f;border-color:#23804f}
+.tmast{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:2px;font-size:.78rem;font-weight:800;color:var(--tc,var(--muted))}.tbar{display:block;width:84px;height:6px;border-radius:99px;background:var(--tcl,#e3e6f0);overflow:hidden}.tbar i{display:block;height:100%;background:var(--tc,var(--accent))}
+.mline{margin-top:8px;font-weight:800}.mline.got{display:flex;gap:6px;align-items:center}
+.tag.again{background:var(--amber);color:var(--amber-ink)}
+.next-row{flex-wrap:wrap}
+@media(max-width:760px){.next-row .btn{width:100%}}
 </style>
 <script src="https://itsdrdan.github.io/games/brand/icons.js" defer></script>
 <script src="https://itsdrdan.github.io/games/brand/embed.js" defer></script>
@@ -518,7 +526,7 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
   <h1><span class="t1">Sticky</span> <span class="t2">Molecules</span></h1>
   <p class="lede">Intermolecular forces: what makes molecules stick, and what that does to boiling points and mixing.</p>
  </div></div>
- <details class="howuse"><summary>How to use this game</summary><ul><li><b>Pick your course</b> at the top, then tap one or more tiles. Tap <b>Go to your question</b> to jump down to it.</li><li><b>Learn</b> shows a worked example. <b>Practice</b> gives hints and feedback. <b>Challenge</b> and <b>Daily 5</b> are short quizzes.</li><li><b>Lab questions:</b> make a prediction, and the lab opens under the question so you can test it.</li><li><b>Stuck?</b> Tap Hint, then Show answer. The Sticky Sheet (top right) has the rules and the data.</li><li><b>Want to explore?</b> Open “Labs and more” below the practice modes.</li></ul></details>
+ <details class="howuse"><summary>How to use this game</summary><ul><li><b>Pick your course</b> at the top, then tap one or more tiles. Tap <b>Go to your question</b> to jump down to it.</li><li><b>Learn</b> shows a worked example. <b>Practice</b> gives hints and feedback. <b>Challenge</b> and <b>Daily 5</b> are short quizzes.</li><li><b>Lab questions:</b> make a prediction, and the lab opens under the question so you can test it.</li><li><b>Stuck?</b> Tap Hint (many questions have a second hint), then Show answer. The Sticky Sheet (top right) has the rules and the data.</li><li><b>Missed one?</b> A question like it comes back a little later so you can try again. Three right in a row with no hint masters a topic.</li><li><b>On a keyboard:</b> press 1, 2, 3 or 4 to pick a choice, and Enter for the next question.</li><li><b>Want to explore?</b> Open “Labs and more” below the practice modes.</li></ul></details>
 
  <section class="chooser" aria-labelledby="pickTitle">
   <h2 class="pick-title" id="pickTitle"><span class="stepnum">1</span>What do you want to work on? <small>Pick one or more.</small></h2>
@@ -659,14 +667,14 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
   </section>
   <div id="playArea" hidden>
    <div class="quiz-bar" id="quizBar" hidden><span></span></div>
-   <div class="tags"><span class="tag" id="tileTag"></span><span class="tag" id="topicTag"></span><span class="tag quiz" id="quizTag" hidden></span></div>
+   <div class="tags"><span class="tag" id="tileTag"></span><span class="tag" id="topicTag"></span><span class="tag quiz" id="quizTag" hidden></span><span class="tag again" id="againTag" hidden>Second look: you missed one like this</span></div>
    <section class="stem" id="stem"></section>
    <div id="tip"></div>
    <div id="parts"></div>
    <div class="feedback" id="feedback" role="status" aria-live="polite" tabindex="-1"></div>
    <div class="actions" id="actions"><button type="button" class="btn" id="hintBtn"><span data-icon="bulb" aria-hidden="true"></span>Hint</button><button type="button" class="btn" id="solBtn"><span data-icon="eye" aria-hidden="true"></span>Show answer</button><button type="button" class="btn" id="videoBtn"><span data-icon="video" aria-hidden="true"></span>Video</button></div>
-   <div class="detail" id="hintBox" hidden></div>
-   <div class="next-row"><button type="button" id="nextBtn" class="btn primary" hidden>Next question <span data-icon="arrow" aria-hidden="true"></span></button></div>
+   <div class="detail" id="hintBox" role="status" hidden></div>
+   <div class="next-row"><button type="button" id="exBtn" class="btn" hidden>See a worked example</button><button type="button" id="nextBtn" class="btn primary" hidden>Next question <span data-icon="arrow" aria-hidden="true"></span></button></div>
   </div>
   <p class="note-small">This game collects anonymous practice stats (no names or student IDs) to help plan new lessons.<br><span class="dd-credit" style="display:inline-block;margin-top:6px"><strong>Game design and chemistry by ItsDrDan.</strong><br>I used AI (Claude by Anthropic) to help write the code, the way I hope you’ll use it: as a tool, while checking every answer and understanding the chemistry and math behind it.</span></p>
  </main>
@@ -675,7 +683,7 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
   <div class="section-head"><h2 id="progressTitle">Progress &amp; achievements</h2><span id="achCount"></span></div>
   <div class="stat-row"><div class="stat rank"><strong id="rankLine">Lone Molecule</strong><div class="xpbar" aria-hidden="true"><span id="xpFill"></span></div><small id="xpText">0 XP</small></div><div class="stat"><strong id="sCorrect">0</strong><small>Correct</small></div><div class="stat"><strong id="sTried">0</strong><small>Tried</small></div><div class="stat"><strong id="sStreak">0</strong><small>Streak</small></div><div class="stat"><strong id="sBest">0</strong><small>Best streak</small></div></div>
   <div class="badges" id="achGrid"></div>
-  <div class="section-foot"><span class="note-small" style="margin:0">XP: +10 for a question with no misses, plus a streak bonus. Each course keeps its own progress on this device.</span><button type="button" class="reset-btn" id="resetBtn">Reset my progress</button></div>
+  <div class="section-foot"><span class="note-small" style="margin:0">XP: +10 for a question with no misses and no hint, plus a streak bonus. +6 if you used a hint. A topic is mastered when you get 3 in a row with no hint. Each course keeps its own progress on this device.</span><button type="button" class="reset-btn" id="resetBtn">Reset my progress</button></div>
  </section>
 
  <details class="panel section" id="videoSection"><summary><span>Learn with Dr. Dan<small id="videoContext">Videos picked for the current question</small></span></summary>
@@ -720,7 +728,8 @@ const SLIP = {
   'size-ignores-type': 'When two molecules have about the same molar mass, check the <b>type</b> of force first. Higher molar mass decides only when the type of force is the same.',
   'vp-backwards': 'Strong forces hold molecules in the liquid, so fewer escape: strong forces → <b>low</b> vapor pressure.',
   'missed-dipole': 'A polar molecule has a δ+ end and a δ− end, so its molecules also attract by dipole–dipole forces.',
-  'missed-hbond': 'Look for an H bonded directly to N, O or F. That molecule can hydrogen bond, which is stronger than ordinary dipole–dipole attraction.',
+  'missed-hbond': 'Look for an H bonded directly to N, O or F. This molecule has one, so it can hydrogen bond, which is stronger than ordinary dipole–dipole attraction.',
+  'polarity': 'Decide polarity in two steps: are the bonds polar, and does the shape let their pulls cancel?',
   'forgot-dispersion': '<b>Every</b> molecule has dispersion forces, because every molecule has electrons. Polar molecules have them too.',
   'no-ions': 'Ion–dipole needs an <b>ion</b>. A pure molecular substance has no ions.',
   'like-dissolves-like': 'Like dissolves like: polar mixes with polar (or ionic), nonpolar mixes with nonpolar.',
@@ -798,8 +807,8 @@ const M = {
   HBr: { name: 'hydrogen bromide', bp: -67, polar: true, d: diat('H', 'Br'), pw: 'Br pulls the shared electrons toward itself: H is δ+ and Br is δ−.' },
   HI: { name: 'hydrogen iodide', bp: -35, polar: true, d: diat('H', 'I'), pw: 'I pulls the shared electrons toward itself: H is δ+ and I is δ−.' },
   ICl: { name: 'iodine monochloride', bp: 97, polar: true, d: diat('I', 'Cl'), pw: 'Cl is more electronegative than I, so Cl is δ− and I is δ+.' },
-  H2S: { name: 'hydrogen sulfide', bp: -60, polar: true, d: bent('S', 'H'), shape: 'bent', pw: 'The molecule is bent (two lone pairs on S), so the bond dipoles do not cancel.' },
-  PH3: { name: 'phosphine', bp: -88, polar: true, d: pyr('P', 'H'), shape: 'trigonal pyramidal', pw: 'The lone pair on P makes a trigonal pyramid, which is not symmetric, so there is a small net dipole.' },
+  H2S: { name: 'hydrogen sulfide', bp: -60, polar: true, d: bent('S', 'H'), shape: 'bent', pw: 'The S–H bonds are only slightly polar, but the molecule is bent with two lone pairs on S, so the small pulls add up instead of cancelling.' },
+  PH3: { name: 'phosphine', bp: -88, polar: true, d: pyr('P', 'H'), shape: 'trigonal pyramidal', pw: 'The P–H bonds are almost nonpolar, but the lone pair on P makes a lopsided trigonal pyramid, so there is a small net dipole.' },
   NF3: { name: 'nitrogen trifluoride', bp: -129, polar: true, d: pyr('N', 'F'), shape: 'trigonal pyramidal', pw: 'The lone pair on N makes a trigonal pyramid, so the N–F bond dipoles do not cancel.' },
   CH3F: { name: 'fluoromethane', bp: -78, polar: true, d: cross('C', 'H', 'F', 'H', 'H'), shape: 'tetrahedral', pw: 'One polar C–F bond with nothing opposite to cancel it.' },
   CH3Cl: { name: 'chloromethane', bp: -24, polar: true, d: cross('C', 'H', 'Cl', 'H', 'H'), shape: 'tetrahedral', pw: 'One polar C–Cl bond with nothing opposite to cancel it.' },
@@ -841,10 +850,10 @@ const nm = m => `${m.name} (${F(m.cf || m.f)})`;
 const fo = m => F(m.cf || m.f);
 const allForces = m => m.donor ? 'dispersion, dipole–dipole and hydrogen bonding' : m.polar ? 'dispersion and dipole–dipole' : 'dispersion only';
 function whyForce(m) {
-  if (m.atom) return `${cap(m.name)} is single atoms: no bonds and no dipole, so dispersion is the only force.`;
-  if (m.donor) return `${F(m.f)} has an H bonded directly to ${donorAtom(m)}, so it hydrogen bonds. It also has dipole–dipole and dispersion forces.`;
-  if (m.polar) return `${F(m.f)} is polar. ${m.pw} No H is on N, O or F, so dipole–dipole is its strongest force (plus dispersion).`;
-  return `${F(m.f)} is nonpolar. ${m.pw} Dispersion is its only force.`;
+  if (m.atom) return `${cap(m.name)} is single atoms: no bonds and no permanent dipole, so dispersion is the only force.`;
+  if (m.donor) return `${fo(m)} has an H bonded directly to ${donorAtom(m)}, so it hydrogen bonds. It also has dipole–dipole and dispersion forces.`;
+  if (m.polar) return `${fo(m)} is polar. ${m.pw} No H is on N, O or F, so dipole–dipole is the strongest type of force it has (along with dispersion).`;
+  return `${fo(m)} is nonpolar. ${m.pw} Dispersion is its only force.`;
 }
 function donorAtom(m) { return /N/.test(m.f) && !/O/.test(m.f) ? 'N' : /F/.test(m.f) ? 'F' : /O/.test(m.f) && /N/.test(m.f) ? 'N' : 'O'; }
 
@@ -935,7 +944,7 @@ const T_CONCEPT = [
     ['Hydrogen bonding &lt; dipole–dipole &lt; dispersion', false, 'That is backwards for molecules of similar size.'],
     ['Dipole–dipole &lt; dispersion &lt; hydrogen bonding', false, 'For similar-size molecules, a permanent dipole adds attraction on top of dispersion.'],
     ['Dispersion &lt; hydrogen bonding &lt; dipole–dipole', false, 'Hydrogen bonding is the strongest kind of dipole–dipole attraction.']] },
-  { q: 'Steam rising from a boiling kettle is made of…', c: [
+  { q: 'The water vapor (steam) inside the bubbles of boiling water is made of…', c: [
     ['H₂O molecules, far apart', true, 'A phase change only separates whole molecules.'],
     ['H₂ and O₂ molecules', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'],
     ['Separate H and O atoms', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'],
@@ -961,8 +970,8 @@ const T_CONCEPT = [
     ['Double bonds cannot be polar', false, 'A C=O bond is quite polar. The dipoles cancel because of the linear shape.']] },
   { q: 'Dry ice (solid CO₂) turns straight into gas. What happens to the CO₂ molecules?', c: [
     ['They move apart from each other but stay whole', true, 'Sublimation overcomes the dispersion forces between CO₂ molecules. No C=O bond breaks.'],
-    ['They break into carbon and oxygen', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'],
-    ['Their C=O double bonds become single bonds', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds']] },
+    ['They break into carbon and oxygen', false, 'Sublimation only separates whole CO₂ molecules <b>from each other</b>. No covalent bond breaks: the gas is still CO₂.', 'boil-breaks-bonds'],
+    ['Their C=O double bonds become single bonds', false, 'Sublimation only separates whole CO₂ molecules <b>from each other</b>. The C=O bonds inside each molecule do not change: the gas is still CO₂.', 'boil-breaks-bonds']] },
   { q: 'Dipole–dipole forces act between…', c: [
     ['polar molecules: the δ+ end of one is attracted to the δ− end of another', true, 'Opposite partial charges on neighboring molecules attract.'],
     ['any two nonpolar molecules', false, 'Nonpolar molecules have no permanent δ+ and δ− ends. They have dispersion forces only.'],
@@ -971,7 +980,7 @@ const T_CONCEPT = [
 ];
 function genConcept() { const it = drawBag('concept', T_CONCEPT); return staticQ('concept', Object.assign({}, it, { art: it.art ? it.art() : '' })); }
 
-const POLAR_SET = ['H2O', 'NH3', 'HF', 'HCl', 'CH4', 'CO2', 'CCl4', 'CF4', 'BF3', 'H2S', 'PH3', 'NF3', 'CH3F', 'CH3Cl', 'CH2Cl2', 'CHCl3', 'HCN', 'CH2O', 'N2', 'O2', 'Cl2', 'CS2', 'SiH4', 'CH3OH', 'CH3OCH3', 'C2H6', 'HBr', 'ICl'];
+const POLAR_SET = ['H2O', 'NH3', 'HF', 'HCl', 'CH4', 'CO2', 'CCl4', 'CF4', 'BF3', 'H2S', 'NF3', 'CH3F', 'CH3Cl', 'CH2Cl2', 'CHCl3', 'HCN', 'CH2O', 'N2', 'O2', 'Cl2', 'CS2', 'SiH4', 'CH3OH', 'CH3OCH3', 'C2H6', 'HBr', 'ICl'];   // PH3 left out: its bonds are nearly nonpolar, so the two-step method misleads
 function polarPart(m) {
   return choicePart(`Is ${nm(m)} a polar molecule?`, [
     opt('Polar', m.polar, m.polar ? m.pw : (m.trap ? SLIP['polar-bonds-polar-molecule'] + ' ' : '') + m.pw, m.trap ? 'polar-bonds-polar-molecule' : 'polarity'),
@@ -980,7 +989,7 @@ function polarPart(m) {
 }
 function genPolar() {
   const m = M[drawBag('polar', POLAR_SET)];
-  return { topic: 'polar', tag: F(m.f), stem: figure(molCard(m)), tip: 'A flat Lewis structure hides the 3D shape. Polar bonds cancel only when identical bonds point in exactly opposite, balanced directions.', parts: [polarPart(m)] };
+  return { topic: 'polar', tag: F(m.f), stem: figure(molCard(m)), tip: 'A flat Lewis structure hides the 3D shape. Polar bonds cancel only when identical bonds are spread evenly around the central atom (linear, trigonal planar or tetrahedral).', parts: [polarPart(m)] };
 }
 
 const HB_YES = { '3A': ['H2O', 'NH3', 'HF', 'CH3OH', 'C2H5OH', 'CH3NH2'], '1A': ['H2O', 'NH3', 'HF', 'CH3OH', 'C2H5OH', 'CH3NH2', 'H2O2', 'N2H4', 'C2H4O2'], '3B': ['CH3OH', 'C2H5OH', 'C3H7OH', 'CH3NH2', 'C3H7NH2', 'C2H4O2', 'C2H5NO', 'C3H6O2'] };
@@ -988,21 +997,22 @@ const HB_NO = { '3A': ['CH4', 'HCl', 'CH3F', 'CH3OCH3', 'H2S', 'CO2', 'CCl4', 'C
 function whyNoHB(m) {
   if (!/H/.test(m.f)) return `${fo(m)} has no hydrogen at all.`;
   if (m.k === 'C3H9N') return `In ${fo(m)} every H is on carbon. The N has a lone pair (it can accept a hydrogen bond from water) but no N–H of its own.`;
-  if (/[NOF]/.test(m.f.replace(/Ne/g, ''))) return `${fo(m)} has ${/F/.test(m.f) ? 'F' : /O/.test(m.f) ? 'O' : 'N'}, but every H is bonded to carbon. With no ${/F/.test(m.f) ? 'F–H' : /O/.test(m.f) ? 'O–H' : 'N–H'} it cannot donate a hydrogen bond${/O|N/.test(m.f) ? ' (it could only accept one from a molecule like water)' : ''}.`;
-  if (/C/.test(m.f)) return `In ${fo(m)} every H is bonded to carbon.`;
+  if (/[NOF]/.test(m.f.replace(/Ne/g, ''))) return `${fo(m)} has ${/F/.test(m.f) ? 'F' : /O/.test(m.f) ? 'O' : 'N'}, but every H is bonded to carbon. With no ${/F/.test(m.f) ? 'F–H' : /O/.test(m.f) ? 'O–H' : 'N–H'} it cannot supply the H for a hydrogen bond${/O|N/.test(m.f) ? ' (its lone pairs could only accept one from a molecule like water)' : ''}.`;
+  if (m.k === 'C3H6O_al') return `${fo(m)} has an O, but in –CHO the H is bonded to the carbonyl carbon (H–C=O), not to the O. With no O–H it cannot supply the H for a hydrogen bond (its lone pairs could only accept one from a molecule like water).`;
+  if (/C(?![a-z])/.test(m.f)) return `In ${fo(m)} every H is bonded to carbon.`;
   return `In ${fo(m)} the H is bonded to ${m.f.replace(/H\d?/, '').replace(/\d/g, '')}, which is not N, O or F.`;
 }
 function genHbond() {
   const c = OPTS.course, yes = M[drawBag('hbY' + c, HB_YES[c])], no = shuffle(HB_NO[c]).slice(0, 3).map(k => M[k]);
   const opts = [opt(fo(yes), true, `${fo(yes)} has an H bonded directly to ${donorAtom(yes)}.`), ...no.map(m => opt(fo(m), false, whyNoHB(m), 'any-h-hbonds'))];
-  return { topic: 'hbond', tag: 'find the donor', stem: '', tip: 'Hydrogen bonding needs N–H, O–H or F–H in the molecule. Having N, O or F somewhere is not enough.', parts: [choicePart('Which of these can form hydrogen bonds with other molecules <b>of itself</b>?', opts, { solution: `Only ${fo(yes)} has H bonded directly to N, O or F.`, hint: 'Find the H atoms. What is each one attached to?' })] };
+  return { topic: 'hbond', tag: 'find the donor', stem: '', tip: 'Hydrogen bonding needs N–H, O–H or F–H in the molecule. Having N, O or F somewhere is not enough.', parts: [choicePart('Which of these can form hydrogen bonds between <b>its own molecules</b>?', opts, { solution: `Only ${fo(yes)} has H bonded directly to N, O or F.`, hint: 'Find the H atoms. What is each one attached to?' })] };
 }
 
 function forceOptions(m, ask) {
   const s = strongest(m), hasH = /H/.test(m.f);
   return [
-    opt('Dispersion', s === 'd', s === 'd' ? whyForce(m) : `${cap(m.name)} does have dispersion forces, but it has something stronger. ${s === 'hb' ? SLIP['missed-hbond'] : SLIP['missed-dipole']}`, s === 'hb' ? 'missed-hbond' : 'missed-dipole'),
-    opt('Dipole–dipole', s === 'dd', s === 'dd' ? whyForce(m) : s === 'hb' ? `It is polar, but it has something stronger. ${SLIP['missed-hbond']}` : m.atom ? 'A single atom has no bonds, so it has no dipole.' : `${cap(m.name)} is nonpolar. ${m.pw}`, s === 'hb' ? 'missed-hbond' : m.trap ? 'polar-bonds-polar-molecule' : 'polarity'),
+    opt('Dispersion', s === 'd', s === 'd' ? whyForce(m) : `${cap(m.name)} does have dispersion forces, but it also has a stronger type of force. ${s === 'hb' ? SLIP['missed-hbond'] : SLIP['missed-dipole']}`, s === 'hb' ? 'missed-hbond' : 'missed-dipole'),
+    opt('Dipole–dipole', s === 'dd', s === 'dd' ? whyForce(m) : s === 'hb' ? `It is polar, but it also has a stronger type of force. ${SLIP['missed-hbond']}` : m.atom ? 'A single atom has no bonds, so it has no dipole.' : `${cap(m.name)} is nonpolar. ${m.pw}`, s === 'hb' ? 'missed-hbond' : m.trap ? 'polar-bonds-polar-molecule' : 'polarity'),
     opt('Hydrogen bonding', s === 'hb', s === 'hb' ? whyForce(m) : hasH ? `${SLIP['any-h-hbonds']} ${whyNoHB(m)}` : `${fo(m)} has no hydrogen at all, so it cannot hydrogen bond.`, 'any-h-hbonds'),
     opt('Ion–dipole', false, SLIP['no-ions'], 'no-ions')
   ];
@@ -1010,7 +1020,7 @@ function forceOptions(m, ask) {
 const FORCE_SET = { '3A': ['H2O', 'NH3', 'HF', 'HCl', 'CH4', 'CO2', 'CCl4', 'H2S', 'CH3F', 'CH3Cl', 'CH2O', 'N2', 'Cl2', 'CH3OH', 'C2H5OH', 'CH3OCH3', 'C2H6', 'Ar', 'O2', 'CH3NH2'], '1A': ['H2O', 'NH3', 'HF', 'HCl', 'CH4', 'CO2', 'CCl4', 'CF4', 'BF3', 'H2S', 'PH3', 'NF3', 'CH3F', 'CH2Cl2', 'CHCl3', 'HCN', 'CH2O', 'N2', 'Br2', 'CS2', 'SiH4', 'CH3OH', 'CH3OCH3', 'C3H6O', 'Ar', 'Xe', 'H2O2', 'N2H4', 'C2H4O2', 'CH3NH2', 'ICl', 'HBr'] };
 function genStrongest() {
   const m = M[drawBag('str' + OPTS.course, FORCE_SET[OPTS.course])];
-  return { topic: 'strongest', tag: F(m.f), stem: figure(molCard(m)), tip: 'Ask two questions in order: Is it polar? Is there an H on N, O or F?', parts: [choicePart(`What is the <b>strongest</b> force between ${m.name} ${unit(m)}?`, forceOptions(m), { keep: true, solution: whyForce(m), hint: 'Polar → dipole–dipole. H on N, O or F → hydrogen bonding. Neither → dispersion only.' })] };
+  return { topic: 'strongest', tag: F(m.f), stem: figure(molCard(m)), tip: 'Ask two questions in order: Is it polar? Is there an H on N, O or F?', parts: [choicePart(`What is the <b>strongest type</b> of force between ${m.name} ${unit(m)}?`, forceOptions(m), { keep: true, solution: whyForce(m), hint: 'Polar → dipole–dipole. H on N, O or F → hydrogen bonding. Neither → dispersion only.' })] };
 }
 function genForces() {
   const set = FORCE_SET[OPTS.course].filter(k => !M[k].atom), m = M[drawBag('for' + OPTS.course, set)], hasH = /H/.test(m.f);
@@ -1021,10 +1031,10 @@ function genForces() {
   const s = strongest(m);
   const all = choicePart(`So which forces act between ${m.name} molecules?`, [
     opt('Dispersion only', s === 'd', s === 'd' ? 'Nonpolar, so dispersion is all it has.' : SLIP[s === 'hb' ? 'missed-hbond' : 'missed-dipole'], s === 'hb' ? 'missed-hbond' : 'missed-dipole'),
-    opt('Dispersion and dipole–dipole', s === 'dd', s === 'dd' ? 'Polar, with no H on N, O or F. Dipole–dipole is the strongest.' : s === 'hb' ? SLIP['missed-hbond'] : `It is nonpolar, so there is no dipole–dipole force. ${m.pw}`, s === 'hb' ? 'missed-hbond' : 'polar-bonds-polar-molecule'),
-    opt('Dispersion, dipole–dipole and hydrogen bonding', s === 'hb', s === 'hb' ? 'It has all three. Hydrogen bonding is the strongest.' : 'Hydrogen bonding needs an H on N, O or F, and this molecule has none.', 'any-h-hbonds'),
+    opt('Dispersion and dipole–dipole', s === 'dd', s === 'dd' ? 'Polar, with no H on N, O or F. Dipole–dipole is the strongest type it has.' : s === 'hb' ? SLIP['missed-hbond'] : `It is nonpolar, so there is no dipole–dipole force. ${m.pw}`, s === 'hb' ? 'missed-hbond' : m.trap ? 'polar-bonds-polar-molecule' : 'polarity'),
+    opt('Dispersion, dipole–dipole and hydrogen bonding', s === 'hb', s === 'hb' ? 'It has all three. Hydrogen bonding is the strongest type.' : 'Hydrogen bonding needs an H on N, O or F, and this molecule has none.', 'any-h-hbonds'),
     opt('Dipole–dipole only', false, SLIP['forgot-dispersion'], 'forgot-dispersion')
-  ], { keep: true, solution: `${cap(allForces(m))}. Strongest: ${FORCE[s].toLowerCase()}.`, hint: 'Start with dispersion (everything has it), then add dipole–dipole if polar, then hydrogen bonding if H is on N, O or F.' });
+  ], { keep: true, solution: `${cap(allForces(m))}. Strongest type: ${FORCE[s].toLowerCase()}.`, hint: 'Start with dispersion (everything has it), then add dipole–dipole if polar, then hydrogen bonding if H is on N, O or F.' });
   return { topic: 'forces', tag: F(m.f), stem: figure(molCard(m)), tip: 'Lewis structure in, forces out: polar? → H on N, O or F? → list the forces.', parts: [polarPart(m), donorPart, all] };
 }
 
@@ -1051,22 +1061,31 @@ const T_IONDIP = [
     ['Water is polar and can form ion–dipole attractions; nonpolar hexane cannot', true, 'Ion–dipole attractions with water pay for pulling the ions apart. Hexane has only weak dispersion forces to offer.'],
     ['Hexane molecules are too small to fit between the ions', false, 'Hexane is much bigger than water. The problem is that hexane is nonpolar.', 'like-dissolves-like'],
     ['Water breaks the covalent bonds in KBr', false, 'KBr is ionic: it has no covalent bonds between K and Br. Water separates the ions.'],
-    ['KBr is nonpolar, like hexane', false, 'KBr is ionic, the opposite extreme from nonpolar.', 'like-dissolves-like']] }
+    ['KBr is nonpolar, like hexane', false, 'KBr is ionic, the opposite extreme from nonpolar.', 'like-dissolves-like']] },
+  { q: 'Which ion attracts the water molecules around it more strongly: Na⁺ or Mg²⁺?', hint: 'Compare the charges. A bigger charge pulls harder on the δ− end of water.', c: [
+    ['Mg²⁺', true, 'Its 2+ charge (on a smaller ion) pulls on water’s δ− oxygen much harder than the 1+ charge of Na⁺.'],
+    ['Na⁺', false, 'Na⁺ has the smaller charge, so its pull on a water dipole is weaker.'],
+    ['They attract water equally', false, 'The strength of an ion–dipole attraction depends on the charge of the ion: 2+ pulls harder than 1+.']] },
+  { q: 'Which pair is held together by an ion–dipole attraction?', hint: 'Ion–dipole needs one ion and one polar molecule.', c: [
+    ['K⁺ and H₂O', true, 'An ion (K⁺) and a polar molecule (H₂O): ion–dipole.'],
+    ['H₂O and H₂O', false, 'Two water molecules attract by hydrogen bonding. Neither one is an ion.', 'no-ions'],
+    ['Na⁺ and Cl⁻ in a salt crystal', false, 'Two ions attract by ionic bonding. Ion–dipole needs a polar molecule as the partner.'],
+    ['CH₄ and CH₄', false, 'Two nonpolar molecules attract by dispersion forces only.', 'no-ions']] }
 ];
 function genIonDip() { return staticQ('iondipole', drawBag('iondip', T_IONDIP)); }
 
 /* CHEM 3B: forces in each organic family */
 const ORG_SET = ['C4H10', 'C4H8', 'C3H7OH', 'C2H5OH', 'C4H10O', 'CH3OCH3', 'C3H6O_al', 'C3H6O', 'C2H4O2', 'C3H6O2', 'C3H7NH2', 'C3H9N', 'C2H5NO'];
-const ORG_NOTE = { alkane: 'Alkanes have only C–C and C–H bonds, so they are nonpolar: dispersion only.', alkene: 'Alkenes have only C–C, C=C and C–H bonds, so they are nonpolar: dispersion only.', alcohol: 'Alcohols have an O–H group, so they hydrogen bond with each other.', ether: 'Ethers have an O but no O–H. They are polar (dipole–dipole) and can only <b>accept</b> hydrogen bonds from water.', aldehyde: 'Aldehydes have a polar C=O but no O–H or N–H: dipole–dipole.', ketone: 'Ketones have a polar C=O but no O–H or N–H: dipole–dipole.', 'carboxylic acid': 'Carboxylic acids have both C=O and O–H, so they hydrogen bond strongly (two acid molecules pair up).', 'amine (1°)': 'A 1° amine has N–H bonds, so it hydrogen bonds.', 'amine (3°)': 'A 3° amine has no N–H (all three groups on N are carbons), so it cannot hydrogen bond with itself: dipole–dipole.', amide: 'Amides have N–H and C=O, so they hydrogen bond strongly (N–H···O=C).' };
+const ORG_NOTE = { alkane: 'Alkanes have only C–C and C–H bonds, so they are nonpolar: dispersion only.', alkene: 'Alkenes have only C–C, C=C and C–H bonds, so they are nonpolar: dispersion only.', alcohol: 'Alcohols have an O–H group, so they hydrogen bond with each other.', ether: 'Ethers have an O but no O–H. They are polar (dipole–dipole) and can only <b>accept</b> hydrogen bonds from water.', aldehyde: 'Aldehydes have a polar C=O but no O–H or N–H: dipole–dipole.', ketone: 'Ketones have a polar C=O but no O–H or N–H: dipole–dipole.', 'carboxylic acid': 'Carboxylic acids have both C=O and O–H, so they hydrogen bond strongly (two acid molecules pair up).', 'amine (1°)': 'A 1° amine has N–H bonds, so it hydrogen bonds.', 'amine (3°)': 'A 3° amine has no N–H (all three groups on N are carbons), so it cannot hydrogen bond with itself: dipole–dipole.', amide: 'An amide with an N–H, like this one, hydrogen bonds strongly (N–H···O=C).' };
 function genOrganic() {
   const m = M[drawBag('org', ORG_SET)], s = strongest(m), fam = m.fam;
   const p1 = choicePart('Does it have an O–H or N–H bond?', [
     opt('Yes', m.donor, m.donor ? `Yes: there is an H on ${donorAtom(m)}.` : whyNoHB(m), 'any-h-hbonds'),
     opt('No', !m.donor, m.donor ? `Look again for H bonded to O or N in ${fo(m)}.` : whyNoHB(m), 'missed-hbond')
-  ], { keep: true, solution: m.donor ? `There is an H on ${donorAtom(m)}.` : whyNoHB(m), hint: 'In a condensed formula, OH and NH₂ show the H right next to the O or N.' });
+  ], { keep: true, solution: m.donor ? `There is an H on ${donorAtom(m)}.` : whyNoHB(m), hint: 'Look for –OH, –COOH or –NH₂. Careful: in –CHO the H is on the carbon, not on the O.' });
   const opts = forceOptions(m).filter(o => o.html !== 'Ion–dipole');
   opts.forEach(o => { if (o.ok) o.why = ORG_NOTE[fam]; });
-  return { topic: 'organic', tag: fam, stem: figure(molCard(m, { fam: true, plain: true })), tip: 'Find the functional group. C and H only → dispersion. C=O or C–O–C → dipole–dipole. O–H or N–H → hydrogen bonding.', parts: [p1, choicePart(`What is the strongest force between ${m.name} molecules?`, opts, { keep: true, solution: ORG_NOTE[fam], hint: 'C and H only → dispersion. Polar group with no O–H or N–H → dipole–dipole. O–H or N–H → hydrogen bonding.' })] };
+  return { topic: 'organic', tag: fam, stem: figure(molCard(m, { fam: true, plain: true })), tip: 'Find the functional group. Check for O–H or N–H first → hydrogen bonding. If there is none, a polar group (C=O, C–O–C, C–N) → dipole–dipole. C and H only → dispersion.', parts: [p1, choicePart(`What is the strongest type of force between ${m.name} molecules?`, opts, { keep: true, solution: ORG_NOTE[fam], hint: 'O–H or N–H → hydrogen bonding. Polar group with no O–H or N–H → dipole–dipole. C and H only → dispersion.' })] };
 }
 
 /* ================= TILE 2: Boiling Point Battles ================= */
@@ -1087,7 +1106,7 @@ const PAIRS = [
   ['C5H12', 'C3H8', 'size', ['3A', '1A', '3B']], ['C8H18', 'C5H12', 'size', ['3A', '1A', '3B']], ['HBr', 'HCl', 'size', ['1A']], ['HI', 'HBr', 'size', ['1A']],
   ['SiH4', 'CH4', 'size', ['1A']], ['CCl4', 'CH4', 'size', ['3A', '1A']], ['C2H5OH', 'CH3OH', 'size', ['1A', '3B']], ['C3H7OH', 'C2H5OH', 'size', ['1A', '3B']],
   ['C6H14', 'C4H10', 'size', ['3B']],
-  ['C8H18', 'H2O', 'sizewins', ['1A']], ['CBr4', 'H2O', 'sizewins', ['1A']], ['I2', 'H2O', 'sizewins', ['1A']], ['CCl4', 'CHCl3', 'sizewins', ['1A']], ['CCl4', 'CH3OH', 'sizewins', ['1A']], ['Br2', 'HCl', 'sizewins', ['1A']]
+  ['C8H18', 'H2O', 'sizewins', ['1A']], ['CBr4', 'H2O', 'sizewins', ['1A']], ['I2', 'H2O', 'sizewins', ['1A']], ['CCl4', 'CHCl3', 'sizewins', ['1A']], ['Br2', 'HCl', 'sizewins', ['1A']]
 ];
 /* pentane isomers (OpenStax Figure 10.7) */
 const ISO = [{ name: 'pentane', cf: 'CH3CH2CH2CH2CH3', bp: 36, shape: 'a long, straight chain' }, { name: 'isopentane', cf: '(CH3)2CHCH2CH3', bp: 27, shape: 'one branch' }, { name: 'neopentane', cf: 'C(CH3)4', bp: 9.5, shape: 'compact and nearly spherical' }];
@@ -1097,7 +1116,7 @@ function pairWhy(W, L, r) {
   if (r === 'hbond') return `${eLine(W, L)}. ${sizeNote(W, L)} Only ${W.name} has an H on ${donorAtom(W)}, so only it can hydrogen bond, and that decides it. ${bpLine(W, L)}`;
   if (r === 'dipole') return `${eLine(W, L)}. ${sizeNote(W, L)} ${cap(W.name)} is polar and ${L.name} is not, so ${W.name} adds dipole–dipole attractions. ${bpLine(W, L)}`;
   if (r === 'size') return `Both have the same kinds of forces (${allForces(W)}). ${eLine(W, L)}. Higher molar mass means more electrons → a bigger, more polarizable cloud → stronger dispersion forces. ${bpLine(W, L)}`;
-  return `${eLine(W, L)}. With a molar mass that much higher (many more electrons), ${W.name}’s dispersion forces add up to more than all of ${L.name}’s attractions${L.donor ? ', hydrogen bonds included' : ''}. ${bpLine(W, L)}`;
+  return `${eLine(W, L)}. With a molar mass that much higher (many more electrons), ${W.name}’s dispersion forces add up to more than all of ${L.name}’s attractions${L.donor ? ', hydrogen bonds included' : ''}.${L.donor ? ' One hydrogen bond is still stronger than one dispersion contact, but a big molecule has a great many contacts.' : ''} ${bpLine(W, L)}`;
 }
 function reasonOptions(W, L, r) {
   const o = [];
@@ -1105,16 +1124,16 @@ function reasonOptions(W, L, r) {
   o.push(opt(`Only ${W.name} can hydrogen bond`, r === 'hbond', r === 'hbond' ? `${cap(W.name)} has an H on ${donorAtom(W)}. ${cap(L.name)} does not.` : both ? `Both can hydrogen bond, so that cannot be the difference.` : neither ? `Neither one has an H on N, O or F, so neither hydrogen bonds.` : `${cap(W.name)} has no H on N, O or F. ${cap(L.name)} is the one that can hydrogen bond, and it still boils lower.`, 'any-h-hbonds'));
   if (!(r === 'hbond' && !L.polar)) o.push(opt(`Only ${W.name} has dipole–dipole attractions`, r === 'dipole', r === 'dipole' ? `${cap(W.name)} is polar. ${cap(L.name)} is nonpolar.` : W.polar && L.polar ? 'Both molecules are polar, so both have dipole–dipole attractions.' : !W.polar ? `${cap(W.name)} is nonpolar. ${W.pw || ''}` : `True, but that is not the main reason here.`, W.trap ? 'polar-bonds-polar-molecule' : 'polarity'));
   const bigger = r === 'size' || r === 'sizewins';
-  o.push(opt(`${cap(W.name)} has a higher molar mass (more electrons), so its dispersion forces are stronger`, bigger, bigger ? `${eLine(W, L)}. Higher molar mass → more electrons → stronger dispersion.` : `${eLine(W, L)}. ${W.e < L.e - 2 ? cap(W.name) + ' is actually the smaller one' : 'That is about the same size'}, so size cannot explain it. Look at the type of force.`, 'size-ignores-type'));
-  o.push(opt(`The covalent bonds inside ${W.name} are stronger`, false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'));
+  o.push(opt(`${cap(W.name)} has a higher molar mass (more electrons), so its dispersion forces are stronger`, bigger, bigger ? `${eLine(W, L)}. Higher molar mass → more electrons → stronger dispersion.` : `${eLine(W, L)}. ${W.e < L.e - 2 ? cap(W.name) + ' is actually the smaller one' : W.e > L.e ? 'That difference is far too small to matter' : 'That is the same size'}, so size cannot explain it. Look at the type of force.`, 'size-ignores-type'));
+  o.push(W.atom ? opt(`${cap(W.name)} atoms are joined by stronger covalent bonds`, false, 'Noble gases are single atoms. There are no covalent bonds at all, only dispersion forces between the atoms.', 'boil-breaks-bonds') : opt(`The covalent bonds inside ${W.name} are stronger`, false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'));
   return o;
 }
 function pairQ(topic, W, L, r, vp) {
   const [A, B] = shuffle([W, L]), ansH = vp ? L : W;
   const s1slip = r === 'hbond' || r === 'dipole' ? 'size-ignores-type' : r === 'sizewins' ? 'type-always-wins' : 'dispersion-size';
-  const wrongWhy = vp ? `${SLIP['vp-backwards']} ${cap(W.name)} has the stronger attractions, so ${L.name} escapes more easily.` : r === 'sizewins' ? `${SLIP['type-always-wins']} ${eLine(W, L)}.` : r === 'size' ? `They have the same kinds of forces, so compare molar mass: more mass means more electrons. ${eLine(W, L)}.` : `${SLIP['size-ignores-type']} ${eLine(W, L)}: compare the type of force.`;
+  const wrongWhy = vp ? `${SLIP['vp-backwards']} ${cap(W.name)} has the stronger attractions, so ${L.name} escapes more easily.` : r === 'sizewins' ? `${SLIP['type-always-wins']} ${eLine(W, L)}.` : r === 'size' ? `They have the same kinds of forces, so compare molar mass: more mass means more electrons. ${eLine(W, L)}.` : Math.abs(W.e - L.e) <= 2 ? `They are the same size, so size cannot decide it. ${eLine(W, L)}. Look for ${r === 'hbond' ? 'an H on N, O or F' : 'a net dipole'}.` : `${SLIP['size-ignores-type']} ${eLine(W, L)}: compare the type of force.`;
   const ask = vp ? 'At the same temperature, which has the <b>higher vapor pressure</b>?' : 'Which has the <b>higher boiling point</b>?';
-  const p1 = choicePart(ask, [A, B].map(m => opt(`${cap(m.name)}, ${fo(m)}`, m === ansH, m === ansH ? (vp ? `${cap(L.name)} has the weaker attractions, so more of its molecules escape. ${bpLine(W, L)}` : bpLine(W, L)) : wrongWhy, vp ? 'vp-backwards' : s1slip)), { keep: true, solution: vp ? `${cap(L.name)}: weaker attractions → more molecules escape → higher vapor pressure. ${bpLine(W, L)}` : pairWhy(W, L, r), hint: vp ? 'First decide which liquid holds its molecules more tightly. That one has the LOWER vapor pressure.' : 'Similar molar mass (similar number of electrons)? Then compare the type of force. Same type of force? Then the higher molar mass wins.' });
+  const p1 = choicePart(ask, [A, B].map(m => opt(`${cap(m.name)}, ${fo(m)}`, m === ansH, m === ansH ? (vp ? `${cap(L.name)} has the weaker attractions, so more of its molecules escape. ${bpLine(W, L)}` : bpLine(W, L)) : wrongWhy, vp ? 'vp-backwards' : s1slip)), { keep: true, solution: vp ? `${cap(L.name)}: weaker attractions → more molecules escape → higher vapor pressure. ${bpLine(W, L)}` : pairWhy(W, L, r), hint: vp ? 'First decide which liquid holds its molecules more tightly. That one has the LOWER vapor pressure.' : r === 'sizewins' ? 'Compare the molar masses first. One of these is several times heavier, and that much extra dispersion can beat a stronger type of force.' : r === 'size' ? 'Both have the same types of force, so the higher molar mass (more electrons) wins.' : W.e < L.e - 2 ? 'The molar masses are not very different, so check the type of force first: does only one of them have an H on N, O or F, or a net dipole?' : 'They are about the same size, so the type of force decides: dispersion &lt; dipole–dipole &lt; hydrogen bonding.' });
   const p2 = choicePart(`Why are the attractions between ${W.name} ${unit(W)} stronger?`, reasonOptions(W, L, r), { solution: pairWhy(W, L, r), hint: 'Check each molecule: polar? H on N, O or F? What is its molar mass (how many electrons)?' });
   return { topic, tag: `${F(A.f)} vs ${F(B.f)}`, stem: figure(molCard(A, { e: true, maxW: 230 }), molCard(B, { e: true, maxW: 230 })), tip: vp ? 'Vapor pressure runs opposite to boiling point: weak forces → easy escape → high vapor pressure.' : 'Boiling separates molecules. Stronger attractions between molecules → higher boiling point.', parts: [p1, p2] };
 }
@@ -1138,17 +1157,17 @@ const TRIPLES = [
   { keys: ['C4H10', 'C3H6O', 'C3H7OH'], why: 'Similar size. Butane: dispersion only. Acetone: polar C=O (dipole–dipole). 1-Propanol: O–H, so hydrogen bonding.', for: ['3A', '1A', '3B'] },
   { keys: ['C2H6', 'CH3F', 'CH3OH'], why: 'All have 18 electrons. Ethane: dispersion only. Fluoromethane: polar, but its H atoms are on carbon. Methanol: O–H, so hydrogen bonding.', for: ['3A', '1A'] },
   { keys: ['F2', 'HCl', 'CH3OH'], why: 'All have 18 electrons. F₂: dispersion only. HCl: dipole–dipole. Methanol: hydrogen bonding.', for: ['1A'] },
-  { keys: ['C3H6O_al', 'C3H7OH', 'C2H4O2'], why: 'Similar size. Propanal has no O–H (dipole–dipole). 1-Propanol hydrogen bonds. Acetic acid hydrogen bonds at two spots (C=O and O–H), so two molecules pair up tightly.', for: ['3B'] },
+  { keys: ['C3H6O_al', 'C3H7OH', 'C2H4O2'], why: 'Similar size. Propanal has no O–H (dipole–dipole). 1-Propanol hydrogen bonds. Acetic acid hydrogen bonds at two spots (C=O and O–H), so two molecules pair up tightly.', hint: 'One has no O–H. The other two both hydrogen bond, but the acid does it at two spots (C=O and O–H).', for: ['3B'] },
   { keys: ['C4H10', 'C3H6O_al', 'C3H7OH'], why: 'Similar size. Alkane: dispersion only. Aldehyde: dipole–dipole. Alcohol: hydrogen bonding.', for: ['3B'] },
-  { keys: ['C3H9N', 'C3H7NH2', 'C3H7OH'], why: 'Similar size. Trimethylamine has no N–H (dipole–dipole). Propylamine hydrogen bonds through N–H. 1-Propanol’s O–H makes stronger hydrogen bonds, because O is more electronegative than N.', for: ['3B'] }
+  { keys: ['C3H9N', 'C3H7NH2', 'C3H7OH'], why: 'Similar size. Trimethylamine has no N–H (dipole–dipole). Propylamine hydrogen bonds through N–H. 1-Propanol’s O–H makes stronger hydrogen bonds, because O is more electronegative than N.', hint: 'One has no N–H or O–H. The other two both hydrogen bond, and an O–H makes a stronger hydrogen bond than an N–H.', for: ['3B'] }
 ];
 function genTriple(topic = 'bprank') {
   const fam = chance(0.5), src = forCourse(fam ? FAMILIES : TRIPLES), T = drawBag((fam ? 'fam' : 'tri') + OPTS.course, src);
   let keys = T.keys; if (keys.length > 3) { const idx = shuffle(keys.map((_, i) => i)).slice(0, 3).sort((a, b) => a - b); keys = idx.map(i => keys[i]); }
   const sorted = K(keys).slice().sort((a, b) => a.bp - b.bp), items = shuffle(sorted).map(m => ({ html: fo(m), aria: m.name, m }));
   const p = rankPart('Tap them in order, <b>lowest → highest boiling point</b>.', items, sorted.map(m => items.findIndex(i => i.m === m)), {
-    hint: fam ? 'Same kind of force in all three, so compare molar mass: more mass means more electrons.' : 'They are about the same size, so sort by type of force: dispersion only, then dipole–dipole, then hydrogen bonding.',
-    orderHint: fam ? 'Higher molar mass → higher boiling point.' : 'Dispersion only &lt; dipole–dipole &lt; hydrogen bonding.',
+    hint: T.hint ? T.hint : fam ? 'Same kind of force in all three, so compare molar mass: more mass means more electrons.' : 'They are about the same size, so sort by type of force: dispersion only, then dipole–dipole, then hydrogen bonding.',
+    orderHint: T.hint ? '' : fam ? 'Higher molar mass → higher boiling point.' : 'Dispersion only &lt; dipole–dipole &lt; hydrogen bonding.',
     solution: `${T.why} ${sorted.map(m => `${fo(m)} ${degC(m.bp)}`).join(' · ')}.` });
   return { topic, tag: fam ? 'same family' : 'similar size', stem: `<div class="figure molrow">${items.map(i => molCard(i.m, { e: true, plain: true })).join('')}</div>`, tip: 'Similar molar mass → the type of force decides. Same type of force → the higher molar mass (more electrons) wins.', parts: [p] };
 }
@@ -1162,7 +1181,7 @@ const T_DISP = [
   { q: 'Which C₅H₁₂ isomer has the lowest boiling point?', art: () => isoFig([0, 1, 2]), c: [['Neopentane, C(CH₃)₄', true, 'It is the most compact, so its molecules touch the least: 9.5 °C, vs 27 °C and 36 °C.'], ['Isopentane', false, 'One branch lowers it to 27 °C, but neopentane is more compact still (9.5 °C).'], ['Pentane', false, 'The straight chain has the most contact and the highest boiling point (36 °C).'], ['They are all the same', false, 'Same formula, but shape changes how well the molecules touch.']] },
   { q: 'What does “polarizability” describe?', c: [['How easily an electron cloud is distorted into a temporary dipole', true, 'Big, loosely held clouds are easy to distort, which gives strong dispersion forces.'], ['How polar a bond is', false, 'That is bond polarity (electronegativity difference). Polarizability is about how squishy the electron cloud is.'], ['How easily a molecule loses an electron', false, 'That is ionization energy.'], ['How many hydrogen bonds a molecule can make', false, 'Polarizability relates to dispersion forces, not hydrogen bonding.']] },
   { q: 'Which noble gas has the <b>lowest</b> boiling point?', c: [['He', true, 'Only 2 electrons, so the weakest dispersion forces of all: it boils at 4.2 K.'], ['Ne', false, 'Ne (27 K) has 10 electrons. He has only 2.'], ['Ar', false, 'Ar boils at 87 K.'], ['Xe', false, 'Xe has the most electrons of these and the highest boiling point (165 K).']] },
-  { q: 'CH₄ boils at 112 K and C₅H₁₂ at 309 K. Neither is polar. What explains the 197 K gap?', c: [['Pentane has a higher molar mass (more electrons) and more surface, so stronger dispersion forces', true, 'Hydrocarbon boiling points climb steadily with chain length: 112, 185, 231, 274, 309 K for C1 to C5.'], ['Pentane can hydrogen bond', false, 'Its H atoms are all on carbon.', 'any-h-hbonds'], ['Pentane has dipole–dipole forces', false, 'Hydrocarbons are nonpolar.', 'polarity'], ['Pentane has more covalent bonds to break', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds']] }
+  { q: 'CH₄ boils at 112 K and C₅H₁₂ at 309 K. Neither is polar. What explains the 197 K gap?', c: [['Pentane has a higher molar mass (more electrons) and more surface, so stronger dispersion forces', true, 'Hydrocarbon boiling points climb steadily with chain length: 112, 185, 231, 273, 309 K for C1 to C5.'], ['Pentane can hydrogen bond', false, 'Its H atoms are all on carbon.', 'any-h-hbonds'], ['Pentane has dipole–dipole forces', false, 'Hydrocarbons are nonpolar.', 'polarity'], ['Pentane has more covalent bonds to break', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds']] }
 ];
 function isoFig(idx) { return `<div class="molrow">${idx.map(i => `<figure class="molcard"><div class="cformula">${F(ISO[i].cf)}</div><figcaption><b>${cap(ISO[i].name)}</b><br><small>${ISO[i].shape}</small></figcaption></figure>`).join('')}</div>`; }
 function genDisp() { const it = drawBag('disp', T_DISP); return staticQ('disp', Object.assign({}, it, { art: it.art ? it.art() : '', tip: 'Dispersion grows with the number of electrons and with how much surface the molecules can touch.' })); }
@@ -1170,7 +1189,7 @@ function genDisp() { const it = drawBag('disp', T_DISP); return staticQ('disp', 
 /* CHEM 3B: fatty acids (melting points as on the CHEM 3B reference table; lipids chapter) */
 const FA = [
   { name: 'lauric acid', c: 12, db: 0, mp: 44 }, { name: 'myristic acid', c: 14, db: 0, mp: 54 }, { name: 'palmitic acid', c: 16, db: 0, mp: 63 }, { name: 'stearic acid', c: 18, db: 0, mp: 69 },
-  { name: 'palmitoleic acid', c: 16, db: 1, mp: 0 }, { name: 'oleic acid', c: 18, db: 1, mp: 14 }, { name: 'linoleic acid', c: 18, db: 2, mp: -5 }, { name: 'linolenic acid', c: 18, db: 3, mp: -11 }, { name: 'arachidonic acid', c: 20, db: 4, mp: -50 }
+  { name: 'palmitoleic acid', c: 16, db: 1, mp: 0.5 }, { name: 'oleic acid', c: 18, db: 1, mp: 13 }, { name: 'linoleic acid', c: 18, db: 2, mp: -5 }, { name: 'linolenic acid', c: 18, db: 3, mp: -11 }, { name: 'arachidonic acid', c: 20, db: 4, mp: -49 }
 ];
 const faLabel = a => `${cap(a.name)} (${a.c}:${a.db})`;
 const faCard = a => `<figure class="molcard"><div class="cformula">${a.c}:${a.db}</div><figcaption><b>${cap(a.name)}</b><br><small>${a.c} carbons, ${a.db ? a.db + ' cis C=C' : 'saturated'}</small></figcaption></figure>`;
@@ -1199,7 +1218,7 @@ const T_VAPOR = [
   { q: 'In a sealed bottle half full of water, the vapor pressure becomes steady. What is true then?', c: [['Evaporation and condensation are happening at the same rate', true, 'This is a dynamic equilibrium: molecules keep leaving and returning, in equal numbers.'], ['Evaporation has stopped', false, 'Molecules never stop escaping. They return to the liquid just as fast.'], ['All the water has evaporated', false, 'Liquid remains. The gas above it holds as much vapor as it can at that temperature.'], ['Condensation has stopped', false, 'Both processes keep going, at equal rates.']] },
   { q: 'Water boils at a lower temperature in Denver than in Fresno. Why?', hint: 'A liquid boils when its vapor pressure equals the pressure pushing down on it.', c: [['The air pressure is lower, so water’s vapor pressure matches it at a lower temperature', true, 'Boiling starts when vapor pressure = outside pressure. Less outside pressure → less heating needed.'], ['Hydrogen bonds are weaker at high altitude', false, 'Altitude does not change the forces between water molecules. It changes the pressure pushing on the liquid.'], ['There is less oxygen', false, 'Boiling does not need oxygen. The total air pressure is what matters.'], ['Water molecules are lighter at altitude', false, 'A water molecule has the same mass everywhere.']] },
   { q: 'The normal boiling point is the temperature where a liquid’s vapor pressure equals…', c: [['1 atm (760 torr)', true, 'For water that happens at 100 °C, where its vapor pressure is 760 torr.'], ['0 atm', false, 'Every liquid has some vapor pressure. Boiling starts when it matches the outside pressure.'], ['the pressure at the triple point', false, 'The normal boiling point is defined at 1 atm.'], ['its surface tension', false, 'Those are different properties with different units.']] },
-  { q: 'At 20 °C these alcohols have vapor pressures of 11.9, 5.95, 2.67 and 0.56 kPa. Which value belongs to <b>methanol</b>, CH₃OH?', hint: 'Methanol is the smallest of the four.', c: [['11.9 kPa', true, 'Methanol has the fewest electrons, so the weakest dispersion forces of the four alcohols, and escapes most easily (OpenStax Example 10.5).'], ['0.56 kPa', false, SLIP['vp-backwards'] + ' The smallest alcohol has the weakest attractions.', 'vp-backwards'], ['5.95 kPa', false, 'That is ethanol. Methanol is smaller, so it escapes more easily.'], ['2.67 kPa', false, 'That is propanol. Methanol is smaller, so it escapes more easily.']] },
+  { q: 'At 20 °C, methanol, ethanol, 1-propanol and 1-butanol have vapor pressures of 11.9, 5.95, 2.67 and 0.56 kPa (not in that order). Which value belongs to <b>methanol</b>, CH₃OH?', hint: 'All four hydrogen bond through one O–H, so size decides. Methanol is the smallest of the four.', c: [['11.9 kPa', true, 'Methanol has the fewest electrons, so the weakest dispersion forces of the four alcohols, and escapes most easily (OpenStax Example 10.5).'], ['0.56 kPa', false, SLIP['vp-backwards'] + ' The smallest alcohol has the weakest attractions.', 'vp-backwards'], ['5.95 kPa', false, 'That is ethanol. Methanol is smaller, so it escapes more easily.'], ['2.67 kPa', false, 'That is 1-propanol. Methanol is smaller, so it escapes more easily.']] },
   { q: 'Rubbing alcohol on your skin feels cold as it evaporates. Why?', c: [['Evaporation absorbs heat: escaping molecules take energy from your skin', true, 'Overcoming attractions takes energy, so evaporation is endothermic.'], ['Evaporation releases heat', false, 'Breaking attractions takes energy in. It is condensation that releases heat.', 'endo-exo-swap'], ['The alcohol reacts with your skin', false, 'It is a physical change: molecules just leave the liquid.']] }
 ];
 function genVapor() {
@@ -1221,22 +1240,26 @@ const T_LIQ = [
   { for: ['3A', '1A'], q: 'A water strider can stand on a pond. Which property of water makes that possible?', c: [['High surface tension, from hydrogen bonding', true, 'The hydrogen-bonded surface resists being stretched or broken.'], ['High vapor pressure', false, 'Water’s vapor pressure is low for its size, and it does not hold insects up.'], ['Low viscosity', false, 'Viscosity is about flow. The “skin” effect is surface tension.'], ['Its covalent O–H bonds', false, 'Bonds inside a molecule do not hold neighboring molecules together. Hydrogen bonds between molecules do.', 'hbond-is-covalent']] },
   { for: ['3A', '1A'], q: 'Why does warm maple syrup pour faster than cold syrup?', c: [['Faster-moving molecules overcome their attractions more easily, so viscosity drops', true, 'Heating lowers viscosity.'], ['Heating makes the molecules smaller', false, 'Molecules do not change size. They move faster.'], ['Heating strengthens hydrogen bonds', false, 'Stronger attractions would make it pour more slowly.'], ['Heating breaks the sugar molecules apart', false, 'Warming syrup is a physical change. The molecules stay whole.', 'boil-breaks-bonds']] },
   { for: ['1A'], q: 'Mercury’s surface tension (458.48 mN/m) is far above water’s (71.99 mN/m). What holds mercury atoms together so strongly?', c: [['Metallic bonding', true, 'Liquid mercury is a metal: its atoms share a sea of electrons, a much stronger attraction than hydrogen bonding.'], ['Hydrogen bonding', false, 'Mercury has no hydrogen.', 'any-h-hbonds'], ['Dipole–dipole forces', false, 'Single Hg atoms have no dipole.'], ['Ion–dipole forces', false, 'There are no ions and no dipoles in pure mercury.', 'no-ions']] },
-  { for: ['1A'], q: 'Hexane (C₆H₁₄) and 1-hexanol (C₆H₁₃OH) are about the same size. Which is more viscous, and why?', c: [['1-Hexanol: its O–H groups hydrogen bond, so molecules resist sliding past each other', true, 'Adding hydrogen bonding on top of similar dispersion forces raises the viscosity.'], ['Hexane: it has more hydrogen atoms', false, SLIP['any-h-hbonds'], 'any-h-hbonds'], ['Hexane: nonpolar liquids are always thicker', false, 'Weak forces make a liquid runny. Hexane has dispersion forces only.'], ['They are the same, because they are the same size', false, SLIP['size-ignores-type'], 'size-ignores-type']] }
+  { for: ['1A'], q: 'Hexane (C₆H₁₄) and 1-hexanol (C₆H₁₃OH) are about the same size. Which is more viscous, and why?', c: [['1-Hexanol: its O–H groups hydrogen bond, so molecules resist sliding past each other', true, 'Adding hydrogen bonding on top of similar dispersion forces raises the viscosity.'], ['Hexane: it has more hydrogen atoms', false, SLIP['any-h-hbonds'], 'any-h-hbonds'], ['Hexane: nonpolar liquids are always thicker', false, 'Weak forces make a liquid runny. Hexane has dispersion forces only.'], ['They are the same, because they are the same size', false, SLIP['size-ignores-type'], 'size-ignores-type']] },
+  { for: ['3A', '1A'], q: 'Rain beads up on a freshly waxed car instead of spreading out. Why?', c: [['Water molecules attract each other much more than they attract the nonpolar wax', true, 'Hydrogen bonds pull the water inward into a bead. That inward pull is surface tension.'], ['Wax is polar and pushes the water away', false, 'Wax is nonpolar. Water simply attracts other water molecules more than it attracts wax.', 'like-dissolves-like'], ['Water has a low surface tension', false, 'It is the reverse: water’s high surface tension is what pulls it into beads.'], ['The water reacts with the wax', false, 'Nothing reacts. Beading is a physical effect of the attractions between water molecules.']] },
+  { for: ['3A', '1A'], q: 'Motor oil and gasoline are both mixtures of nonpolar hydrocarbons, but motor oil pours much more slowly. Why?', c: [['Oil molecules are much longer, so their dispersion forces are stronger and the chains tangle', true, 'Gasoline molecules have about 5 to 12 carbons. Motor oil molecules have 20 or more, so a higher molar mass and stronger dispersion forces: a higher viscosity.'], ['Motor oil can hydrogen bond', false, 'Hydrocarbons have every H on carbon. ' + SLIP['any-h-hbonds'], 'any-h-hbonds'], ['Motor oil is polar', false, 'Both are nonpolar hydrocarbons.', 'polarity'], ['Gasoline molecules are the bigger ones', false, 'Gasoline molecules are the smaller ones, which is why gasoline also evaporates faster.', 'chain-length']] }
 ];
 function genLiquids() {
   if (OPTS.course === '1A' && chance(0.45)) {
     const prop = pick(['st', 'visc']), [a, b] = drawBag('liq' + prop, [[0, 2], [0, 3], [1, 2], [1, 3], [0, 1]]).map(i => LIQ[i]);
     const W = a[prop] > b[prop] ? a : b, L = W === a ? b : a, pname = prop === 'st' ? 'surface tension' : 'viscosity', u = prop === 'st' ? 'mN/m' : 'mPa·s';
     const trapVisc = prop === 'visc' && W.name === 'ethylene glycol' && L.name === 'water';
-    const why = `${cap(W.name)}: ${W.note}. ${cap(L.name)}: ${L.note}. ${trapVisc ? 'Ethylene glycol molecules are larger and tangle through two O–H groups each, so they slide past each other slowly. ' : ''}${cap(pname)} at 25 °C: ${W.name} ${W[prop]} ${u}, ${L.name} ${L[prop]} ${u} (OpenStax Table ${prop === 'st' ? '10.3' : '10.2'}).`;
-    return { topic: 'liquids', tag: pname, stem: `<div class="figure molrow">${shuffle([a, b]).map(x => `<figure class="molcard"><div class="cformula">${F(x.f)}</div><figcaption><b>${cap(x.name)}</b></figcaption></figure>`).join('')}</div>`, tip: 'Stronger attractions → higher surface tension and higher viscosity.', parts: [choicePart(`Which has the higher <b>${pname}</b> at 25 °C?`, [a, b].map(x => opt(cap(x.name), x === W, x === W ? why : `Compare the forces. ${why}`, 'weak-vs-strong')), { keep: true, solution: why, hint: 'Count the O–H groups on each molecule. More hydrogen bonding → stronger attractions.' })] };
+    const trapEt = prop === 'visc' && W.name === 'ethanol' && L.name === 'water', vsOct = L.name === 'octane' && W.name === 'water';
+    const hintL = trapVisc || (W.name === 'water' && L.name === 'ethylene glycol') ? 'Both hydrogen bond through two O–H groups. Surface tension: which one packs more hydrogen bonds into its surface? Viscosity: which molecule is bigger, and can tangle with its neighbors?' : trapEt ? 'This one is close. Both hydrogen bond. Viscosity also depends on the size and shape of the molecule: bigger molecules slide past each other more slowly.' : L.name === 'octane' ? 'One of these hydrogen bonds and the other has dispersion forces only.' : 'Count the O–H groups on each molecule. More hydrogen bonding → stronger attractions.';
+    const why = `${cap(W.name)}: ${W.note}. ${cap(L.name)}: ${L.note}. ${trapVisc ? 'Ethylene glycol molecules are larger and tangle through two O–H groups each, so they slide past each other slowly. ' : ''}${trapEt ? 'It is close: water hydrogen bonds more, but ethanol molecules are larger, so they slide past each other a little more slowly. ' : ''}${vsOct ? 'Octane boils higher than water only because each big molecule has so many dispersion contacts. Packed into the same space, water’s small molecules make far more strong attractions. ' : ''}${cap(pname)} at 25 °C: ${W.name} ${W[prop]} ${u}, ${L.name} ${L[prop]} ${u} (OpenStax Table ${prop === 'st' ? '10.3' : '10.2'}).`;
+    return { topic: 'liquids', tag: pname, stem: `<div class="figure molrow">${shuffle([a, b]).map(x => `<figure class="molcard"><div class="cformula">${F(x.f)}</div><figcaption><b>${cap(x.name)}</b></figcaption></figure>`).join('')}</div>`, tip: 'Stronger attractions → higher surface tension and higher viscosity.', parts: [choicePart(`Which has the higher <b>${pname}</b> at 25 °C?`, [a, b].map(x => opt(cap(x.name), x === W, x === W ? why : `Compare the forces. ${why}`, 'weak-vs-strong')), { keep: true, solution: why, hint: hintL })] };
   }
   return staticQ('liquids', Object.assign({ tip: 'Stronger attractions → higher boiling point, surface tension and viscosity, but lower vapor pressure.' }, drawBag('liq' + OPTS.course, forCourse(T_LIQ))));
 }
 
 /* mixing: [solute, solvent, kinds, mixes?, courses]. kinds: p polar/H-bonding, n nonpolar, i ionic */
 const MIX = [
-  ['ethanol', 'water', 'pp', ['3A', '1A', '3B']], ['methanol', 'water', 'pp', ['3A', '1A', '3B']], ['acetone', 'water', 'pp', ['1A', '3B']], ['ammonia', 'water', 'pp', ['3A', '1A']], ['acetic acid (vinegar)', 'water', 'pp', ['3A', '3B']], ['glucose', 'water', 'pp', ['3A', '3B']],
+  ['ethanol', 'water', 'pp', ['3A', '1A', '3B']], ['methanol', 'water', 'pp', ['3A', '1A', '3B']], ['acetone', 'water', 'pp', ['1A', '3B']], ['ammonia', 'water', 'pp', ['3A', '1A']], ['acetic acid (the acid in vinegar)', 'water', 'pp', ['3A', '3B']], ['glucose', 'water', 'pp', ['3A', '3B']],
   ['hexane', 'water', 'np', ['3A', '1A', '3B']], ['vegetable oil', 'water', 'np', ['3A', '3B']], ['carbon tetrachloride', 'water', 'np', ['1A']], ['octane (gasoline)', 'water', 'np', ['3A', '1A']], ['iodine (I₂)', 'water', 'np', ['1A']],
   ['pentane', 'hexane', 'nn', ['3A', '1A', '3B']], ['iodine (I₂)', 'hexane', 'nn', ['1A']], ['octane', 'carbon tetrachloride', 'nn', ['1A']], ['vegetable oil', 'hexane', 'nn', ['3A', '3B']], ['bromine (Br₂)', 'carbon tetrachloride', 'nn', ['1A']],
   ['NaCl', 'water', 'ip', ['3A', '1A', '3B']], ['KBr', 'water', 'ip', ['3A', '1A']], ['NaCl', 'hexane', 'in', ['3A', '1A', '3B']], ['KBr', 'carbon tetrachloride', 'in', ['1A']]
@@ -1252,7 +1275,7 @@ function genMixing() {
   const c = OPTS.course, [a, b, k] = drawBag('mix' + c, MIX.filter(m => m[3].includes(c))), X = MIXK[k], id = c === '1A' && k === 'ip';
   const kinds = `${cap(a)} is ${X.a}; ${b} is ${X.b}.`;
   const txt = kk => MIXK[kk].text + (kk === 'ip' && c === '1A' ? ' (ion–dipole)' : '');
-  const p1 = choicePart(`Does ${a} dissolve in (mix with) ${b}?`, [opt('Yes, they mix', X.yes, `${kinds} ${X.yes ? 'Like dissolves like.' : SLIP['like-dissolves-like']}`, 'like-dissolves-like'), opt('No, they stay separate', !X.yes, `${kinds} ${X.yes ? SLIP['like-dissolves-like'] : 'Mismatched forces stay apart.'}`, 'like-dissolves-like')], { keep: true, solution: `${kinds} ${txt(k)}.`, hint: 'Classify each one first: polar, nonpolar or ionic?' });
+  const p1 = choicePart(`Does ${a} dissolve in (mix with) ${b}?`, [opt('Yes, they mix', X.yes, `${kinds} ${k === 'ip' ? 'The ions attract the partial charges on the polar molecules.' : X.yes ? 'Like dissolves like.' : SLIP['like-dissolves-like']}`, 'like-dissolves-like'), opt('No, they stay separate', !X.yes, `${kinds} ${X.yes ? SLIP['like-dissolves-like'] : 'Mismatched forces stay apart.'}`, 'like-dissolves-like')], { keep: true, solution: `${kinds} ${txt(k)}.`, hint: 'Classify each one first: polar, nonpolar or ionic?' });
   const others = shuffle(Object.keys(MIXK).filter(x => x !== k && MIXK[x].yes === X.yes).concat(shuffle(Object.keys(MIXK).filter(x => MIXK[x].yes !== X.yes)).slice(0, 1)));
   const p2 = choicePart('Why?', [opt(txt(k), true, `${kinds}${id ? ' This attraction is called ion–dipole.' : ''}`), ...others.map(x => opt(txt(x), false, `Check each substance. ${kinds}`, 'like-dissolves-like'))], { solution: `${kinds} ${txt(k)}.`, hint: kinds });
   return { topic: 'mixing', tag: `${a} + ${b}`, stem: '', tip: 'Like dissolves like. Polar and ionic substances mix with polar liquids. Nonpolar mixes with nonpolar.', parts: [p1, p2] };
@@ -1265,7 +1288,7 @@ const T_SOL3B = [
   { q: 'Which is <b>most</b> soluble in water?', c: [['1-Propanol, CH₃CH₂CH₂OH', true, 'A short chain plus an O–H that hydrogen bonds with water.'], ['Propane, CH₃CH₂CH₃', false, 'Propane is nonpolar: dispersion forces only.', 'like-dissolves-like'], ['1-Octanol, CH₃(CH₂)₇OH', false, 'It has an O–H, but the eight-carbon tail is too hydrophobic.'], ['Octane, CH₃(CH₂)₆CH₃', false, 'Octane is nonpolar and does not mix with water.', 'like-dissolves-like']] },
   { q: 'Dimethyl ether (CH₃OCH₃) cannot hydrogen bond with itself, yet it dissolves fairly well in water. Why?', c: [['Its O has lone pairs that accept hydrogen bonds from water’s O–H', true, 'An ether has no O–H to donate, but it can accept a hydrogen bond from water.'], ['Its C–H hydrogens hydrogen bond to water', false, SLIP['any-h-hbonds'], 'any-h-hbonds'], ['It is nonpolar, like water', false, 'Water is very polar, and dimethyl ether is polar too (bent at O).', 'polarity'], ['It turns into ions in water', false, 'It stays as whole molecules.']] }
 ];
-function genSol3B() { return chance(0.5) ? genMixing() : Object.assign(staticQ('mixing', Object.assign({ tip: 'Hydrophilic = attracts water (O–H, N–H, charges). Hydrophobic = nonpolar carbon chains.' }, drawBag('sol3b', T_SOL3B))), { tag: 'chain length' }); }
+function genSol3B() { return chance(0.5) ? genMixing() : Object.assign(staticQ('mixing', Object.assign({ tip: 'Hydrophilic = attracts water (O–H, N–H, charges). Hydrophobic = nonpolar carbon chains.' }, drawBag('sol3b', T_SOL3B))), { tag: 'water-loving or water-fearing' }); }
 
 /* ================= H-BOND LAB: a teaching model, not molecular dynamics (CONCEPT-MAP.md §6.1 and "Model rules") =================
    Flat 2D rigid molecules. Each substance gets a stickiness: ΔHvap in kJ/mol where Dr. Dan's tables give one (water 40.70,
@@ -1349,7 +1372,7 @@ const simPerMol = s => 2 * s.bonds.length / s.mols.length;
 /* predictions the student makes before the molecules start moving */
 const LAB_NAME = { H2O: 'water', NH3: 'ammonia', HF: 'hydrogen fluoride', CH3OH: 'methanol', CH4: 'methane' };
 const LAB_PRED = [
-  { id: 'water-nh3', mol: 'H2O', T: 25, q: 'Water and ammonia both hydrogen bond. At the same temperature, which will show <b>more hydrogen bonds per molecule</b>?', test: 'Run water at 25 °C, then switch to NH₃ and compare the counter. Then heat both.', c: [
+  { id: 'water-nh3', mol: 'H2O', T: 25, q: 'Water and ammonia both hydrogen bond. At the same temperature, which will show <b>more hydrogen bonds per molecule</b>?', test: 'Run water at 25 °C, then switch to NH₃ and compare the counter. At 25 °C ammonia is a gas, so also cool both down: ammonia still tops out near 2 per molecule, water near 4.', c: [
     ['Water, H₂O', true, 'Each water molecule has 2 H atoms <b>and</b> 2 lone pairs, so it can be part of up to 4 hydrogen bonds. NH₃ has 3 H atoms but only 1 lone pair to accept with. That matches the boiling points: water 100 °C, ammonia −33 °C.'],
     ['Ammonia, NH₃, because it has more H atoms', false, 'A hydrogen bond needs an H <b>and</b> a lone pair to point it at. NH₃ has only 1 lone pair, so most of its H atoms have nowhere to go. Water (2 H, 2 lone pairs) makes more: it boils at 100 °C, ammonia at −33 °C.', 'hbond-needs-lone-pair'],
     ['The same, because both hydrogen bond', false, 'They hydrogen bond to different extents. Water has 2 H and 2 lone pairs per molecule; NH₃ has 3 H but only 1 lone pair.', 'hbond-needs-lone-pair']] },
@@ -1372,7 +1395,7 @@ const LAB_PRED = [
     ['Water', true, 'Water can donate 2 H atoms and accept at 2 lone pairs. Methanol has only 1 H on oxygen; its CH₃ hydrogens are on carbon and do not count. Boiling points: water 100 °C, methanol 65 °C.'],
     ['Methanol, because it has four H atoms', false, SLIP['any-h-hbonds'] + ' Only one of methanol’s four H atoms is on oxygen.', 'any-h-hbonds'],
     ['Methanol, because it is the bigger molecule', false, 'Size adds dispersion, but hydrogen bonds are counted by O–H groups and lone pairs: water has two O–H, methanol one.', 'size-ignores-type']] },
-  { id: 'water-hf', for: ['3A', '1A'], mol: 'HF', T: 0, q: 'HF has the most polar bond of all, but only one H. At the same temperature, which shows more hydrogen bonds per molecule: HF or water?', test: 'Run HF at 0 °C, then switch to water and compare the counter.', c: [
+  { id: 'water-hf', for: ['3A', '1A'], mol: 'HF', T: 0, q: 'HF has the most polar H–X bond, but only one H. At the same temperature, which shows more hydrogen bonds per molecule: HF or water?', test: 'Run HF at 0 °C, then switch to water and compare the counter.', c: [
     ['Water', true, 'Each HF can donate only one H, so HF forms chains. Water donates two and accepts two, building a network. Boiling points: water 100 °C, HF 20 °C.'],
     ['HF, because F is the most electronegative atom', false, 'Each H–F···H–F bond is strong, but there is only one H per molecule. The number of bonds per molecule matters too: water makes about twice as many.', 'hbond-needs-lone-pair'],
     ['The same', false, 'HF has 1 H per molecule; water has 2 H and 2 lone pairs, so water can be part of more hydrogen bonds.', 'hbond-needs-lone-pair']] }
@@ -1471,7 +1494,7 @@ function genCurve() {
     opt(`${other}: heat is absorbed`, false, `${other} happens when heat is added (moving right). ` + SLIP['endo-exo-swap'], 'endo-exo-swap'),
     opt(`${nm}: heat is absorbed`, false, SLIP['endo-exo-swap'], 'endo-exo-swap'),
     opt('The temperature drops steadily', false, 'A flat segment stays flat in both directions: ' + (i === 1 ? '0 °C until all the water is frozen.' : '100 °C until all the steam has condensed.'), 'plateau-heats-up')], { solution: `Cooling along segment ${s.k} is ${nm.toLowerCase()}, an exothermic change at constant temperature.`, hint: 'Every phase change has a reverse with the opposite heat flow.' })); }
-  return Q('largest step', null, choicePart('Ice at −20 °C is heated all the way to steam at 145 °C. Which segment takes the most heat?', segOpts(3, `Boiling: ${HC.q[3].toFixed(1)} kJ of the ${HC.total.toFixed(1)} kJ total for 15.0 g. Vaporization breaks nearly all the attractions.`, (x, j) => `Segment ${x.k} takes ${HC.q[j].toFixed(2)} kJ for 15.0 g. Boiling (D) takes ${HC.q[3].toFixed(1)} kJ.`), { keep: true, solution: `D, boiling: ${HC.q[3].toFixed(1)} of ${HC.total.toFixed(1)} kJ.`, hint: 'Which change pulls the molecules farthest apart?' }));
+  return Q('largest step', null, choicePart('Ice at −20 °C is heated all the way to steam at 145 °C. Which segment takes the most heat?', segOpts(3, `Boiling: ${HC.q[3].toFixed(1)} kJ of the ${HC.total.toFixed(1)} kJ total for 15.0 g. Vaporization breaks nearly all the attractions.`, (x, j) => `Segment ${x.k} takes ${HC.q[j].toPrecision(3)} kJ for 15.0 g. Boiling (D) takes ${HC.q[3].toFixed(1)} kJ.`), { keep: true, solution: `D, boiling: ${HC.q[3].toFixed(1)} of ${HC.total.toFixed(1)} kJ.`, hint: 'Which change pulls the molecules farthest apart?' }));
 }
 
 /* ---------- Heating Curve Lab: the particle box (water only; reuses the H-bond model above) ----------
@@ -1538,7 +1561,7 @@ function pdVap(S, T) { const x = 1 / (T + KEL), v = S.vapPts; let i = 0; while (
 const pdSub = (S, T) => Math.exp(Math.log(S.tp[1]) + S.subB * (1 / (T + KEL) - 1 / (S.tp[0] + KEL)));   // solid–gas line
 const pdMelt = (S, P) => S.tp[0] + S.slope * (P - S.tp[1]);                                                // solid–liquid line
 function phaseAt(S, T, P) {
-  if (T > S.cp[0] && P > S.cp[1]) return 'scf';
+  if (T >= S.cp[0] && P >= S.cp[1]) return 'scf';
   if (P < S.tp[1]) return T < S.tp[0] && P > pdSub(S, T) ? 'solid' : 'gas';
   if (T < pdMelt(S, P)) return 'solid';
   if (T >= S.cp[0]) return 'gas';
@@ -1558,7 +1581,7 @@ const pdX = (S, T) => PDV.x0 + (T - S.T[0]) / (S.T[1] - S.T[0]) * (PDV.x1 - PDV.
 const pdYp = (S, P) => PDV.y1 - (Math.log10(P) - Math.log10(S.P[0])) / (Math.log10(S.P[1]) - Math.log10(S.P[0])) * (PDV.y1 - PDV.y0);
 const pdInv = (S, x, y) => [Math.max(S.T[0], Math.min(S.T[1], S.T[0] + (x - PDV.x0) / (PDV.x1 - PDV.x0) * (S.T[1] - S.T[0]))), Math.max(S.P[0], Math.min(S.P[1], Math.pow(10, Math.log10(S.P[0]) + (PDV.y1 - y) / (PDV.y1 - PDV.y0) * (Math.log10(S.P[1]) - Math.log10(S.P[0])))))];
 const fmtP = P => (P >= 100 ? P.toFixed(0) : P >= 10 ? P.toFixed(1) : P >= 1 ? P.toFixed(2) : P >= 0.01 ? P.toFixed(3) : P.toFixed(4)) + ' atm';
-const fmtT = T => (T < -0.05 ? '−' : '') + Math.abs(T).toFixed(1) + ' °C';
+const fmtT = T => (T < -0.05 ? '−' : '') + Math.abs(T).toFixed(T > 0 && T < 0.05 ? 2 : 1) + ' °C';
 const tickP = P => P >= 1 ? String(P) : String(P).replace(/^0\./, '0.');
 function pdSvg(S, o = {}) {
   const V = PDV, f1 = v => v.toFixed(1), XY = (T, P) => f1(pdX(S, T)) + ' ' + f1(pdYp(S, Math.max(S.P[0], Math.min(S.P[1], P))));
@@ -1591,11 +1614,11 @@ function pdSvg(S, o = {}) {
 }
 const pdFig = (S, o, capx) => `<div class="figure">${pdSvg(S, o)}<small class="figcap">Phase diagram of ${S.name}, ${S.f}${capx || ''}. The pressure axis is a log scale.</small></div>`;
 const PD_ARROWS = {
-  water: [[[-25, 1], [40, 1]], [[40, 1], [-25, 1]], [[40, 1], [165, 1]], [[165, 1], [40, 1]], [[-30, 0.003], [60, 0.003]], [[60, 0.003], [-30, 0.003]], [[150, 0.4], [150, 40]]],
+  water: [[[-25, 1], [40, 1]], [[40, 1], [-25, 1]], [[40, 1], [165, 1]], [[165, 1], [40, 1]], [[-40, 0.002], [60, 0.002]], [[60, 0.002], [-40, 0.002]], [[150, 0.4], [150, 40]]],
   co2: [[[-105, 1], [-40, 1]], [[-40, 1], [-105, 1]], [[-80, 20], [-30, 20]], [[-30, 20], [-80, 20]], [[-20, 60], [-20, 4]], [[0, 8], [0, 65]]],
   hydrazine: [[[-25, 1], [50, 1]], [[50, 1], [-25, 1]], [[50, 1], [210, 1]], [[210, 1], [50, 1]]]
 };
-const PD_STATES = { water: [[-10, 0.5], [25, 0.9], [50, 0.4], [80, 0.05], [50, 0.003], [200, 0.25], [-10, 0.003]], co2: [[-30, 20], [-90, 10], [-60, 1], [20, 1], [-40, 15]], hydrazine: [[25, 1], [150, 1], [-10, 1], [200, 50]] };
+const PD_STATES = { water: [[-30, 0.5], [25, 0.9], [50, 0.4], [80, 0.05], [50, 0.003], [200, 0.25], [-35, 0.003]], co2: [[-30, 40], [-90, 10], [-60, 1], [20, 1], [-40, 30]], hydrazine: [[25, 1], [150, 1], [-25, 1], [200, 50]] };   // every point sits well clear of the drawn lines
 const pdSubs = () => OPTS.course === '1A' ? ['water', 'co2', 'hydrazine'] : ['water', 'co2'];
 function genPDiagram() {
   const c = OPTS.course, kinds = ['region', 'cross', 'cross', 'marks', 'triple', 'state'].concat(c === '1A' ? ['critical', 'squeeze', 'slope', 'maxliq'] : []);
@@ -1666,14 +1689,20 @@ const PD_PRED = [
 
 /* ================= TILE 5: Cells & Osmosis (all courses; Π = iMRT in CHEM 1A only; CONCEPT-MAP.md §6.9) ================= */
 /* typed numbers: E notation, ×10^, thousands separators; Dr. Dan's sig-fig rule (trailing zeros with no decimal point do not count) */
+const SUPS = { '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁻': '-', '⁺': '+' };
+/* tidy what was typed: any kind of minus sign, superscript exponents (×10³), and a unit typed after the number (7.84 atm) */
+function normNum(raw) {
+  return String(raw).trim().replace(/[−–—]/g, '-').replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+/g, m => '^' + m.replace(/./g, c => SUPS[c]))
+    .replace(/(\d|\.)\s*(?:°\s*[CFK]?|%|[a-df-wyzA-DF-WYZµ][a-zA-Z/·.\s]*)$/, '$1').replace(/\s+/g, '');
+}
 function parseNum(raw) {
-  let s = String(raw).trim().replace(/[−–—]/g, '-').replace(/\s+/g, '');
+  let s = normNum(raw);
   if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
-  s = s.replace(/^\+/, '').replace(/[×x*]10\^?\(?([-+]?\d+)\)?$/i, 'e$1');
+  s = s.replace(/^\+/, '').replace(/[×x*]10\^\(?([-+]?\d+)\)?$/i, 'e$1');
   return /^-?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s) ? +s : NaN;
 }
 function countSF(raw) {
-  let s = String(raw).trim().replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/^[-+]/, '').replace(/,/g, '').replace(/([×x*]10\^?\(?|e)[-+]?\d+\)?$/i, '');
+  let s = normNum(raw).replace(/^[-+]/, '').replace(/,/g, '').replace(/([×x*]10\^\(?|e)[-+]?\d+\)?$/i, '');
   if (s.includes('.')) { const d = s.replace('.', '').replace(/^0+/, ''); return d.length || 1; }
   return s.replace(/^0+/, '').replace(/0+$/, '').length || 1;
 }
@@ -1684,7 +1713,10 @@ function numPart(ask, fields, o = {}) { return Object.assign({ kind: 'nums', ask
 function checkNum(f, raw) {
   const v = parseNum(raw); if (!Number.isFinite(v)) return { ok: false, slip: 'format', why: 'Type a number.' };
   const good = f.exact ? Math.abs(v - f.answer) < 1e-9 : f.abs ? Math.abs(v - f.answer) <= f.abs : Math.abs(v - f.answer) <= (f.tol || 0.01) * Math.abs(f.answer);
-  if (good) return { ok: true, sf: !f.exact && f.sf && countSF(raw) !== f.sf };
+  /* a wrong-method value (f.traps) can sit inside the tolerance when a solution is dilute: if it shows differently at 3 sig figs and the entry is nearer to it than to the answer, it is not accepted */
+  const trapped = good && !f.exact && (f.traps || []).some(t => fmtSF(t, 3) !== fmtSF(f.answer, 3) && Math.abs(v - t) < Math.abs(v - f.answer));
+  if (good && !trapped) return { ok: true, sf: !f.exact && f.sf && countSF(raw) !== f.sf };
+  if (!good && !f.exact && f.sf > 1) { const n = countSF(raw); if (n < f.sf && Math.abs(v - Number(f.answer.toPrecision(n))) <= 1e-9 * Math.abs(f.answer)) return { ok: false, slip: 'sig-figs', why: `Your value rounds correctly, but it has only ${n} sig fig${n === 1 ? '' : 's'}. Give ${f.sf}.` }; }
   const d = f.diag && f.diag(v); return { ok: false, slip: d ? d[0] : 'calc', why: d ? d[1] : f.miss || 'Check your setup and try again.' };
 }
 const RGAS = 0.08206, BODY_K = 310.15, BLOOD_OSM = 0.308;   // blood is close to 0.9% NaCl: 0.154 M × 2 particles
@@ -1707,16 +1739,17 @@ SLIP['celsius-in-gas-law'] = 'Temperature must be in kelvin in Π = iMRT: add 27
 function genTonicity() {
   const c = OPTS.course, b = drawBag('ton' + c, BATHS), plant = chance(0.25), cell = plant ? 'lettuce leaf cell' : 'red blood cell', cls = b.cls;
   const p1 = choicePart(`Compared with the inside of the cell, ${b.name} is…`, ['hypo', 'iso', 'hyper'].map(k => opt(`${TON[k]}: ${TON_DEF[k]}`, k === cls, k === cls ? (cls === 'iso' ? `${cap(b.name)} matches the solute concentration inside the cell.` : `${cap(b.name)} has ${cls === 'hypo' ? 'less' : 'more'} dissolved solute than the cell’s 0.9% NaCl equivalent.`) : `Compare with 0.9% NaCl, which matches the cell. ${cap(b.name)} is ${TON[cls].toLowerCase()}.`, 'tonicity-class')), { keep: true, solution: `${cap(b.name)} is ${TON[cls].toLowerCase()}: ${TON_DEF[cls]}.`, hint: 'Hypo = less solute outside. Hyper = more solute outside. Iso = the same.' });
+  const tonWrong = k => cls === 'iso' ? 'This bath matches the cell’s solute concentration, so there is no net flow of water and the cell does not change.' : k === 'iso' ? `That happens only when the concentrations match. ${cap(b.name)} is ${TON[cls].toLowerCase()}. ${SLIP['tonicity-swap']}` : SLIP['tonicity-swap'];
   const dir = { hypo: 'Into the cell', iso: 'No net movement: equal amounts cross both ways', hyper: 'Out of the cell' };
-  const p2 = choicePart('Which way is the <b>net</b> movement of water?', ['hypo', 'iso', 'hyper'].map(k => opt(dir[k], k === cls, k === cls ? (cls === 'iso' ? 'Water still crosses the membrane, but at equal rates in both directions.' : `Water moves toward the higher solute concentration, which is ${cls === 'hypo' ? 'inside the cell' : 'the bath'}.`) : SLIP['tonicity-swap'], 'tonicity-swap')), { keep: true, solution: SLIP['tonicity-swap'], hint: 'Water moves toward the side with more solute.' });
+  const p2 = choicePart('Which way is the <b>net</b> movement of water?', ['hypo', 'iso', 'hyper'].map(k => opt(dir[k], k === cls, k === cls ? (cls === 'iso' ? 'Water still crosses the membrane, but at equal rates in both directions.' : `Water moves toward the higher solute concentration, which is ${cls === 'hypo' ? 'inside the cell' : 'the bath'}.`) : tonWrong(k), 'tonicity-swap')), { keep: true, solution: cls === 'iso' ? 'The concentrations match, so water crosses at equal rates in both directions: no net movement.' : SLIP['tonicity-swap'], hint: 'Water moves toward the side with more solute.' });
   const out = plant ? { hypo: 'It swells until the cell wall stops it: the cell is firm (turgid)', iso: 'It stays about the same', hyper: 'The membrane pulls away from the cell wall (plasmolysis): the leaf wilts' } : { hypo: b.k === 'water' ? 'It swells and bursts (hemolysis)' : 'It swells, and can burst if the solution is dilute enough (hemolysis)', iso: 'It keeps its normal shape', hyper: 'It shrinks and wrinkles (crenation)' };
-  const p3 = choicePart(`What happens to the ${cell}?`, ['hypo', 'iso', 'hyper'].map(k => opt(out[k], k === cls, k === cls ? (cls === 'iso' ? 'No net water movement, so no change.' : cls === 'hypo' ? 'Water flows in, so the cell swells.' : 'Water flows out, so the cell loses volume.') : SLIP['tonicity-swap'], 'tonicity-swap')), { keep: true, solution: `${out[cls]}.`, hint: 'Gaining water makes a cell swell. Losing water makes it shrink.' });
-  return { topic: 'tonicity', tag: b.short, stem: `<div class="datacard"><b>A ${cell} is placed in ${b.name}.</b><br>The inside of the cell has the same solute concentration as 0.9% NaCl (or 5% glucose).${b.k === 'sea' ? '<br>Seawater is about 3.5% dissolved salts.' : ''}</div>`, tip: 'Water follows solute: it moves toward the side with more dissolved particles.', parts: [p1, p2, p3] };
+  const p3 = choicePart(`What happens to the ${cell}?`, ['hypo', 'iso', 'hyper'].map(k => opt(out[k], k === cls, k === cls ? (cls === 'iso' ? 'No net water movement, so no change.' : cls === 'hypo' ? 'Water flows in, so the cell swells.' : 'Water flows out, so the cell loses volume.') : tonWrong(k), 'tonicity-swap')), { keep: true, solution: `${out[cls]}.`, hint: 'Gaining water makes a cell swell. Losing water makes it shrink.' });
+  return { topic: 'tonicity', tag: b.short, stem: `<div class="datacard"><b>A ${cell} is placed in ${b.name}.</b><br>Assume the inside of the cell has the same solute concentration as 0.9% NaCl (or 5% glucose).${b.k === 'sea' ? '<br>Seawater is about 3.5% dissolved salts.' : ''}</div>`, tip: 'Water follows solute: it moves toward the side with more dissolved particles.', parts: [p1, p2, p3] };
 }
 const T_OSM = [
   { q: 'What is osmosis?', c: [['Water moving through a semipermeable membrane toward the side with more solute', true, 'The membrane lets water through but blocks the solute, so water moves to dilute the more concentrated side.'], ['Solute particles moving through a membrane toward the side with less solute', false, 'In osmosis the <b>water</b> moves. The membrane does not let the solute through.', 'osmosis-solute-moves'], ['Water moving toward the side with less solute', false, SLIP['tonicity-swap'], 'tonicity-swap'], ['Water breaking apart at a membrane', false, 'The water molecules stay whole. They just cross the membrane.', 'boil-breaks-bonds']] },
   { q: 'A semipermeable membrane separates pure water from salt water. Which way does the net flow of water go?', c: [['From the pure water into the salt water', true, 'Water moves toward the higher solute concentration.'], ['From the salt water into the pure water', false, SLIP['tonicity-swap'], 'tonicity-swap'], ['No water moves', false, 'Water crosses both ways, but more of it moves toward the salt water.', 'tonicity-swap']] },
-  { q: 'Why must an IV solution be isotonic with blood?', c: [['So red blood cells neither swell nor shrink', true, 'Isotonic means equal solute concentration inside and out, so there is no net water movement.'], ['So the solution carries more oxygen', false, 'Tonicity is about solute concentration and water movement, not oxygen.'], ['So water rushes into the red blood cells', false, 'That would happen with a hypotonic solution, and the cells could burst (hemolysis).', 'tonicity-swap'], ['So the solution is sterile', false, 'Sterility matters too, but it is a separate issue from tonicity.']] },
+  { q: 'Why are most IV solutions made isotonic with blood?', c: [['So red blood cells neither swell nor shrink', true, 'Isotonic means equal solute concentration inside and out, so there is no net water movement.'], ['So the solution carries more oxygen', false, 'Tonicity is about solute concentration and water movement, not oxygen.'], ['So water rushes into the red blood cells', false, 'That would happen with a hypotonic solution, and the cells could burst (hemolysis).', 'tonicity-swap'], ['So the solution is sterile', false, 'Sterility matters too, but it is a separate issue from tonicity.']] },
   { q: 'Which pair of IV solutions is isotonic with red blood cells?', c: [['0.9% NaCl and 5% glucose', true, 'Both have about the same total particle concentration as the inside of a red blood cell.'], ['Pure water and 0.9% NaCl', false, 'Pure water is hypotonic: red blood cells swell and burst in it.', 'tonicity-class'], ['3% NaCl and 5% glucose', false, '3% NaCl is hypertonic: it shrinks red blood cells.', 'tonicity-class'], ['0.9% glucose and 5% NaCl', false, 'The numbers are swapped: 0.9% is for NaCl and 5% is for glucose.', 'tonicity-class']] },
   { q: 'Why does drinking seawater make a stranded sailor more dehydrated?', c: [['Seawater is hypertonic, so it pulls water out of the body’s cells', true, 'Seawater has more dissolved solute than body fluids. Water leaves the cells to dilute it.'], ['Seawater is hypotonic, so cells swell and burst', false, 'Seawater has <b>more</b> solute than cells, so it is hypertonic. ' + SLIP['tonicity-swap'], 'tonicity-swap'], ['The salt reacts with water in the body', false, 'Dissolved salt does not use up water in a reaction. It draws water out of cells by osmosis.'], ['Seawater has no water in it', false, 'Seawater is mostly water, but its high solute concentration draws water out of cells.']] },
   { q: 'A cucumber left in salty brine shrivels into a pickle. Why?', c: [['The brine is hypertonic, so water leaves the cucumber’s cells', true, 'Water moves toward the higher solute concentration, which is the brine.'], ['Salt moves into the cells and takes up space', false, 'The main effect is water leaving. The membrane lets water through far more easily than ions.', 'osmosis-solute-moves'], ['The brine is hypotonic', false, 'Brine is very salty, so it is hypertonic. ' + SLIP['tonicity-swap'], 'tonicity-swap']] },
@@ -1728,14 +1761,14 @@ function genOsmosis() { return staticQ('osmosis', Object.assign({ tip: 'A semipe
 /* CHEM 1A: Π = iMRT */
 const OSM_SOLUTES = [
   { f: 'NaCl', i: 2, ions: 'Na⁺ and Cl⁻' }, { f: 'KBr', i: 2, ions: 'K⁺ and Br⁻' }, { f: 'MgCl2', i: 3, ions: 'one Mg²⁺ and two Cl⁻' }, { f: 'CaCl2', i: 3, ions: 'one Ca²⁺ and two Cl⁻' }, { f: 'Na2SO4', i: 3, ions: 'two Na⁺ and one SO₄²⁻' }, { f: 'K3PO4', i: 4, ions: 'three K⁺ and one PO₄³⁻' },
-  { f: 'C6H12O6', name: 'glucose', i: 1 }, { f: 'C12H22O11', name: 'sucrose', i: 1 }, { f: 'CH4N2O', name: 'urea', i: 1 }
+  { f: 'C6H12O6', name: 'glucose', i: 1 }, { f: 'C12H22O11', name: 'sucrose', i: 1 }, { f: 'C6H14O6', name: 'mannitol', i: 1 }   // not urea: urea crosses the red-cell membrane, so an "isotonic" urea solution still bursts cells
 ];
 function genOsmoticP() {
   const s = drawBag('osmS', OSM_SOLUTES), body = chance(0.7), cls = body ? drawBag('osmC', ['hypo', 'iso', 'hyper']) : pick(['hypo', 'hyper']);
   const osm = cls === 'iso' ? 0.296 + Math.random() * 0.016 : cls === 'hypo' ? 0.08 + Math.random() * 0.12 : 0.45 + Math.random() * 0.45, M = +(osm / s.i).toPrecision(3), tC = body ? 37.0 : 25.0, TK = tC + 273.15, pi = s.i * M * RGAS * TK;
   const name = s.name ? `${s.name}, ${F(s.f)}` : F(s.f), Ms = M.toPrecision(3), piS = fmtSF(pi, 3), near = (v, x) => Math.abs(v - x) <= 0.012 * Math.abs(x);
   const iPart = numPart(`How many particles does one formula unit of ${F(s.f)} give in water? (This is the ideal van’t Hoff factor, i.)`, [{ key: 'i', label: 'i', answer: s.i, exact: true, show: String(s.i), diag: v => s.i === 1 ? ['i-for-molecular', SLIP['i-for-molecular']] : v === 1 ? ['forgot-i', SLIP['forgot-i']] : ['ion-count', `Count every ion: ${F(s.f)} gives ${s.ions}.`] }], { solution: s.i === 1 ? `${cap(s.name)} is a molecular compound, so it stays whole: i = 1.` : `${F(s.f)} is ionic: it gives ${s.ions}, so i = ${s.i}.`, hint: s.i === 1 ? 'Is it ionic or molecular? Molecular solutes do not break into ions.' : 'Write out the ions it breaks into and count them.' });
-  const piPart = numPart(`Calculate the osmotic pressure, Π, in atm. Give 3 sig figs.`, [{ key: 'pi', label: 'Π (atm)', answer: pi, sf: 3, show: piS + ' atm', diag: v => s.i > 1 && near(v, pi / s.i) ? ['forgot-i', `That is MRT without i. ${SLIP['forgot-i']}`] : near(v, s.i * M * RGAS * tC) || near(v, M * RGAS * tC) ? ['celsius-in-gas-law', SLIP['celsius-in-gas-law']] : near(v, s.i * M * 8.314 * TK) ? ['wrong-R', 'Use R = 0.08206 L atm mol⁻¹ K⁻¹ to get atm.'] : null, miss: 'Π = iMRT, with T in kelvin and R = 0.08206 L atm mol⁻¹ K⁻¹.' }],
+  const piPart = numPart(`Calculate the osmotic pressure, Π, in atm. Give 3 sig figs.`, [{ key: 'pi', label: 'Π (atm)', answer: pi, sf: 3, show: piS + ' atm', diag: v => s.i > 1 && near(v, pi / s.i) ? ['forgot-i', `That is MRT without i. ${SLIP['forgot-i']}`] : near(v, s.i * M * RGAS * tC) || near(v, M * RGAS * tC) ? ['celsius-in-gas-law', SLIP['celsius-in-gas-law']] : near(v, s.i * M * 8.314 * TK) ? ['wrong-R', 'Use R = 0.08206 L atm mol⁻¹ K⁻¹ to get atm.'] : near(v, s.i * M * RGAS * (tC === 37 ? 298.15 : 310.15)) ? ['wrong-temperature', `Use the temperature in the question: ${tC.toFixed(1)} °C is ${TK.toFixed(2)} K.`] : near(v, pi * 760) ? ['units', 'That is in torr. With R = 0.08206 L atm mol⁻¹ K⁻¹ the answer comes out in atm.'] : null, miss: 'Π = iMRT, with T in kelvin and R = 0.08206 L atm mol⁻¹ K⁻¹.' }],
     { solution: `Π = iMRT = (${s.i})(${Ms} mol L⁻¹)(0.08206 L atm mol⁻¹ K⁻¹)(${TK.toFixed(2)} K) = ${piS} atm.`, hint: `Π = iMRT. T = ${tC.toFixed(1)} + 273.15 = ${TK.toFixed(2)} K. On the TI-36X Pro: ${s.i} × ${Ms} × 0.08206 × ${TK.toFixed(2)} enter.`, note: 'Scientific notation is fine: type 7.84 or 7.84E0.' });
   const parts = [iPart, piPart];
   if (body) { const eff = { hypo: 'Hypotonic: water moves into the cells and they swell', iso: 'Isotonic: no net water movement', hyper: 'Hypertonic: water moves out of the cells and they shrink' }; parts.push(choicePart(`Blood has an osmotic pressure of about 7.7 atm. What would this solution do to red blood cells?`, ['hypo', 'iso', 'hyper'].map(k => opt(eff[k], k === cls, k === cls ? `${piS} atm is ${cls === 'iso' ? 'close to' : cls === 'hypo' ? 'well below' : 'well above'} 7.7 atm.` : `Compare ${piS} atm with 7.7 atm. ${SLIP['tonicity-swap']}`, 'tonicity-swap')), { keep: true, solution: `${piS} atm vs 7.7 atm: ${eff[cls].toLowerCase()}.`, hint: 'Higher osmotic pressure means more dissolved particles.' })); }
@@ -1780,6 +1813,8 @@ const COLL = [
   { f: 'C6H12O6', name: 'glucose', mm: 180.16, i: 1 }, { f: 'C12H22O11', name: 'sucrose', mm: 342.30, i: 1 }, { f: 'CH4N2O', name: 'urea', mm: 60.06, i: 1 }, { f: 'C2H6O2', name: 'ethylene glycol', mm: 62.07, i: 1 }, { f: 'C3H8O3', name: 'glycerol', mm: 92.09, i: 1 }
 ];
 const r3 = (lo, hi) => +(lo + Math.random() * (hi - lo)).toPrecision(3);
+/* grams of water for a problem: never a multiple of 10, so the number shown always has 3 sig figs under the trailing-zero rule */
+const gWater = (lo, span) => { const g = Math.round(lo + Math.random() * span); return g % 10 ? g : g + 1; };
 const s3 = v => fmtSF(v, 3), neg = s => String(s).replace(/^-/, '−');
 const solName = s => s.name ? `${s.name}, ${F(s.f)}` : F(s.f);
 const near = (v, x, t = 0.012) => Math.abs(v - x) <= t * Math.abs(x) + 1e-12;
@@ -1788,7 +1823,7 @@ const iWhy = s => s.i === 1 ? `${cap(s.name)} is molecular, so it stays whole: i
 const iField = s => ({ key: 'i', label: 'i', answer: s.i, exact: true, show: String(s.i), diag: v => s.i === 1 ? ['i-for-molecular', SLIP['i-for-molecular']] : v === 1 ? ['forgot-i', SLIP['forgot-i']] : ['ion-count', `Count every ion: ${F(s.f)} gives ${s.ions}.`] });
 const card = lines => `<div class="datacard">${lines.join('<br>')}</div>`;
 function genFpBp() {
-  const s = drawBag('fpS', COLL), bp = chance(0.4), gW = Math.round(180 + Math.random() * 620), mT = 0.25 + Math.random() * 1.2, gS = +(mT * gW / 1000 * s.mm).toPrecision(3), n = gS / s.mm, m = n / (gW / 1000), K = bp ? KB : KF, dT = s.i * K * m, sym = bp ? 'ΔT<sub>b</sub>' : 'ΔT<sub>f</sub>', pt = bp ? 100 + dT : -dT;
+  const s = drawBag('fpS', COLL.filter(x => x.f !== 'Na2SO4')), bp = chance(0.4), gW = gWater(180, 620), /* no Na2SO4: it is not soluble enough in cold water for these freezing points */ mT = 0.25 + Math.random() * 1.2, gS = +(mT * gW / 1000 * s.mm).toPrecision(3), n = gS / s.mm, m = n / (gW / 1000), K = bp ? KB : KF, dT = s.i * K * m, sym = bp ? 'ΔT<sub>b</sub>' : 'ΔT<sub>f</sub>', pt = bp ? 100 + dT : -dT;
   const parts = [
     numPart(`How many moles of ${F(s.f)} are dissolved?`, [NF('n', 'Moles', n, 'mol', { diag: v => near(v, gS * s.mm) ? ['mm-upside-down', 'Divide the mass by the molar mass: g ÷ (g/mol) = mol.'] : null })], { solution: `${s3(gS)} g ÷ ${s.mm.toFixed(2)} g mol⁻¹ = ${s3(n)} mol.`, hint: 'moles = mass ÷ molar mass.' }),
     numPart('What is the molality of the solution?', [NF('m', 'Molality', m, 'mol/kg', { diag: v => near(v, n / gW) ? ['kg-solvent', 'Put the water in <b>kilograms</b>: ' + gW + ' g = ' + s3(gW / 1000) + ' kg.'] : near(v, n / ((gW + gS) / 1000)) ? ['molarity-for-molality', 'Divide by the mass of the <b>solvent</b> only, not the whole solution. ' + SLIP['molarity-for-molality']] : null })], { solution: `${s3(n)} mol ÷ ${s3(gW / 1000)} kg of water = ${s3(m)} mol/kg.`, hint: 'molality = moles of solute ÷ kilograms of solvent.' }),
@@ -1799,7 +1834,7 @@ function genFpBp() {
   return { topic: 'fpbp', tag: `${F(s.f)} · ${bp ? 'boiling' : 'freezing'}`, stem: card([`<b>${s3(gS)} g of ${solName(s)}</b> dissolved in <b>${gW} g of water</b>`, `Molar mass of ${F(s.f)}: ${s.mm.toFixed(2)} g mol⁻¹`, `Water: K<sub>f</sub> = 1.86, K<sub>b</sub> = 0.512 °C kg mol⁻¹`]), tip: 'grams → moles → molality → × i → × K. Give 3 sig figs.', parts };
 }
 function genAntifreeze() {
-  const s = drawBag('afS', COLL.filter(x => ['C2H6O2', 'C3H8O3', 'NaCl', 'CaCl2'].includes(x.f))), kg = r3(2, 12), dT = +(5 + Math.random() * 18).toFixed(1), m = dT / (s.i * KF), n = m * kg, mass = n * s.mm / 1000, road = s.i > 1;
+  const s = drawBag('afS', COLL.filter(x => ['C2H6O2', 'C3H8O3', 'NaCl', 'CaCl2'].includes(x.f))), kg = r3(2, 12), dT = +(10 + Math.random() * (s.f === 'NaCl' ? 5 : 13)).toFixed(1), /* 3 sig figs; NaCl brine cannot go below about −21 °C */ m = dT / (s.i * KF), n = m * kg, mass = n * s.mm / 1000, road = s.i > 1;
   return { topic: 'fpbp', tag: `${F(s.f)} · how much?`, stem: card([`<b>Goal:</b> ${road ? 'brine' : 'antifreeze'} that freezes at <b>−${dT.toFixed(1)} °C</b>, made from <b>${s3(kg)} kg of water</b> and ${solName(s)}`, `Molar mass of ${F(s.f)}: ${s.mm.toFixed(2)} g mol⁻¹ · ${iWhy(s)}`, 'Water: K<sub>f</sub> = 1.86 °C kg mol⁻¹']), tip: 'Work backward: ΔT<sub>f</sub> → molality → moles → mass.', parts: [
     numPart('What molality is needed?', [NF('m', 'Molality', m, 'mol/kg', { diag: v => s.i > 1 && near(v, dT / KF) ? ['forgot-i', `Divide by i too: m = ΔT<sub>f</sub> ÷ (i K<sub>f</sub>). ${SLIP['forgot-i']}`] : near(v, dT * s.i * KF) ? ['rearrange', 'Solve ΔT<sub>f</sub> = i K<sub>f</sub> m for m: divide, do not multiply.'] : null })], { solution: `m = ΔT<sub>f</sub> ÷ (i K<sub>f</sub>) = ${dT.toFixed(1)} ÷ (${s.i} × 1.86) = ${s3(m)} mol/kg.`, hint: 'ΔT<sub>f</sub> is ' + dT.toFixed(1) + ' °C. Rearrange ΔT<sub>f</sub> = i K<sub>f</sub> m.' }),
     numPart(`How many moles of ${F(s.f)} is that for ${s3(kg)} kg of water?`, [NF('n', 'Moles', n, 'mol')], { solution: `${s3(m)} mol/kg × ${s3(kg)} kg = ${s3(n)} mol.`, hint: 'moles = molality × kilograms of solvent.' }),
@@ -1822,12 +1857,12 @@ function genVantHoff() {
     choicePart(`The ideal value for ${F(s.f)} is ${s.i}. Why is the measured value lower?`, [opt('Some oppositely charged ions pair up and act as one particle', true, 'Ion pairing means slightly fewer independent particles than the formula predicts.'), opt('Some of the solute did not dissolve', false, 'It is all dissolved. Some dissolved ions stick together briefly as pairs.', 'ion-pairing'), opt('The formula has fewer ions than that', false, `${F(s.f)} really does give ${s.ions}.`, 'ion-count'), opt('Water molecules break apart', false, 'Water stays whole. The effect comes from ion pairing.', 'boil-breaks-bonds')], { solution: 'Ion pairing lowers the measured i below the ideal ion count.', hint: 'Opposite charges attract, even in solution.' })] };
 }
 function genConc() {
-  const s = drawBag('cnS', COLL), gS = r3(5, 60), gW = Math.round(110 + Math.random() * 380), n = gS / s.mm, nW = gW / MM_W, d = 1 + 0.55 * gS / (gS + gW), mL = +((gS + gW) / d).toPrecision(3);
+  const s = drawBag('cnS', COLL), gW = gWater(110, 380), gS = r3(5, Math.min(60, (s.f === 'Na2SO4' ? 0.15 : 0.3) * gW)), /* kept below what dissolves */ n = gS / s.mm, nW = gW / MM_W, d = 1 + 0.55 * gS / (gS + gW), mL = +((gS + gW) / d).toPrecision(3);
   const all = {
-    m: numPart('What is the <b>molality</b>?', [NF('m', 'Molality', n / (gW / 1000), 'mol/kg', { diag: v => near(v, n / (mL / 1000)) ? ['molarity-for-molality', 'That is molarity (per liter of solution). ' + SLIP['molarity-for-molality']] : near(v, n / gW) ? ['kg-solvent', 'Put the water in kilograms.'] : null })], { solution: `${s3(n)} mol ÷ ${s3(gW / 1000)} kg of water = ${s3(n / (gW / 1000))} mol/kg.`, hint: 'molality = moles of solute ÷ kilograms of <b>solvent</b>.' }),
+    m: numPart('What is the <b>molality</b>?', [NF('m', 'Molality', n / (gW / 1000), 'mol/kg', { diag: v => near(v, n / (mL / 1000)) ? ['molarity-for-molality', 'That is molarity (per liter of solution). Molality is per kilogram of <b>solvent</b>.'] : near(v, n / gW) ? ['kg-solvent', 'Put the water in kilograms.'] : null })], { solution: `${s3(n)} mol ÷ ${s3(gW / 1000)} kg of water = ${s3(n / (gW / 1000))} mol/kg.`, hint: 'molality = moles of solute ÷ kilograms of <b>solvent</b>.' }),
     M: numPart('What is the <b>molarity</b>?', [NF('M', 'Molarity', n / (mL / 1000), 'mol/L', { diag: v => near(v, n / (gW / 1000)) ? ['molarity-for-molality', 'That is molality (per kilogram of water). Molarity is moles per liter of <b>solution</b>.'] : near(v, n / mL) ? ['mL-vs-L', 'Put the volume in liters.'] : null })], { solution: `${s3(n)} mol ÷ ${s3(mL / 1000)} L of solution = ${s3(n / (mL / 1000))} mol/L.`, hint: 'molarity = moles of solute ÷ liters of <b>solution</b>.' }),
     pct: numPart('What is the <b>mass percent</b> of the solute?', [NF('pct', 'Mass percent', gS / (gS + gW) * 100, '%', { diag: v => near(v, gS / gW * 100) ? ['percent-solvent', 'Divide by the mass of the whole <b>solution</b> (solute + water), not the water alone.'] : near(v, gS / (gS + gW)) ? ['percent-x100', 'Multiply by 100 to get a percent.'] : null })], { solution: `${s3(gS)} g ÷ (${s3(gS)} + ${gW}) g × 100 = ${s3(gS / (gS + gW) * 100)}%.`, hint: 'mass percent = mass of solute ÷ mass of solution × 100.' }),
-    X: numPart('What is the <b>mole fraction</b> of the solute?', [NF('X', 'Mole fraction', n / (n + nW), '', { diag: v => near(v, n / nW) ? ['mole-ratio', 'Divide by the <b>total</b> moles (solute + water), not the moles of water alone.'] : near(v, nW / (n + nW)) ? ['raoult-solute-fraction', 'That is the mole fraction of the water. The question asks for the solute.'] : null })], { solution: `Moles of water: ${gW} g ÷ 18.02 g mol⁻¹ = ${s3(nW)} mol. X = ${s3(n)} ÷ (${s3(n)} + ${s3(nW)}) = ${s3(n / (n + nW))}.`, hint: 'Find the moles of water first (18.02 g/mol). Mole fraction = moles of solute ÷ total moles.' })
+    X: numPart('What is the <b>mole fraction</b> of the solute?', [NF('X', 'Mole fraction', n / (n + nW), '', { traps: [n / nW], diag: v => near(v, n / nW) ? ['mole-ratio', 'Divide by the <b>total</b> moles (solute + water), not the moles of water alone.'] : near(v, nW / (n + nW)) ? ['raoult-solute-fraction', 'That is the mole fraction of the water. The question asks for the solute.'] : null })], { solution: `Moles of water: ${gW} g ÷ 18.02 g mol⁻¹ = ${s3(nW)} mol. X = ${s3(n)} ÷ (${s3(n)} + ${s3(nW)}) = ${s3(n / (n + nW))}.`, hint: 'Find the moles of water first (18.02 g/mol). Mole fraction = moles of solute ÷ total moles.' })
   };
   const two = shuffle(Object.keys(all)).slice(0, 2);
   return { topic: 'conc', tag: `${F(s.f)} · ${two.map(k => ({ m: 'molality', M: 'molarity', pct: 'mass %', X: 'mole fraction' }[k])).join(', ')}`, stem: card([`<b>${s3(gS)} g of ${solName(s)}</b> dissolved in <b>${gW} g of water</b>, making <b>${s3(mL)} mL</b> of solution`, `Molar masses: ${F(s.f)} ${s.mm.toFixed(2)} g mol⁻¹ · H<sub>2</sub>O 18.02 g mol⁻¹`]), tip: 'Molarity: per liter of solution. Molality: per kilogram of solvent. Give 3 sig figs.', parts: [numPart(`How many moles of ${F(s.f)} are there?`, [NF('n', 'Moles', n, 'mol')], { solution: `${s3(gS)} g ÷ ${s.mm.toFixed(2)} g mol⁻¹ = ${s3(n)} mol.`, hint: 'moles = mass ÷ molar mass.' })].concat(two.map(k => all[k])) };
@@ -1836,12 +1871,12 @@ const PW = { 20: 17.5, 25: 23.8, 30: 31.8, 35: 42.2, 40: 55.3, 50: 92.5, 60: 149
 const PAIRS_V = [{ k: 'pent', a: 'pentane', b: 'hexane', fa: 'C5H12', fb: 'C6H14', pa: 425, pb: 151, T: 25 }, { k: 'benz', a: 'benzene', b: 'toluene', fa: 'C6H6', fb: 'C7H8', pa: 95.1, pb: 28.4, T: 25 }, { k: 'hept', a: 'heptane', b: 'octane', fa: 'C7H16', fb: 'C8H18', pa: 92.0, pb: 31.0, T: 40 }];
 function genRaoult() {
   if (chance(0.45)) {
-    const s = drawBag('raS', COLL.filter(x => ['C6H12O6', 'C12H22O11', 'CH4N2O', 'C3H8O3'].includes(x.f))), T = +pick(Object.keys(PW)), P0 = PW[T], gS = r3(20, 95), gW = Math.round(100 + Math.random() * 200), n = gS / s.mm, nW = gW / MM_W, X = nW / (n + nW), P = X * P0;
+    const s = drawBag('raS', COLL.filter(x => ['C6H12O6', 'C12H22O11', 'CH4N2O', 'C3H8O3'].includes(x.f))), T = +pick(Object.keys(PW)), P0 = PW[T], gW = gWater(100, 100), gS = r3(45, Math.min(110, 0.85 * gW)), n = gS / s.mm, nW = gW / MM_W, X = nW / (n + nW), P = X * P0;
     return { topic: 'raoult', tag: `${F(s.f)} in water`, stem: card([`<b>${s3(gS)} g of ${solName(s)}</b> (it does not evaporate) in <b>${gW} g of water</b> at ${T} °C`, `Vapor pressure of pure water at ${T} °C: <b>${P0} torr</b>`, `Molar masses: ${F(s.f)} ${s.mm.toFixed(2)} g mol⁻¹ · H<sub>2</sub>O 18.02 g mol⁻¹`]), tip: 'Raoult’s law: P = X<sub>solvent</sub> × P°<sub>solvent</sub>. The solute blocks some of the surface, so fewer water molecules escape.', parts: [
       numPart(`How many moles of ${F(s.f)}?`, [NF('n', 'Moles of solute', n, 'mol')], { solution: `${s3(gS)} ÷ ${s.mm.toFixed(2)} = ${s3(n)} mol.`, hint: 'moles = mass ÷ molar mass.' }),
       numPart('How many moles of water?', [NF('nw', 'Moles of water', nW, 'mol')], { solution: `${gW} ÷ 18.02 = ${s3(nW)} mol.`, hint: 'Water is 18.02 g/mol.' }),
-      numPart('What is the mole fraction of <b>water</b>?', [NF('X', 'X of water', X, '', { diag: v => near(v, 1 - X) ? ['raoult-solute-fraction', 'That is the mole fraction of the solute. ' + SLIP['raoult-solute-fraction']] : near(v, nW / n) ? ['mole-ratio', 'Divide by the total moles, not the moles of solute.'] : null })], { solution: `X = ${s3(nW)} ÷ (${s3(nW)} + ${s3(n)}) = ${s3(X)}.`, hint: 'moles of water ÷ total moles.' }),
-      numPart('What is the vapor pressure of the solution?', [NF('P', 'Vapor pressure', P, 'torr', { diag: v => near(v, (1 - X) * P0) ? ['raoult-solute-fraction', SLIP['raoult-solute-fraction']] : near(v, P0 - P) ? ['delta-not-point', 'That is how much the vapor pressure dropped. The question asks for the vapor pressure itself.'] : null })], { solution: `P = X<sub>water</sub> × P° = ${s3(X)} × ${P0} = ${s3(P)} torr (a drop of ${s3(P0 - P)} torr).`, hint: 'P = X<sub>water</sub> × P°<sub>water</sub>.' })] };
+      numPart('What is the mole fraction of <b>water</b>?', [NF('X', 'X of water', X, '', { traps: [1, 1 - n / nW], diag: v => near(v, 1, 1e-9) ? ['raoult-setup', 'The water is no longer pure: divide the moles of water by the <b>total</b> moles.'] : near(v, 1 - n / nW, 0.002) ? ['mole-ratio', 'Close, but divide by the <b>total</b> moles (water + solute), not by the moles of water.'] : near(v, 1 - X) ? ['raoult-solute-fraction', 'That is the mole fraction of the solute. ' + SLIP['raoult-solute-fraction']] : near(v, nW / n) ? ['mole-ratio', 'Divide by the total moles, not the moles of solute.'] : null })], { solution: `X = ${s3(nW)} ÷ (${s3(nW)} + ${s3(n)}) = ${s3(X)}.`, hint: 'moles of water ÷ total moles.' }),
+      numPart('What is the vapor pressure of the solution?', [NF('P', 'Vapor pressure', P, 'torr', { traps: [P0], diag: v => near(v, P0, 1e-9) ? ['raoult-setup', 'That is the vapor pressure of <b>pure</b> water. Multiply it by the mole fraction of water.'] : near(v, (1 - X) * P0) ? ['raoult-solute-fraction', SLIP['raoult-solute-fraction']] : near(v, P0 - P) ? ['delta-not-point', 'That is how much the vapor pressure dropped. The question asks for the vapor pressure itself.'] : null })], { solution: `P = X<sub>water</sub> × P° = ${s3(X)} × ${P0} = ${s3(P)} torr (a drop of ${s3(P0 - P)} torr).`, hint: 'P = X<sub>water</sub> × P°<sub>water</sub>.' })] };
   }
   const pr = drawBag('raP', PAIRS_V), stem = lines => card([`A mixture of <b>${pr.a}</b> and <b>${pr.b}</b> at ${pr.T} °C. Both liquids evaporate.`, `Pure ${pr.a}: P° = ${pr.pa} torr · Pure ${pr.b}: P° = ${pr.pb} torr`].concat(lines));
   if (chance(0.5)) {
@@ -1851,7 +1886,7 @@ function genRaoult() {
       numPart(`What is the partial pressure of ${pr.b}?`, [NF('pb', 'P of ' + pr.b, PB, 'torr', { diag: v => near(v, XA * pr.pb) ? ['raoult-swapped', `${cap(pr.b)}’s mole fraction is 1 − ${XA.toFixed(3)} = ${(1 - XA).toFixed(3)}.`] : null })], { solution: `X = 1 − ${XA.toFixed(3)} = ${(1 - XA).toFixed(3)}. ${(1 - XA).toFixed(3)} × ${pr.pb} = ${s3(PB)} torr.`, hint: 'The two mole fractions add up to 1.' }),
       numPart('What is the total vapor pressure?', [NF('pt', 'Total pressure', PA + PB, 'torr')], { solution: `${s3(PA)} + ${s3(PB)} = ${s3(PA + PB)} torr.`, hint: 'Add the two partial pressures.' })] };
   }
-  let XA, Pt; do { XA = 0.15 + Math.random() * 0.7; Pt = +(XA * pr.pa + (1 - XA) * pr.pb).toPrecision(3); } while (pr.k === 'pent' && Pt === 258);
+  let XA, Pt; do { XA = 0.15 + Math.random() * 0.7; Pt = +(XA * pr.pa + (1 - XA) * pr.pb).toPrecision(3); } while ((pr.k === 'pent' && Pt === 258) || Math.abs(XA * pr.pa - (1 - XA) * pr.pb) < 0.12 * XA * pr.pa);
   const X = (Pt - pr.pb) / (pr.pa - pr.pb);
   return { topic: 'raoult', tag: `${pr.a} + ${pr.b} · find X`, stem: stem([`Total vapor pressure of the mixture: <b>${s3(Pt)} torr</b>`]), tip: 'P<sub>total</sub> = X<sub>A</sub>P°<sub>A</sub> + (1 − X<sub>A</sub>)P°<sub>B</sub>. Solve for X<sub>A</sub>.', parts: [
     numPart(`What is the mole fraction of ${pr.a} in the liquid?`, [NF('X', 'X of ' + pr.a, X, '', { tol: 0.02, diag: v => near(v, 1 - X, 0.02) ? ['raoult-swapped', `That is the mole fraction of ${pr.b}.`] : near(v, Pt / (pr.pa + pr.pb), 0.02) ? ['raoult-setup', 'The two mole fractions must add to 1. Write (1 − X) for the second liquid.'] : null })], { solution: `X = (P<sub>total</sub> − P°<sub>${pr.b}</sub>) ÷ (P°<sub>${pr.a}</sub> − P°<sub>${pr.b}</sub>) = (${s3(Pt)} − ${pr.pb}) ÷ (${pr.pa} − ${pr.pb}) = ${s3(X)}.`, hint: `${s3(Pt)} = X(${pr.pa}) + (1 − X)(${pr.pb}). Collect the X terms.` }),
@@ -1879,7 +1914,7 @@ const CG_PRED = [
   { id: 'roads', sim: 'fp', q: 'Salt is spread on an icy road at −3 °C. What will the model show for salt water at that temperature?', test: 'Set the temperature to −3 °C and compare the NaCl beaker at different molalities.', c: [['It can stay liquid, because salt lowers the freezing point', true, 'At 1.0 mol/kg NaCl the freezing point is −3.72 °C, so at −3 °C it is still liquid.'], ['It freezes sooner, because salt raises the freezing point', false, SLIP['fp-sign'], 'fp-sign'], ['Salt makes no difference', false, 'Dissolved particles always lower the freezing point.', 'fp-sign']] },
   { id: 'equal', sim: 'ra', q: 'Pentane (P° = 425 torr) and hexane (P° = 151 torr) are mixed in equal moles at 25 °C. What will the total vapor pressure be?', test: 'Set the slider to 0.50 and read the total.', c: [['288 torr, halfway between the two', true, 'Each liquid contributes its mole fraction times its own P°: 0.50 × 425 + 0.50 × 151 = 288 torr.'], ['576 torr, the sum of the two', false, 'Each liquid only contributes its mole fraction of its pure vapor pressure, so the total lies between the two.', 'raoult-setup'], ['Below 151 torr', false, 'Both liquids evaporate, so the total is between 151 and 425 torr.', 'raoult-setup']] },
   { id: 'target', sim: 'ra', q: 'A pentane and hexane mixture has a total vapor pressure of 258 torr at 25 °C. Compared with a 50:50 mixture (288 torr), does it have more pentane or more hexane?', test: 'Slide until the total reads 258 torr and read the mole fraction of pentane.', c: [['More hexane', true, '258 torr is below 288, so there is more of the less volatile liquid: the mole fraction of pentane is about 0.39.'], ['More pentane', false, 'Pentane has the higher vapor pressure, so more pentane would push the total above 288 torr.', 'vp-backwards'], ['It is still 50:50', false, 'A 50:50 mixture gives 288 torr.', 'raoult-setup']] },
-  { id: 'vapor', sim: 'ra', q: 'In a 50:50 liquid mixture of pentane and hexane, which will make up more of the <b>vapor</b>?', test: 'Compare the two partial-pressure bars at 0.50.', c: [['Pentane', true, 'It is more volatile: 212 torr of pentane against 76 torr of hexane. This is why distillation can separate them.'], ['Hexane', false, 'Hexane has the lower vapor pressure (stronger dispersion forces), so less of it escapes.', 'vp-backwards'], ['Equal amounts', false, 'Equal moles in the liquid does not mean equal moles in the vapor: pentane escapes more easily.', 'vapor-composition']] }
+  { id: 'vapor', sim: 'ra', q: 'In a 50:50 liquid mixture of pentane and hexane, which will make up more of the <b>vapor</b>?', test: 'Compare the two partial-pressure bars at 0.50.', c: [['Pentane', true, 'It is more volatile: 0.50 × 425 = 212.5 torr of pentane against 0.50 × 151 = 75.5 torr of hexane. This is why distillation can separate them.'], ['Hexane', false, 'Hexane has the lower vapor pressure (stronger dispersion forces), so less of it escapes.', 'vp-backwards'], ['Equal amounts', false, 'Equal moles in the liquid does not mean equal moles in the vapor: pentane escapes more easily.', 'vapor-composition']] }
 ];
 
 /* ================= TILE 7: Biomolecules (CHEM 3B; CONCEPT-MAP.md §2 "3B examples") =================
@@ -1896,6 +1931,7 @@ const AA_COL = { np: '#fff1d6', pn: '#e3f5e6', ac: '#fde3e1', ba: '#e2eefc' };
 const aaOf = cls => Object.keys(AAS).filter(k => AAS[k].cls === cls).map(k => AAS[k]);
 const aaCard = a => `<figure class="molcard"><div class="cformula" style="background:${AA_COL[a.cls]}">${a.R}</div><figcaption><b>${cap(a.n)}</b> (${a.k})<br><small>${AA_CLS[a.cls]} side chain</small></figcaption></figure>`;
 const INTER = { hyd: 'Hydrophobic interaction', salt: 'Salt bridge (ionic attraction)', ss: 'Disulfide bond', hb: 'Hydrogen bond' };
+const INTER_PL = { hyd: 'Hydrophobic interactions', salt: 'Salt bridges', ss: 'Disulfide bonds', hb: 'Hydrogen bonds' };
 SLIP['disulfide-is-covalent'] = 'A disulfide bond (–S–S–) is a real <b>covalent</b> bond between two cysteines. The other side-chain interactions are attractions, not shared electrons.';
 SLIP['secondary-vs-tertiary'] = 'Secondary structure uses only the <b>backbone</b> (C=O and N–H hydrogen bonds). Tertiary structure comes from the <b>side chains</b>.';
 function sidePair() {
@@ -1910,7 +1946,7 @@ function wrongInter(pick_, P) {
   if (pick_ === 'ss') return kind === 'hyd' || kind === 'salt' || kind === 'hb' ? `A disulfide bond needs two cysteines (–SH). Neither of these is cysteine.` : '';
   if (pick_ === 'salt') return `A salt bridge needs one negative side chain (Asp or Glu) and one positive one (Lys or Arg). ${kind === 'ss' ? 'Cysteine is not charged.' : kind === 'hyd' ? 'These are both nonpolar and uncharged.' : 'These are polar but not charged.'}`;
   if (pick_ === 'hyd') return `Hydrophobic interactions happen between <b>nonpolar</b> side chains. ${kind === 'salt' ? 'These are charged.' : kind === 'ss' ? 'Two –SH groups do something stronger: they bond covalently.' : 'These are polar, with O–H or N–H groups.'}`;
-  return `Hydrogen bonding needs O–H or N–H in the side chains. ${kind === 'hyd' ? 'These have only C–H bonds.' : kind === 'ss' ? 'An S–H does not hydrogen bond the way O–H does. Two cysteines form a covalent –S–S– bond instead.' : 'These are fully charged, so the attraction is ionic: a salt bridge.'}`;
+  return `Hydrogen bonding needs O–H or N–H in the side chains. ${kind === 'hyd' ? 'Every H here is on carbon.' : kind === 'ss' ? 'An S–H does not hydrogen bond the way O–H does. Two cysteines form a covalent –S–S– bond instead.' : 'These do have N–H groups, but both side chains carry a full charge, so the attraction is ionic. The best name for it is a salt bridge.'}`;
 }
 function genSideChain() {
   if (chance(0.3)) {
@@ -1920,7 +1956,7 @@ function genSideChain() {
   }
   const P = sidePair(), k = P.kind, order = ['hb', 'salt', 'ss', 'hyd'];
   const p1 = choicePart(`These two side chains end up next to each other in a folded protein. What holds them together?`, order.map(o => opt(INTER[o], o === k, o === k ? P.why : wrongInter(o, P), o === 'ss' ? 'disulfide-is-covalent' : 'side-chain-' + o)), { keep: true, solution: P.why, hint: 'Classify each side chain first: nonpolar, polar with O–H or N–H, charged, or –SH.' });
-  const cov = k === 'ss', p2 = choicePart('Is that a covalent bond, or an attraction between groups?', [opt('A covalent bond: electrons are shared', cov, cov ? 'The two sulfur atoms share a pair of electrons: –S–S–. It is much stronger than the other side-chain interactions.' : SLIP['disulfide-is-covalent'] + (k === 'hb' ? ' ' + SLIP['hbond-is-covalent'] : ''), k === 'hb' ? 'hbond-is-covalent' : 'disulfide-is-covalent'), opt('An attraction: no electrons are shared', !cov, cov ? SLIP['disulfide-is-covalent'] : `${INTER[k]}s are attractions between groups. Heating can break them without breaking any covalent bond.`, 'disulfide-is-covalent')], { keep: true, solution: cov ? SLIP['disulfide-is-covalent'] : `${INTER[k]}s are attractions, not covalent bonds.`, hint: 'Only one of the four side-chain interactions is a covalent bond.' });
+  const cov = k === 'ss', p2 = choicePart('Is that a covalent bond, or an attraction between groups?', [opt('A covalent bond: electrons are shared', cov, cov ? 'The two sulfur atoms share a pair of electrons: –S–S–. It is much stronger than the other side-chain interactions.' : SLIP['disulfide-is-covalent'] + (k === 'hb' ? ' ' + SLIP['hbond-is-covalent'] : ''), k === 'hb' ? 'hbond-is-covalent' : 'disulfide-is-covalent'), opt('An attraction: no electrons are shared', !cov, cov ? SLIP['disulfide-is-covalent'] : `${INTER_PL[k]} are attractions between groups. Heating can break them without breaking any covalent bond.`, 'disulfide-is-covalent')], { keep: true, solution: cov ? SLIP['disulfide-is-covalent'] : `${INTER_PL[k]} are attractions, not covalent bonds.`, hint: 'Only one of the four side-chain interactions is a covalent bond.' });
   return { topic: 'sidechain', tag: `${P.a.k} + ${P.b.k}`, stem: figure(aaCard(P.a), aaCard(P.b)), tip: 'Nonpolar + nonpolar: hydrophobic. O–H or N–H groups: hydrogen bond. Opposite charges: salt bridge. Two –SH: disulfide bond.', parts: [p1, p2] };
 }
 const T_FOLD = [
@@ -1933,7 +1969,7 @@ const T_FOLD = [
   { q: 'Adding acid to milk makes its proteins clump (curdle). Which interaction does a change in pH disrupt most directly?', c: [['Salt bridges, because the charges on acidic and basic side chains change', true, 'Extra H⁺ turns –COO⁻ into –COOH, so it can no longer attract –NH₃⁺.'], ['Peptide bonds', false, 'Peptide bonds need much harsher conditions (or enzymes) to break.', 'boil-breaks-bonds'], ['Hydrophobic interactions between nonpolar side chains', false, 'Nonpolar side chains have no charge for H⁺ to change.']] }
 ];
 function betaFig() { let h = ''; [40, 100].forEach((y, r) => { let d = ''; for (let i = 0; i < 7; i++) d += `${i ? 'L' : 'M'}${30 + i * 40} ${y + (i % 2 ? 10 : -10) * (r ? -1 : 1)}`; h += `<path d="${d}" fill="none" stroke="#3d4a73" stroke-width="4" stroke-linejoin="round"/>`; }); [70, 150, 230].forEach(x => { h += `<path d="M${x} 52V88" stroke="#346cc3" stroke-width="3" stroke-dasharray="2 5" stroke-linecap="round"/><text x="${x - 6}" y="48" text-anchor="end" font-size="10" font-weight="800" fill="#c2412d">C=O</text><text x="${x + 6}" y="102" font-size="10" font-weight="800" fill="#2f5fc4">H–N</text>`; }); return `<svg viewBox="0 0 300 130" style="width:100%;max-width:340px" role="img" aria-label="Two backbone strands side by side, joined by dashed hydrogen bonds from C=O on one strand to H–N on the other.">${h}</svg><small class="figcap">Two backbone strands of a β-pleated sheet</small>`; }
-function genFolding() { const it = drawBag('fold', T_FOLD); return staticQ('folding', Object.assign({ tip: 'Backbone hydrogen bonds → secondary structure. Side-chain interactions → tertiary structure.' }, it, { art: /helix|sheet/.test(it.q) ? betaFig() : '' })); }
+function genFolding() { const it = drawBag('fold', T_FOLD); return staticQ('folding', Object.assign({ tip: 'Backbone hydrogen bonds → secondary structure. Side-chain interactions → tertiary structure.' }, it, { art: /sheet/.test(it.q) ? betaFig() : '' })); }
 
 /* DNA: A–T pairs have 2 hydrogen bonds, G–C pairs have 3 */
 const COMP = { A: 'T', T: 'A', G: 'C', C: 'G' }, HBN = { A: 2, T: 2, G: 3, C: 3 };
@@ -1964,7 +2000,9 @@ const T_CARB = [
   { q: 'Cellulose (wood, cotton) and starch are both chains of glucose. Why is cellulose so strong and insoluble?', c: [['Its straight chains line up and hydrogen bond to each other into fibers', true, 'The β links make straight chains, so many –OH groups on neighboring chains can hydrogen bond. Starch chains coil instead.'], ['Cellulose has no –OH groups', false, 'It has just as many –OH groups as starch. In cellulose they are busy hydrogen bonding to neighboring chains.', 'any-h-hbonds'], ['Cellulose chains are joined by disulfide bonds', false, 'Disulfide bonds are found in proteins. Carbohydrates have no sulfur.'], ['Cellulose is nonpolar', false, 'It is covered in polar –OH groups. They hydrogen bond chain to chain.', 'like-dissolves-like']] },
   { q: 'Starch chains coil into a loose helix, and cellulose chains are straight. Which packs into tight fibers?', c: [['Cellulose', true, 'Straight chains can lie side by side and hydrogen bond along their whole length.'], ['Starch', false, 'Coiled chains cannot line up closely, so starch does not form strong fibers.'], ['Both equally', false, 'Shape decides how well chains can pack and hydrogen bond to each other.']] },
   { q: 'In a sugar’s –OH group, which atoms can take part in hydrogen bonding with water?', c: [['Both: the H can donate and the O’s lone pairs can accept', true, 'One –OH group can make up to three hydrogen bonds: one through H and two through the lone pairs on O.'], ['Only the H', false, 'The O also has two lone pairs that accept hydrogen bonds.'], ['Only the O', false, 'The H on oxygen is δ+ and donates a hydrogen bond too.'], ['Neither', false, 'An O–H group is exactly what hydrogen bonding needs.', 'any-h-hbonds']] },
-  { q: 'Hexane (C₆H₁₄) and glucose (C₆H₁₂O₆) both have six carbons. Glucose is a solid that dissolves in water; hexane is a liquid that does not. Why?', c: [['Glucose hydrogen bonds through its –OH groups; hexane has only dispersion forces', true, 'Strong attractions between glucose molecules make it a solid, and its –OH groups attract water.'], ['Glucose is heavier', false, 'Mass alone does not explain it. The –OH groups change the type of force.', 'size-ignores-type'], ['Hexane has more hydrogen atoms, so it hydrogen bonds more', false, SLIP['any-h-hbonds'], 'any-h-hbonds']] }
+  { q: 'Hexane (C₆H₁₄) and glucose (C₆H₁₂O₆) both have six carbons. Glucose is a solid that dissolves in water; hexane is a liquid that does not. Why?', c: [['Glucose hydrogen bonds through its –OH groups; hexane has only dispersion forces', true, 'Strong attractions between glucose molecules make it a solid, and its –OH groups attract water.'], ['Glucose is heavier', false, 'Mass alone does not explain it. The –OH groups change the type of force.', 'size-ignores-type'], ['Hexane has more hydrogen atoms, so it hydrogen bonds more', false, SLIP['any-h-hbonds'], 'any-h-hbonds']] },
+  { q: 'Table sugar (sucrose) is a molecular compound, yet it is a hard solid at room temperature. What mainly holds one sucrose molecule to the next in the crystal?', c: [['Hydrogen bonds between –OH groups on neighboring molecules', true, 'Sucrose has eight O–H groups, so each molecule hydrogen bonds to several neighbors.'], ['Ionic bonds', false, 'Sucrose is molecular. It has no ions.'], ['Covalent bonds between the molecules', false, 'The molecules are not bonded to each other: they separate as whole molecules when sugar dissolves.', 'hbond-is-covalent'], ['Dispersion forces only', false, 'It has dispersion forces too, but with eight O–H groups the hydrogen bonds matter most.', 'missed-hbond']] },
+  { q: 'A cotton towel is mostly cellulose. Why does cotton soak up water so well?', c: [['The –OH groups on cellulose hydrogen bond with water', true, 'Water clings to the many –OH groups on the fibers. The fibers themselves stay solid, because the chains are also hydrogen bonded to each other.'], ['Cellulose dissolves in water', false, 'Cotton does not dissolve: its chains hold on to each other. Water sticks to the –OH groups on the surface of the fibers.'], ['Cellulose is nonpolar', false, 'A nonpolar fiber would repel water. Cellulose is covered in polar –OH groups.', 'like-dissolves-like'], ['Water breaks the covalent bonds in cellulose', false, 'Wetting a towel is a physical change. No covalent bond breaks.', 'boil-breaks-bonds']] }
 ];
 function genCarbs() { return staticQ('carbs', Object.assign({ tip: 'Every –OH group can hydrogen bond: to water (dissolving) or to a neighboring chain (fibers).' }, drawBag('carb', T_CARB))); }
 function bilayerFig() { let h = `<rect x="0" y="0" width="300" height="34" fill="#dff0fb"/><rect x="0" y="126" width="300" height="34" fill="#dff0fb"/><text x="150" y="14" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2c64a0">water</text><text x="150" y="154" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2c64a0">water</text>`; for (let i = 0; i < 9; i++) { const x = 22 + i * 32; h += `<path d="M${x - 5} 44v32M${x + 5} 44v32M${x - 5} 84v32M${x + 5} 84v32" stroke="#c98a1b" stroke-width="3" stroke-linecap="round"/><circle cx="${x}" cy="36" r="10" fill="#8fb8f0" stroke="#346cc3" stroke-width="2"/><circle cx="${x}" cy="124" r="10" fill="#8fb8f0" stroke="#346cc3" stroke-width="2"/>`; } return `<svg viewBox="0 0 300 160" style="width:100%;max-width:360px" role="img" aria-label="Phospholipid bilayer: two rows of molecules with round heads facing the water on each side and tails pointing toward each other in the middle.">${h}</svg><small class="figcap">Round heads, two tails each</small>`; }
@@ -2007,7 +2045,9 @@ const WELL_PRED = [
   { id: 'first', well: 'hb', ke: 10, q: 'One pair of molecules is held by dispersion forces and another pair by a hydrogen bond. Both are warmed the same way. Which pair comes apart first?', test: 'Raise the kinetic energy for each kind of attraction and see where the pair escapes.', c: [['The dispersion pair', true, 'Its well is shallow, so less kinetic energy is needed to climb out.'], ['The hydrogen-bonded pair', false, 'A hydrogen bond is the stronger attraction, so its well is deeper and takes more energy to escape.', 'well-depth'], ['Both at the same moment', false, 'Different attractions have different well depths.', 'well-depth']] },
   { id: 'bp', well: 'dd', ke: 10, q: 'One substance has a deeper energy well between its molecules than another. How will its boiling point compare?', test: 'Compare how much kinetic energy each well needs before the pair separates.', c: [['Higher', true, 'A deeper well needs more kinetic energy, which means a higher temperature, to pull the molecules apart.'], ['Lower', false, 'A deeper well holds the molecules more tightly, so it takes a higher temperature to separate them.', 'vp-backwards'], ['The same', false, 'Boiling point tracks the strength of the attractions, which is the depth of the well.', 'well-depth']] },
   { id: 'escape', well: 'dd', ke: 20, q: 'The kinetic energy line climbs above the top of the well. What will happen to the two molecules?', test: 'Raise the kinetic energy past the top of the well and watch the pair.', c: [['They move apart, and each molecule stays whole', true, 'They have enough energy to escape each other’s attraction. Nothing inside either molecule breaks.'], ['They break into atoms', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'], ['They stick together more tightly', false, 'More kinetic energy means more motion, which pulls them apart.', 'well-depth']] },
-  { id: 'deepest', for: ['1A'], well: 'd', ke: 10, q: 'For particles of similar size, which attraction has the deepest well?', test: 'Step through the four attractions and compare the wells.', c: [['Ion–dipole', true, 'A full ionic charge pulls on a dipole harder than two partial charges pull on each other.'], ['Hydrogen bond', false, 'Hydrogen bonds are the strongest attraction between neutral molecules, but an ion’s full charge pulls harder.', 'well-depth'], ['Dispersion', false, 'For similar sizes, dispersion is the weakest.', 'well-depth']] }
+  { id: 'deepest', for: ['1A'], well: 'd', ke: 10, q: 'For particles of similar size, which attraction has the deepest well?', test: 'Step through the four attractions and compare the wells.', c: [['Ion–dipole', true, 'A full ionic charge pulls on a dipole harder than two partial charges pull on each other.'], ['Hydrogen bond', false, 'Hydrogen bonds are the strongest attraction between neutral molecules, but an ion’s full charge pulls harder.', 'well-depth'], ['Dispersion', false, 'For similar sizes, dispersion is the weakest.', 'well-depth']] },
+  { id: 'bottom', well: 'hb', ke: 10, q: 'Where on the energy curve do two molecules have the <b>lowest</b> potential energy?', test: 'Lower the kinetic energy all the way and see where the pair settles.', c: [['At the bottom of the well, a small distance apart', true, 'There the attraction and the repulsion balance. That is the most stable separation.'], ['Pushed as close together as possible', false, 'Too close, and the two electron clouds repel: the curve shoots up on the left.', 'well-depth'], ['Very far apart', false, 'Far apart there is no attraction, so the energy is higher than at the bottom of the well.', 'well-depth']] },
+  { id: 'cool', well: 'dd', ke: 20, q: 'Two molecules flew apart because their kinetic energy was above the top of the well. The sample is then cooled. What can happen?', test: 'Raise the kinetic energy until the pair separates, then lower it again and watch.', c: [['They can be held together again, once the kinetic energy drops below the depth of the well', true, 'Slower molecules cannot escape the attraction. This is what happens when a gas condenses.'], ['They stay apart for good', false, 'The attraction is still there. Cool the molecules enough and it can hold them again.', 'well-depth'], ['They join by a covalent bond', false, 'This well is an attraction between whole molecules. No electrons are shared.', 'hbond-is-covalent']] }
 ];
 /* Electron coin-flip: the chance that n electrons split exactly evenly between two halves of an atom, C(n, n/2) ÷ 2ⁿ */
 function evenSplit(n) { let p = 1; for (let k = 1; k <= n / 2; k++) p *= (n / 2 + k) / (4 * k); return p; }
@@ -2015,7 +2055,8 @@ const NOBLE = [{ f: 'He', e: 2, bpK: 4.2 }, { f: 'Ne', e: 10, bpK: 27 }, { f: 'A
 const COIN_PRED = [
   { id: 'helium', n: 2, q: 'Helium has 2 electrons. Pretend each one is equally likely to be on the left or the right side of the atom. How often will they be split evenly, one on each side?', test: 'Flip helium 100 times and read the tally.', c: [['About half the time', true, 'Four equally likely arrangements: left-left, left-right, right-left, right-right. Two of the four are even.'], ['Always', false, 'Both electrons can land on the same side. That happens half the time.', 'coin-flip'], ['Never', false, 'One on each side is the most likely single outcome.', 'coin-flip']] },
   { id: 'trend', n: 2, q: 'As the number of electrons goes up from 2 to 54, what will happen to the chance of a perfectly even split?', test: 'Step through He, Ne, Ar, Kr and Xe and read the “even split” column.', c: [['It goes down', true, 'With more electrons there are many more lopsided arrangements, so the cloud is almost always a little uneven: 50.0% for He but only 10.8% for Xe.'], ['It goes up', false, 'More electrons means more ways to be uneven, so an exact tie gets rarer.', 'coin-flip'], ['It stays at 50%', false, 'It is 50% only for 2 electrons.', 'coin-flip']] },
-  { id: 'xenon', n: 54, q: 'Which noble gas will have the strongest dispersion forces, and so the highest boiling point?', test: 'Compare the boiling point column with the electron counts.', c: [['Xenon, with 54 electrons', true, 'A big electron cloud is lopsided more often and by more, so it makes larger temporary dipoles. Xe boils at 165 K; He at 4.2 K.'], ['Helium, with 2 electrons', false, 'Two electrons can only make a tiny temporary dipole. Helium has the weakest dispersion forces of all.', 'dispersion-size'], ['They are all the same', false, 'Dispersion forces grow with the number of electrons.', 'dispersion-size']] }
+  { id: 'xenon', n: 54, q: 'Which noble gas will have the strongest dispersion forces, and so the highest boiling point?', test: 'Compare the boiling point column with the electron counts.', c: [['Xenon, with 54 electrons', true, 'A big electron cloud is lopsided more often and by more, and its outer electrons are far from the nucleus, so the cloud is easy to distort (polarizable). That makes larger temporary dipoles. Xe boils at 165 K; He at 4.2 K.'], ['Helium, with 2 electrons', false, 'Two electrons can only make a tiny temporary dipole. Helium has the weakest dispersion forces of all.', 'dispersion-size'], ['They are all the same', false, 'Dispersion forces grow with the number of electrons.', 'dispersion-size']] },
+  { id: 'argon', n: 18, q: 'Neon has 10 electrons and argon has 18. Which atom is caught more often with its electrons split <b>unevenly</b>?', test: 'Flip neon 100 times, then argon, and compare the “even split” tallies.', c: [['Argon', true, 'An exact even split gets rarer as electrons are added: about 25% of the time for neon and 19% for argon. So argon is lopsided more often, which fits its higher boiling point (87 K vs 27 K).'], ['Neon', false, 'Neon splits evenly about 25% of the time, argon only about 19%. More electrons means more ways to be uneven.', 'coin-flip'], ['Neither: electrons are always spread evenly', false, 'On average, yes. At any instant the cloud is usually a little lopsided, and that is where dispersion forces come from.', 'coin-flip']] }
 ];
 /* Mixing beaker: drop a substance into water or hexane. v: yes (mixes well), some (only a little), no (stays apart). */
 const MIXLAB = {
@@ -2147,7 +2188,7 @@ const topicsFor = (tile, c = OPTS.course) => tile.topics.filter(t => TOPICS[t].c
 const tilesFor = (c = OPTS.course) => TILES.filter(t => topicsFor(t, c).length);
 const generate = t => { const q = TOPICS[t].gen(); q.topic = q.topic || t; q.parts.forEach(p => { if (!p.hint) p.hint = TOPIC_HINT[q.topic] || TOPIC_HINT[t] || ''; }); return q; };
 /* Daily 5 tiers: 2 easy → 2 medium → 1 hard */
-const TIER = { easy: ['concept', 'hbond', 'polar', 'liquids', 'mixing', 'phasename', 'osmosis', 'colligq', 'vanthoff', 'folding', 'carbs', 'colloid', 'simhb', 'simcell', 'simmix', 'simfold'], medium: ['strongest', 'bppair', 'organic', 'iondipole', 'disp', 'vapor', 'fats', 'endoexo', 'curve', 'tonicity', 'conc', 'sidechain', 'dna', 'simwell', 'simcoin', 'simcurve', 'simpd', 'simsol'], hard: ['forces', 'bprank', 'orgbp', 'pdiagram', 'osmoticp', 'fpbp', 'raoult'] };
+const TIER = { easy: ['concept', 'hbond', 'polar', 'liquids', 'mixing', 'phasename', 'osmosis', 'colligq', 'vanthoff', 'folding', 'carbs', 'colloid', 'simhb', 'simcell', 'simmix', 'simfold'], medium: ['strongest', 'bppair', 'organic', 'iondipole', 'disp', 'vapor', 'fats', 'endoexo', 'curve', 'tonicity', 'conc', 'dna', 'simwell', 'simcoin', 'simcurve', 'simpd', 'simsol'], hard: ['forces', 'bprank', 'orgbp', 'sidechain', 'pdiagram', 'osmoticp', 'fpbp', 'raoult'] };
 if (typeof module !== 'undefined') module.exports = { M, PAIRS, FAMILIES, TRIPLES, FA, faPairs, TOPICS, TILES, TIER, OPTS, generate, strongest, electrons, checkRank, spec, topicsFor, tilesFor, LIQ, MIX, MIXK, ALL, SIM_MOLS, SIM, makeSim, stepSim, simPerMol, simMaxBonds, dhaAngle, sitePos, LAB_PRED, forCourse, PHASE, HC, HC_SEG, HC_PRED, hcState, hcX, hcY, curveSvg, makePhaseSim, phaseSync, iceSites, simRelease, PD, PD_PRED, PD_ARROWS, PD_STATES, PD_CHANGE, phaseAt, pdCross, pdVap, pdSub, pdMelt, pdSvg, pdInv, pdX, pdYp, parseNum, countSF, fmtSF, checkNum, BATHS, CELLM, cellConc, cellStep, cellStatus, CELL_PRED, OSM_SOLUTES, RGAS, COLL, VH, PAIRS_V, PW, FPL, fpDrop, CG_PRED, KF, KB, AAS, FOLD_SEQ, FOLD_LINKS, FOLD_PRED, foldState, dnaH, T_FOLD, T_DNA, T_CARB, T_COLL, WELLS, wellV, wellBound, wellTurn, WELL_PRED, evenSplit, NOBLE, COIN_PRED, MIXLAB, AW, molarMass, mmTxt, TOPIC_HINT, SIMQ, genSim, genSimMix };
 /*LOGIC-END*/
 </script>
@@ -2246,7 +2287,7 @@ function renderStats() {
   $('achGrid').innerHTML = A.map(a => `<div class="badge${P.ach[a[0]] ? ' got' : ''}">${badgeImg(a[3], a[4])}<b>${a[1]}</b><small>${a[2]}</small></div>`).join('');
 }
 function setCourse(c) {
-  state.course = c; OPTS.course = c; loadCourse(c);
+  state.course = c; OPTS.course = c; loadCourse(c); reviewQ = []; shown.clear();
   state.sel = new Set((P.sel || []).filter(t => TOPICS[t] && TOPICS[t].courses.includes(c))); state.mode = ['learn', 'practice'].includes(P.mode) ? P.mode : 'practice'; state.ch = null; state.learn = null; closeLab();
   document.querySelectorAll('#course button').forEach(b => { b.classList.toggle('active', b.dataset.course === c); b.setAttribute('aria-pressed', b.dataset.course === c); });
   $('eyebrow').textContent = EYEBROW[c];
@@ -2258,12 +2299,12 @@ function setCourse(c) {
 const catOn = T => tTopics(T).some(t => state.sel.has(t));
 function renderChooser() {
   const TS = tiles();
-  $('cats').innerHTML = TS.map(c => `<button type="button" class="cat${catOn(c) ? ' on' : ''}" data-cat="${c.id}" aria-pressed="${catOn(c)}" style="${tileVars(c.id)}"><span class="tick" aria-hidden="true">${ico('check')}</span>${TILE_ART[c.id]}<b>${c.title}</b><small>${c.blurb}</small></button>`).join('');
+  $('cats').innerHTML = TS.map(c => `<button type="button" class="cat${catOn(c) ? ' on' : ''}" data-cat="${c.id}" aria-pressed="${catOn(c)}" style="${tileVars(c.id)}"><span class="tick" aria-hidden="true">${ico('check')}</span>${TILE_ART[c.id]}<b>${c.title}</b><small>${c.blurb}</small>${tileMast(c)}</button>`).join('');
   const open = TS.filter(catOn);
   $('chipsWrap').hidden = !open.length;
   const nOn = open.reduce((n, c) => n + tTopics(c).filter(t => state.sel.has(t)).length, 0), nAll = open.reduce((n, c) => n + tTopics(c).length, 0);
   $('topicCount').textContent = nOn === nAll ? `· all ${nAll} topics on` : `· ${nOn} of ${nAll} topics on`;
-  $('chips').innerHTML = (nOn < nAll ? `<button type="button" class="resetsel" data-allon="1">Turn all topics back on</button>` : '') + open.map(c => `<div class="chip-row" style="${tileVars(c.id)}"><span>${c.title}</span>${tTopics(c).map(t => { const s = P.topic[t], T = TOPICS[t]; return `<button type="button" class="chip${state.sel.has(t) ? ' on' : ''}" data-topic="${t}" aria-pressed="${state.sel.has(t)}">${T.label}${T.lab ? ' <span class="ctag">lab</span>' : ''}${s && s.a ? ` <span class="cstat">${s.c}/${s.a}</span>` : ''}</button>`; }).join('')}</div>`).join('');
+  $('chips').innerHTML = (nOn < nAll ? `<button type="button" class="resetsel" data-allon="1">Turn all topics back on</button>` : '') + open.map(c => `<div class="chip-row" style="${tileVars(c.id)}"><span>${c.title}</span>${tTopics(c).map(t => { const s = P.topic[t], T = TOPICS[t]; return `<button type="button" class="chip${state.sel.has(t) ? ' on' : ''}" data-topic="${t}" aria-pressed="${state.sel.has(t)}">${T.label}${T.lab ? ' <span class="ctag">lab</span>' : ''}${s && s.a ? ` ${pips(t)}<span class="cstat">${s.c}/${s.a}</span>` : ''}</button>`; }).join('')}</div>`).join('') + '<p class="note-small" style="margin:2px 0 0">Dots count your answers in a row with no hint and no miss. Three dots: topic mastered.</p>';
   $('goRow').hidden = !state.sel.size; $('goPlay').firstChild.textContent = state.mode === 'learn' && !state.ch ? 'Go to the lesson ' : 'Go to your question ';
   const curMode = (inlineLab ? '' : (LABS.find(L => L.on()) || {}).k) || (state.ch ? state.ch.kind : state.mode);
   document.querySelectorAll('#modes button').forEach(b => { b.classList.toggle('active', b.dataset.mode === curMode); b.setAttribute('aria-pressed', b.dataset.mode === curMode); });
@@ -2318,21 +2359,32 @@ function weightedTopic(pool) {
   for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) return pool[i]; }
   return pool[0];
 }
-let lastTopic = null, sinceSim = 2;
+let lastTopic = null, sinceSim = 2, reviewQ = [], sinceReview = 9;
+const shown = new Set();   // topics shown on this visit
+/* second look: a topic missed in Practice comes back after a few other questions (this visit only) */
+function queueReview(t) { if (!reviewQ.some(r => r.t === t)) reviewQ = reviewQ.concat({ t, due: 3 }).slice(-3); }   // at most 3 waiting
+/* topics never tried come in one at a time, in the order each tile lists them (simpler ideas first) */
+const isNew = t => !(P.topic[t] && P.topic[t].a) && !shown.has(t);
+function nextNew(pool) { const firsts = []; TILES.forEach(T => { const t = T.topics.find(x => pool.includes(x) && isNew(x)); if (t) firsts.push(t); }); return firsts.length ? pick(firsts) : null; }
 function makeQuestion() {
   OPTS.course = state.course;
   if (state.ch) return generate(state.ch.plan[state.ch.i]);
   if (state.q && state.q.sim && !state.done && !state.tries) sinceSim = 2;
+  reviewQ = reviewQ.filter(r => state.sel.has(r.t)); reviewQ.forEach(r => r.due--);
+  const rv = sinceReview >= 2 ? reviewQ.find(r => r.due <= 0) : null; sinceReview++;   // never more than one second look in three questions
+  if (rv) { sinceReview = 0; reviewQ = reviewQ.filter(r => r !== rv); lastTopic = rv.t; shown.add(rv.t); sinceSim = TOPICS[rv.t].lab ? 0 : sinceSim + 1; const q = generate(rv.t); q.review = true; return q; }
   let pool = [...state.sel]; const labs = pool.filter(t => TOPICS[t].lab);
   if (labs.length && labs.length < pool.length && sinceSim >= 2) pool = labs;
   else if (pool.length > 1 && lastTopic) pool = pool.filter(t => t !== lastTopic || chance(0.3));
-  const t = weightedTopic(pool.length ? pool : [...state.sel]); lastTopic = t; sinceSim = TOPICS[t].lab ? 0 : sinceSim + 1; return generate(t);
+  if (!pool.length) pool = [...state.sel];
+  const first = nextNew(pool), t = first && (pool.every(isNew) || chance(0.6)) ? first : weightedTopic(pool);
+  lastTopic = t; shown.add(t); sinceSim = TOPICS[t].lab ? 0 : sinceSim + 1; return generate(t);
 }
 function initWork(p) { if (!p) return null; if (p.kind === 'rank') return { order: [] }; return null; }
 function newQuestion(focus) {
   closeLab();
   const q = makeQuestion();
-  Object.assign(state, { q, pi: 0, wrong: false, revealed: false, helped: false, done: false, logged: false, missed: [], tries: 0, stepRes: [] });
+  Object.assign(state, { q, pi: 0, wrong: false, revealed: false, helped: false, done: false, logged: false, missed: [], tries: 0, stepRes: [], hintN: 0, hintOut: '' });
   state.work = initWork(q.parts[0]);
   $('emptyBox').hidden = true; $('learnBox').hidden = true; $('reportBox').hidden = true; $('playArea').hidden = false; $('skipBtn').hidden = false;
   const T = TOPICS[q.topic], tile = TILES.find(t => t.id === T.tile);
@@ -2343,7 +2395,7 @@ function newQuestion(focus) {
   $('stem').innerHTML = q.stem || ''; $('stem').hidden = !q.stem;
   $('tip').innerHTML = q.tip && !strict() ? `<div class="tipbox">${ico('bulb')}<span><b>Professor Tip:</b> ${q.tip}</span></div>` : '';
   $('hintBtn').hidden = strict(); $('solBtn').hidden = strict(); $('actions').style.gridTemplateColumns = strict() ? '1fr' : '';
-  $('hintBox').hidden = true; $('nextBtn').hidden = true; $('solBtn').classList.remove('pulse');
+  $('hintBox').hidden = true; $('nextBtn').hidden = true; $('exBtn').hidden = true; $('solBtn').classList.remove('pulse'); $('againTag').hidden = !q.review; $('hintBtn').disabled = $('solBtn').disabled = false; hintLabel();
   setFeedback('', '');
   setVideoFor(T.video);
   renderParts(); renderChooser(); paintIcons($('play')); setMood('idle');
@@ -2386,9 +2438,10 @@ function rerenderCurrent(keepFocusSel) {
 function checkCurrent() {
   const p = state.q.parts[state.pi]; if (!p || state.done) return; state.sfNote = '';
   if (p.kind === 'nums') {
-    const msgs = []; let slip = '', sf = null;
-    for (const f of p.fields) { const raw = $('in-' + f.key).value.trim(); if (!raw) return setFeedback('info', 'Type an answer in every box first.'); if (/^-?\d+,\d+$/.test(raw) && !/^-?\d{1,3}(,\d{3})+$/.test(raw)) return setFeedback('info', 'Use a period for decimals (2.5), not a comma.'); if (!Number.isFinite(parseNum(raw))) return setFeedback('info', 'Type a number, like 7.84 or 7.84E0.'); }
-    p.fields.forEach(f => { const r = checkNum(f, $('in-' + f.key).value), box = $('field-' + f.key); box.classList.toggle('good', r.ok); box.classList.toggle('bad', !r.ok); if (!r.ok) { slip = slip || r.slip; msgs.push(r.why + (r.slip === 'calc' && p.hint ? ' <b>Hint:</b> ' + p.hint : '')); } else if (r.sf) sf = f; });
+    const msgs = []; let slip = '', sf = null, onlySF = true;
+    for (const f of p.fields) { const raw = $('in-' + f.key).value.trim(); if (!raw) return setFeedback('info', 'Type an answer in every box first.'); if (/^-?\d+,\d+$/.test(raw) && !/^-?\d{1,3}(,\d{3})+$/.test(raw)) return setFeedback('info', 'Use a period for decimals (2.5), not a comma.'); if (!Number.isFinite(parseNum(raw))) return setFeedback('info', 'Type just the number, like 7.84 or 7.84E0. For a power of ten, type 1.2E3 or 1.2×10^3.'); }
+    p.fields.forEach(f => { const r = checkNum(f, $('in-' + f.key).value), box = $('field-' + f.key); box.classList.toggle('good', r.ok); box.classList.toggle('bad', !r.ok); if (!r.ok) { if (r.slip !== 'sig-figs') onlySF = false; slip = slip || r.slip; msgs.push(r.why + (r.slip === 'calc' && p.hint ? ' <b>Hint:</b> ' + p.hint : '')); } else if (r.sf) sf = f; });
+    if (msgs.length && onlySF) return setFeedback('info', msgs.join('<br>') + ' This does not count as a miss.');
     if (msgs.length) return wrong(slip, msgs.join('<br>'));
     state.sfNote = sf ? `<div class="sfnote">Close, but fix your sig figs: the answer should have ${sf.sf}, so write ${sf.show}.</div>` : '';
     return right(sf ? `${p.solution || ''}${state.sfNote}` : '');
@@ -2432,25 +2485,44 @@ function right(why) {
 }
 function advancePart() {
   const q = state.q;
-  state.pi++; state.tries = 0; $('hintBox').hidden = true; $('solBtn').classList.remove('pulse');
+  state.pi++; state.tries = 0; state.hintN = 0; state.hintOut = ''; $('hintBox').hidden = true; $('solBtn').classList.remove('pulse'); hintLabel();
   if (state.pi >= q.parts.length) { finishQuestion(); return; }
   state.work = initWork(q.parts[state.pi]);
   renderParts(); focusPart();
 }
-function bumpTopic(t, ok) { const s = P.topic[t] || (P.topic[t] = { c: 0, a: 0 }); s.a++; if (ok) s.c++; }
+/* per-topic record: a = tried, c = right with no miss, h = how many of those used a hint, r = the last 6 results (2 = on your own, 1 = with a hint, 0 = missed or shown) */
+function bumpTopic(t, ok, helped) { const s = P.topic[t] || (P.topic[t] = { c: 0, a: 0 }); s.a++; if (ok) s.c++; if (ok && helped) s.h = (s.h || 0) + 1; s.r = (s.r || []).concat(ok ? (helped ? 1 : 2) : 0).slice(-6); }
+/* mastery says only what the record shows: 0 not started, 1 practicing, 2 almost (2 in a row on your own), 3 mastered (3 in a row on your own) */
+const MASTER_N = 3, MASTER_WORD = ['Not started', 'Practicing', 'Almost there', 'Mastered'];
+function runOf(t) { const r = (P.topic[t] || {}).r || []; let n = 0; for (let i = r.length - 1; i >= 0 && r[i] === 2; i--) n++; return n; }
+function mastery(t) { const s = P.topic[t]; if (!s || !s.a) return 0; const n = runOf(t); return n >= MASTER_N ? 3 : n === MASTER_N - 1 ? 2 : 1; }
+const pips = t => { const n = Math.min(MASTER_N, runOf(t)); return `<span class="pips" role="img" aria-label="${MASTER_WORD[mastery(t)]}: ${n} of ${MASTER_N} in a row with no hint">${[0, 1, 2].map(i => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span>`; };
+function tileMast(T) { const ts = tTopics(T); if (!ts.some(t => P.topic[t] && P.topic[t].a)) return ''; const m = ts.filter(t => mastery(t) === 3).length; return `<span class="tmast"><span class="tbar" aria-hidden="true"><i style="width:${Math.round(m / ts.length * 100)}%"></i></span>${m} of ${ts.length} topics mastered</span>`; }
 function finishQuestion() {
-  const q = state.q, ok = !state.wrong && !state.revealed; state.done = true;
+  const q = state.q, ok = !state.wrong && !state.revealed, solo = ok && !state.helped, T = TOPICS[q.topic]; state.done = true;
   renderParts();
   if (!state.logged) ddLog(ok, state.revealed ? 'gave-up' : '');
-  P.tried++; bumpTopic(q.topic, ok); markMode(state.ch ? state.ch.kind : 'practice');
-  /* XP (style guide): 10 per independent correct answer + 2 per streak step (max +10); 2 for a reveal or a finish after a miss */
+  const was = mastery(q.topic);
+  P.tried++; bumpTopic(q.topic, ok, state.helped); markMode(state.ch ? state.ch.kind : 'practice');
+  /* XP (style guide): 10 per independent correct answer + 2 per streak step (max +10); 6 for a correct answer that used a hint (the streak neither grows nor resets); 2 for a reveal or a finish after a miss */
   let xp = 2;
-  if (ok) { P.correct++; P.streak++; P.best = Math.max(P.best, P.streak); xp = 10 + 2 * Math.min(P.streak, 5); }
+  if (solo) { P.correct++; P.streak++; P.best = Math.max(P.best, P.streak); xp = 10 + 2 * Math.min(P.streak, 5); }
+  else if (ok) { P.correct++; xp = 6; }
   P.xp += xp;
   if (state.ch) state.ch.results.push({ topic: q.topic, tag: q.tag, ok, steps: q.parts.length, missed: (state.missed || []).slice() });
-  const many = q.parts.length > 1;
-  setFeedback(ok ? 'good' : 'info', ok ? `<b>${pick(['Stuck the landing!', 'Nailed it!', 'That one stuck!', 'Strong attraction!'])}</b> <span class="xp-pop">+${xp} XP</span> ${many ? 'Every step was right. ' : ''}${/sfnote/.test(state.lastWhy || '') ? state.lastWhy : (state.lastWhy || '') + (state.sfNote || '')}` : `<b>Done.</b> <span class="xp-pop">+${xp} XP</span> ${strict() && many && state.missed.length ? `Every step has to be right for the question to count, and step ${state.missed.join(' and ')} of ${q.parts.length} was missed. ` : ''}Read the explanation above${strict() ? '.' : ', then try another one like it to lock it in.'}`);
-  if (ok) setMood(P.streak && P.streak % 5 === 0 ? 'victory' : 'correct');
+  const many = q.parts.length > 1, now = mastery(q.topic), practice = !state.ch, newly = now === 3 && was < 3;
+  if (practice && !ok) queueReview(q.topic);
+  const why = /sfnote/.test(state.lastWhy || '') ? state.lastWhy : (state.lastWhy || '') + (state.sfNote || ''), xpPop = `<span class="xp-pop">+${xp} XP</span>`;
+  const mline = newly ? `<div class="mline got">${ico('check')}<span>Topic mastered: <b>${T.label}</b>. That is ${MASTER_N} in a row with no hint.</span></div>` : solo && now < 3 ? `<div class="mline">${T.label}: ${runOf(q.topic)} of ${MASTER_N} in a row on your own.</div>` : '';
+  let msg;
+  if (solo) msg = `<b>${pick(['Stuck the landing!', 'Nailed it!', 'That one stuck!', 'Strong attraction!'])}</b> ${xpPop} ${q.review ? 'You missed one like this earlier, and now you have it. ' : ''}${many ? 'Every step was right. ' : ''}${why}${mline}`;
+  else if (ok) msg = `<b>Correct, with a hint.</b> ${xpPop} ${why}<div class="mline">Get one like this with no hint and it counts toward mastery.</div>`;
+  else if (strict()) msg = `<b>Done.</b> ${xpPop} ${many && state.missed.length ? `Every step has to be right for the question to count, and step ${state.missed.join(' and ')} of ${q.parts.length} was missed. ` : ''}Read the explanation above.`;
+  else msg = `<b>${state.revealed ? 'Answer shown.' : 'You got there.'}</b> ${xpPop} ${state.revealed ? 'Read the explanation above.' : why}${practice ? `<div class="mline">${q.review ? 'That is two misses on this topic. A worked example may help before the next one.' : 'One like this will come back in a few questions, so you can try it again.'}</div>` : ''}`;
+  setFeedback(ok ? 'good' : 'info', msg);
+  if (ok) setMood(newly || (solo && P.streak && P.streak % 5 === 0) ? 'victory' : 'correct');
+  if (newly) confetti();
+  $('exBtn').hidden = ok || !practice; $('hintBtn').disabled = $('solBtn').disabled = true;
   if (state.ch) $('skipBtn').hidden = true;
   $('nextBtn').hidden = false; $('nextBtn').innerHTML = (state.ch && state.ch.i === state.ch.plan.length - 1 ? 'See my results ' : 'Next question ') + ico('arrow');
   if (!coarse()) try { $('nextBtn').focus({ preventScroll: true }); } catch (e) {}
@@ -2467,7 +2539,32 @@ function showStep() {
   setFeedback('info', `<b>Answer:</b> ${p.answer}. ${p.solution || ''}`);
   advancePart(true);
 }
-function showHint() { const p = state.q && state.q.parts[state.pi]; if (!p) return; state.helped = true; setMood('thinking'); const h = $('hintBox'); h.hidden = false; h.innerHTML = `<b>Hint:</b> ${p.hint || 'Go back to the Professor Tip above, or open the Sticky Sheet.'}`; }
+/* hints come in steps: first the idea, then (where there is one) a nudge that does part of the work. The student still makes the last move. */
+function setupHint(sol) {
+  const cut = sol.lastIndexOf('. ', sol.length - 3), head = cut > 0 ? sol.slice(0, cut + 2) : '', seg = cut > 0 ? sol.slice(cut + 2) : sol;
+  for (let from = 0; ;) { const j = seg.indexOf(' = ', from); if (j < 0) return ''; if (/[÷×+−(]/.test(seg.slice(0, j))) return head + seg.slice(0, j) + ' = <b>?</b>'; from = j + 3; }
+}
+function hintSteps(p) {
+  const out = [p.hint || 'Go back to the Professor Tip above, or open the Sticky Sheet.'];
+  if (p.hint2) out.push(p.hint2);
+  else if (p.kind === 'nums') { const s = !p.fields.some(f => f.exact) && p.solution ? setupHint(p.solution) : ''; if (s) out.push('Set it up like this: ' + s); }
+  else if (p.kind === 'rank') out.push(`<b>${p.items[p.want[0]].html}</b> goes first. ${p.orderHint || ''}`);
+  else if (p.kind === 'choice' && p.choices.length >= 3) out.push(null);   // rule one option out, picked when asked
+  return out;
+}
+function ruleOut(p) {
+  const btns = [...document.querySelectorAll('#parts .part.current .choice')], open = p.choices.map((c, k) => k).filter(k => !p.choices[k].ok && btns[k] && !btns[k].disabled);
+  if (open.length < 2) return 'Only two choices are left. Reread the first hint and compare them.';
+  const k = pick(open); btns[k].disabled = true; btns[k].classList.add('out');
+  return `Rule one out: <b>${p.choices[k].html}</b> is not the answer. ${p.choices[k].why}`;
+}
+function hintLabel() { const b = $('hintBtn'), p = state.q && state.q.parts[state.pi]; if (!b || !b.lastChild) return; b.lastChild.textContent = p && !state.done && state.hintN > 0 && state.hintN < hintSteps(p).length ? 'Next hint' : 'Hint'; }
+function showHint() {
+  const p = state.q && state.q.parts[state.pi]; if (!p || state.done) return; state.helped = true; setMood('thinking');
+  const steps = hintSteps(p), n = Math.min((state.hintN || 0) + 1, steps.length); state.hintN = n;
+  let txt = steps[n - 1]; if (txt === null) txt = state.hintOut || (state.hintOut = ruleOut(p));
+  const h = $('hintBox'); h.hidden = false; h.innerHTML = `<b>Hint${steps.length > 1 ? ` ${n} of ${steps.length}` : ''}:</b> ${txt}`; hintLabel();
+}
 function next() {
   if (state.ch) { state.ch.i++; if (state.ch.i >= state.ch.plan.length) { showReport(); scrollToPlay(); return; } }
   newQuestion(true); scrollToPlay();
@@ -2558,7 +2655,7 @@ function renderSheet() {
   let h = `<h3>Which forces does it have?</h3><ol class="flow"><li><b>Everything</b> has dispersion forces.</li><li><b>Polar molecule?</b> Add dipole–dipole. (Polar bonds that cancel in a symmetric shape do not count.)</li><li><b>H bonded directly to N, O or F?</b> Add hydrogen bonding.</li>${c === '1A' ? '<li><b>An ion with a polar molecule?</b> That is ion–dipole.</li>' : ''}</ol>
    <h3>Force ladder (similar size)</h3><div class="ladder"><span>Dispersion</span><i>&lt;</i><span>Dipole–dipole</span><i>&lt;</i><span>Hydrogen bonding</span>${c === '1A' ? '<i>&lt;</i><span>Ion–dipole</span>' : ''}</div><p class="note-small">All of these are much weaker than a covalent bond. Dispersion grows with molar mass (more electrons), so a heavy molecule can out-stick a light one.</p>
    <h3>What stronger forces do</h3>${tbl(['Property', 'Stronger forces →'], [['Boiling and melting point', 'higher'], ['Surface tension', 'higher'], ['Viscosity', 'higher'], ['Vapor pressure', '<b>lower</b>']])}`;
-  if (c !== '3B') h += `<h3>Dispersion and molar mass</h3>${tbl(['Halogen', 'Molar mass', 'Electrons', 'Boiling point'], [['F₂', '38 g/mol', 18, '85 K'], ['Cl₂', '71 g/mol', 34, '238 K'], ['Br₂', '160 g/mol', 70, '332 K'], ['I₂', '254 g/mol', 106, '457 K']])}${tbl(['Noble gas', 'Molar mass', 'Electrons', 'Boiling point'], [['He', '4.0 g/mol', 2, '4.2 K'], ['Ne', '20.2 g/mol', 10, '27 K'], ['Ar', '39.9 g/mol', 18, '87 K'], ['Kr', '83.8 g/mol', 36, '120 K'], ['Xe', '131.3 g/mol', 54, '165 K']])}${tbl(['Hydrocarbon', 'Molar mass', 'Electrons', 'Boiling point'], [['CH₄', '16.0 g/mol', 10, '112 K'], ['C₂H₆', '30.1 g/mol', 18, '185 K'], ['C₃H₈', '44.1 g/mol', 26, '231 K'], ['C₄H₁₀', '58.1 g/mol', 34, '274 K'], ['C₅H₁₂', '72.2 g/mol', 42, '309 K']])}<p class="note-small">Higher molar mass → more electrons → stronger dispersion forces → higher boiling point.</p>`;
+  if (c !== '3B') h += `<h3>Dispersion and molar mass</h3>${tbl(['Halogen', 'Molar mass', 'Electrons', 'Boiling point'], [['F₂', '38 g/mol', 18, '85 K'], ['Cl₂', '71 g/mol', 34, '238 K'], ['Br₂', '160 g/mol', 70, '332 K'], ['I₂', '254 g/mol', 106, '457 K']])}${tbl(['Noble gas', 'Molar mass', 'Electrons', 'Boiling point'], [['He', '4.0 g/mol', 2, '4.2 K'], ['Ne', '20.2 g/mol', 10, '27 K'], ['Ar', '39.9 g/mol', 18, '87 K'], ['Kr', '83.8 g/mol', 36, '120 K'], ['Xe', '131.3 g/mol', 54, '165 K']])}${tbl(['Hydrocarbon', 'Molar mass', 'Electrons', 'Boiling point'], [['CH₄', '16.0 g/mol', 10, '112 K'], ['C₂H₆', '30.1 g/mol', 18, '185 K'], ['C₃H₈', '44.1 g/mol', 26, '231 K'], ['C₄H₁₀', '58.1 g/mol', 34, '273 K'], ['C₅H₁₂', '72.2 g/mol', 42, '309 K']])}<p class="note-small">Higher molar mass → more electrons → stronger dispersion forces → higher boiling point.</p>`;
   if (c === '1A') h += `<h3>Liquids at 25 °C</h3>${tbl(['Liquid', 'Surface tension, mN m⁻¹', 'Viscosity, mPa·s'], [['Water', '71.99', '0.890'], ['Ethylene glycol', '47.99', '16.1'], ['Ethanol', '21.97', '1.074'], ['Octane', '21.14', '0.508'], ['Mercury', '458.48', '1.526']])}<h3>Alcohol vapor pressures at 20 °C</h3>${tbl(['Alcohol', 'Vapor pressure, kPa'], [['Methanol', '11.9'], ['Ethanol', '5.95'], ['Propanol', '2.67'], ['Butanol', '0.56']])}`;
   if (c === '3B') h += `<h3>Organic families</h3>${tbl(['Family', 'Strongest force between its molecules'], [['Alkane, alkene', 'Dispersion'], ['Ether, aldehyde, ketone', 'Dipole–dipole (can accept H-bonds from water)'], ['3° amine', 'Dipole–dipole (no N–H)'], ['Alcohol, 1° or 2° amine', 'Hydrogen bonding'], ['Carboxylic acid, amide', 'Hydrogen bonding (strong: two sites)']])}<h3>Fatty acids</h3>${tbl(['Fatty acid', 'Carbons : C=C', 'Melting point'], FA.map(a => [cap(a.name), `${a.c}:${a.db}`, degC(a.mp)]))}<p class="note-small">Longer chain → higher melting point. Each cis double bond adds a kink → lower melting point.</p>`;
   if (c !== '3B') h += `<h3>Phase changes</h3>${tbl(['Change', 'From → to', 'Heat'], PHASE.map(p => [phFull(p), p.from + ' → ' + p.to, p.endo ? 'in (endothermic)' : 'out (exothermic)']))}<h3>Water</h3>${tbl(['Quantity', 'Value'], [['ΔH<sub>fus</sub>', '6.02 kJ mol⁻¹ (334.16 J g⁻¹)'], ['ΔH<sub>vap</sub> at 100 °C', '40.70 kJ mol⁻¹ (2259 J g⁻¹)'], ['Specific heat: ice, liquid, steam', '2.06, 4.184, 2.02 J g⁻¹ °C⁻¹']])}<h3>Phase diagram points</h3>${tbl(['Substance', 'Triple point', 'Critical point'], pdSubs().map(k => [cap(PD[k].name), fmtT(PD[k].tp[0]) + ', ' + fmtP(PD[k].tp[1]), fmtT(PD[k].cp[0]) + ', ' + fmtP(PD[k].cp[1])]))}<p class="note-small">Triple point: all three phases together. Critical point: liquid and gas become one phase. CO₂ sublimes at −78.5 °C at 1 atm.</p>`;
@@ -3404,7 +3501,12 @@ function bind() {
     if (t.closest('[data-learntry]')) { const topic = state.learn.topic; state.mode = 'practice'; save(); renderChooser(); lastTopic = null; const keep = state.sel; state.sel = new Set([topic]); newQuestion(true); state.sel = keep; renderChooser(); return; }
     const v = t.closest('[data-video]'); if (v) { setVideoFor(v.dataset.video); const pl = $('player'); pl.src = pl.dataset.src; }
   });
-  document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.closest && e.target.closest('#parts input')) { e.preventDefault(); checkCurrent(); } });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.closest && e.target.closest('#parts input')) { e.preventDefault(); return checkCurrent(); }
+    /* number keys pick a choice (1 = first) when the keyboard is not in a text box, slider or dialog */
+    if (/^[1-9]$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName || '') && !document.querySelector('dialog[open]') && !$('playArea').hidden && state.q && !state.done) { const b = document.querySelectorAll('#parts .part.current .choice')[+e.key - 1]; if (b && !b.disabled) { e.preventDefault(); b.click(); } }
+  });
+  $('exBtn').onclick = () => { const q = state.q; if (!q) return; const t = q.topic; state.sel.add(t); state.mode = 'learn'; state.ch = null; markMode('learn'); state.learn = { tile: TOPICS[t].tile, topic: t }; save(); renderChooser(); showLearn(); scrollToPlay(); };
   /* in a round, Skip reveals the rest of the question and counts it as missed; it never re-rolls a round slot */
   $('skipBtn').onclick = () => { if (state.ch) { if (state.q && !state.done) { while (!state.done) showStep(); } return; } newQuestion(true); scrollToPlay(); };
   $('nextBtn').onclick = next; $('goPlay').onclick = scrollToPlay;
@@ -3414,7 +3516,7 @@ function bind() {
   $('sheetDialog').addEventListener('click', e => { if (e.target === $('sheetDialog')) $('sheetDialog').close(); });
   $('videoBtn').onclick = () => { const d = $('videoSection'); d.open = true; const pl = $('player'); if (pl.src !== pl.dataset.src) pl.src = pl.dataset.src; try { d.scrollIntoView({ behavior: smoothB(), block: 'start' }); } catch (e) {} };
   $('videoSection').addEventListener('toggle', () => { const pl = $('player'); if ($('videoSection').open && pl.src !== pl.dataset.src) pl.src = pl.dataset.src; });
-  let armed = 0; $('resetBtn').onclick = () => { const b = $('resetBtn'); if (!armed) { armed = 1; b.classList.add('armed'); b.textContent = 'Tap again to erase this course’s progress'; setTimeout(() => { armed = 0; b.classList.remove('armed'); b.textContent = 'Reset my progress'; }, 4000); return; } P = fresh(); state.sel.clear(); state.mode = 'practice'; state.ch = null; save(); armed = 0; b.classList.remove('armed'); b.textContent = 'Reset my progress'; renderStats(); renderChooser(); showEmpty(); };
+  let armed = 0; $('resetBtn').onclick = () => { const b = $('resetBtn'); if (!armed) { armed = 1; b.classList.add('armed'); b.textContent = 'Tap again to erase this course’s progress'; setTimeout(() => { armed = 0; b.classList.remove('armed'); b.textContent = 'Reset my progress'; }, 4000); return; } P = fresh(); reviewQ = []; shown.clear(); state.sel.clear(); state.mode = 'practice'; state.ch = null; save(); armed = 0; b.classList.remove('armed'); b.textContent = 'Reset my progress'; renderStats(); renderChooser(); showEmpty(); };
 }
 function init() {
   $('brandMascot').innerHTML = `<img src="assets/logo.png" alt="" onerror="this.outerHTML=mascotSvg('','')">`; $('introMascot').innerHTML = mascotHTML('mascot-big', ''); $('playMascot').innerHTML = mascotHTML('mascot', 'mascotPlay');
@@ -3422,7 +3524,7 @@ function init() {
   let c = null; try { c = (new URLSearchParams(location.search).get('course') || '').toUpperCase().replace('CHEM', '').trim(); } catch (e) {}
   if (!COURSES.includes(c)) { try { c = JSON.parse(localStorage.getItem(STORE) || '{}').last; } catch (e) {} }
   if (!COURSES.includes(c)) c = '3A';
-  bind(); bindLab(); bindHC(); bindPD(); bindCL(); bindCG(); bindFL(); GEN_LABS.forEach(L => L.mount()); mountMX(); $('feedback').insertAdjacentHTML('afterend', '<div id="simSlot" hidden></div>'); $('clChamberFig').innerHTML = OSMO_SVG; setCourse(c); paintIcons();
+  bind(); bindLab(); bindHC(); bindPD(); bindCL(); bindCG(); bindFL(); GEN_LABS.forEach(L => L.mount()); mountMX(); $('hintBox').insertAdjacentHTML('afterend', '<div id="simSlot" hidden></div>'); $('clChamberFig').innerHTML = OSMO_SVG; setCourse(c); paintIcons();
   let m = ''; try { m = (new URLSearchParams(location.search).get('mode') || '').toLowerCase(); } catch (e) {}
   if (['daily', 'challenge'].includes(m)) startRound(m); else if (m === 'lab') openLab(); else if (m === 'curve' && TOPICS.curve.courses.includes(state.course)) openHC(); else if (m === 'diagram' && TOPICS.curve.courses.includes(state.course)) openPD(); else if (m === 'cell') openCL(); else if (m === 'solutions' && state.course === '1A') openCG(); else if (m === 'fold' && state.course === '3B') openFL(); else if (LABS.some(x => x.url === m && x.courses.includes(state.course))) LABS.find(x => x.url === m).open(); else if (m === 'learn' || m === 'practice') setMode(m);
 }

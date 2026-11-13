@@ -4,7 +4,7 @@ ItsDrDan study game on **intermolecular forces, phase changes and colligative pr
 
 Live at https://itsdrdan.github.io/IMF/
 
-Current version: v15
+Current version: v16
 
 - `index.html`: the whole game (standalone; no build step). It loads the brand kit (`games/brand/itsdrdan.css`, `icons.js`, `embed.js`) and `games/track.js` for anonymous stats, and reads its art from `assets/`.
 - `?course=3A` (default), `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden.
@@ -19,6 +19,8 @@ Current version: v15
 | `index.html` | The game |
 | `INSTRUCTORS.md` | Instructor notes: topics by course, labs, sources, values still to review, differences from the spec, slip catalog, how it was tested |
 | `CONCEPT-MAP.md` | The design spec the game was built from |
+| `AUDIT-2026-11-13.md` | The v16 audit: corrections, tests, scores and open questions |
+| `tools/` | Scripts that check every question generator and the answer checking (see `tools/README.md`) |
 | `meta.json` | Study hub card text: topic label "Intermolecular Forces", fun name "Sticky Molecules" |
 | `LICENSE` | All rights reserved |
 | `docs/img/` | Concept map and water vapor-pressure chart images |
@@ -32,6 +34,7 @@ Art notes are in [assets/ART-NOTES.md](assets/ART-NOTES.md).
 
 ## Still to do
 
+- Dr. Dan decides the open items in section 7 of `AUDIT-2026-11-13.md` (pentane vapor pressure, nine new questions, XP for a hinted answer).
 - Dr. Dan reviews the values listed under "Values that still need Dr. Dan's review" in `INSTRUCTORS.md`.
 - Confirm the nightly question-bank build keeps working with `tools/samplers/IMF.js` in `ItsDrDan/questionbank`.
 
