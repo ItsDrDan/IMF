@@ -1,29 +1,43 @@
-# Sticky Molecules (IMF)
+# Sticky Molecules: Intermolecular Forces (CHEM 3A · 1A · 3B)
 
 ItsDrDan study game on **intermolecular forces, phase changes and colligative properties** for CHEM 3A, 1A and 3B at Fresno City College.
 
-**Status:** design spec and art only. No game code yet.
+Live at https://itsdrdan.github.io/IMF/
 
-## For the builder (Fable): read in this order
+Current version: v8
 
-1. **[CONCEPT-MAP.md](CONCEPT-MAP.md)**: the full spec. It covers course modes, the concept map, question types, misconception slips, simulations and their model rules, reference data, known source errors, Week 17 alignment and the build checklist.
-2. Dr. Dan's starter kit in `Desktop › Study Games`: START-HERE.md, STYLE-GUIDE.md and game-template.html. Where it disagrees with CONCEPT-MAP.md, CONCEPT-MAP.md wins (for example, the default course here is 3A).
-3. **[assets/](assets/)**: the finished art: logo, the "Ollie" mascot (7 moods) and 15 badges, as PNG, WebP and editable SVG. Notes are in [assets/ART-NOTES.md](assets/ART-NOTES.md).
+- `index.html`: the whole game (standalone; no build step). It loads the brand kit (`games/brand/itsdrdan.css`, `icons.js`, `embed.js`) and `games/track.js` for anonymous stats, and reads its art from `assets/`.
+- `?course=3A` (default), `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden.
+- 7 tiles: Spot the Forces, Boiling Point Battles, Liquids & Mixing, Phase Changes, Cells & Osmosis, Colligative Properties (1A), Biomolecules (3B). Modes: Learn, Practice, Challenge (10 mixed, no hints) and Daily 5.
+- 9 predict-first labs: H-Bond Lab, Energy Well, Electron Coin-Flip, Mixing Beaker, Heating Curve Lab, Phase Diagram Explorer, Solutions Lab, Cell Lab, Protein Fold Lab.
+- Direct links: `?mode=daily`, `?mode=challenge`, `?mode=lab`, `?mode=well`, `?mode=coin`, `?mode=mix`, `?mode=curve`, `?mode=diagram`, `?mode=solutions`, `?mode=cell`, `?mode=fold`.
 
 ## Layout
 
 | Path | What it is |
 | --- | --- |
-| `CONCEPT-MAP.md` | Build spec (start here) |
+| `index.html` | The game |
+| `INSTRUCTORS.md` | Instructor notes: topics by course, labs, sources, values still to review, differences from the spec, slip catalog, how it was tested |
+| `CONCEPT-MAP.md` | The design spec the game was built from |
+| `meta.json` | Study hub card text: topic label "Intermolecular Forces", fun name "Sticky Molecules" |
+| `LICENSE` | All rights reserved |
 | `docs/img/` | Concept map and water vapor-pressure chart images |
-| `docs/ART-BRIEF.md`, `docs/ART-FIXES-ROUND-2.md` | Prompts used for the ChatGPT art (for future redos) |
+| `docs/ART-BRIEF.md`, `docs/ART-FIXES-ROUND-2.md` | Prompts used for the art (for future redos) |
 | `assets/logo.png`, `assets/logo-full.png`, `assets/imf.webp` | Logo (512, 1024) and study hub icon |
 | `assets/mascot/` | Ollie: idle, thinking, correct, oops, victory, heated, chilly |
 | `assets/badges/png/`, `assets/badges/webp-256/` | 15 achievement badges |
 | `assets/source-svg/` | Editable vector sources for every image |
 
+Art notes are in [assets/ART-NOTES.md](assets/ART-NOTES.md).
+
+## Still to do
+
+- Dr. Dan reviews the values listed under "Values that still need Dr. Dan's review" in `INSTRUCTORS.md`.
+- Add a question-bank sampler in `ItsDrDan/questionbank`.
+
 ## Rules
 
-- Deliver the game as `sticky-molecules-vN.html`. It becomes `index.html` here only when Dr. Dan says to push.
+- Working builds are named `sticky-molecules-vN.html` and stay local. A build becomes `index.html` only when Dr. Dan says to push.
 - Chemistry must be correct. Check values against OpenStax Chemistry 2e and the course yellow sheet.
-- © ItsDrDan. All rights reserved.
+
+Game design and chemistry by ItsDrDan. Code written with AI assistance (Claude) and checked by the author. © ItsDrDan, all rights reserved; free to play, reuse by permission only (see LICENSE).

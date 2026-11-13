@@ -1,0 +1,3 @@
+# working builds stay local; the published game is index.html
+sticky-molecules-v*.html
+.DS_Store
