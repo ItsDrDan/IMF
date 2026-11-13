@@ -4,8 +4,16 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v11.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v12.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v12 (2026-11-13)
+
+- **Simulations are shown, not hidden.** A simulation question now has its simulation right under it from the start, greyed out with "Make your prediction first". It unlocks when the student answers. Before, the simulation only appeared after the answer, so these looked like ordinary multiple-choice questions.
+- **Simulation questions come up more often.** In Practice the first question is a simulation and so is at least every third one after that. A Challenge has at least 3 simulation questions out of 10 and the Daily 5 has at least 1. A student who turns the lab topics off under "Focus on specific topics" gets none.
+- **Labs keep their shape on a large screen.** The H-Bond, Heating Curve and Cell labs were drawn for a box at most about 520 px wide and then stretched sideways to fill a wider one. They now scale evenly, redraw sharper at larger sizes, and stop growing at 680 px wide.
+- **H-Bond Lab caption.** For the first six seconds after the model starts it says the molecules are still finding each other. Before, it said they "move too fast for hydrogen bonds to last" even when cold, because no bonds had formed yet.
+- **iPhone check:** v11 and v12 were tried in iOS Safari in Apple's iPhone 17 simulator (tiles, the pinned button, hints, wrong and right answers, a lab unlocking under its question, the temperature slider). Not yet tried on a physical phone or in the Canvas Student app.
 
 ## New in v10 (2026-11-13)
 

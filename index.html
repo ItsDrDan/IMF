@@ -381,7 +381,7 @@ ol.flow{margin:4px 0 0;padding-left:22px;display:grid;gap:4px}
 .lab-grid{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:14px;align-items:start;margin-top:10px}
 @media(max-width:820px){.lab-grid{grid-template-columns:1fr}}
 .lab-stage{position:relative;border:2px solid var(--line2);border-radius:16px;background:linear-gradient(180deg,#fbfdff,#f1f6fd);overflow:hidden;line-height:0}
-.lab-stage canvas{display:block;width:100%;touch-action:pan-y}
+.lab-stage canvas{display:block;width:100%;max-width:680px;margin:0 auto;height:auto!important;touch-action:pan-y}
 .lab-lock{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px;background:#ffffffc9;font-weight:800;color:var(--muted);line-height:1.4}
 .lab-side{display:grid;gap:10px}
 .lab-side fieldset{border:2px solid var(--line);border-radius:14px;padding:8px 10px 10px;margin:0;min-width:0}
@@ -487,6 +487,7 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
 .simq-head b{display:block;font-family:var(--font-display);font-weight:600;font-size:1.05rem}.simq-head span{display:block;color:var(--muted);font-weight:700;font-size:.92rem}
 .simq-inline{border:0;padding:0;margin:0;background:none;box-shadow:none}
 .simq-inline>.part.current,.simq-inline>.feedback:not(#mxFeedback),.simq-inline>.ex-actions,.simq-inline>.ex-label,.simq-inline .lab-lock{display:none!important}
+.simq-inline.simq-locked .lab-lock{display:grid!important}.simq-locked .lab-side,.simq-locked fieldset,.simq-locked .lab-btns{opacity:.55}
 .chip .ctag{background:#e7edff;color:#3c47b8;border-radius:99px;padding:0 6px;font-size:.72rem;font-weight:800}
 </style>
 <script src="https://itsdrdan.github.io/games/brand/icons.js" defer></script>
@@ -521,7 +522,7 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
    <button type="button" data-mode="challenge"><span class="ms-ico" data-icon="target" aria-hidden="true"></span><span><b>Challenge</b><small>10 mixed questions from every tile. No hints.</small></span></button>
    <button type="button" data-mode="daily"><span class="ms-ico" data-icon="calendar" aria-hidden="true"></span><span><b>Daily 5</b><small id="dailySmall">2 easy, 2 medium, 1 hard.</small></span></button>
   </div>
-  <details class="topicbox morebox" id="moreBox"><summary>Labs and more <small>explore the simulations freely</small></summary><div class="specials" id="specials"></div></details>
+  <details class="topicbox morebox" id="moreBox"><summary>Labs and more <small>free-play simulations</small></summary><div class="specials" id="specials"></div></details>
  </section>
 
  <main class="panel" id="play">
@@ -2060,7 +2061,7 @@ const SIMQ = {
   simsol: { k: 'cg', lab: 'Solutions Lab', list: () => CG_PRED, hint: 'Count particles: find i for each solute. For two liquids, each one contributes its mole fraction times its own vapor pressure.' },
   simfold: { k: 'fl', lab: 'Protein Fold Lab', list: () => FOLD_PRED, hint: 'Heat breaks attractions (hydrogen bonds, salt bridges, hydrophobic contacts). Covalent bonds stay.' }
 };
-const SIM_TIP = 'Predict first. After you answer, the lab opens right under this question so you can test it.';
+const SIM_TIP = 'This is a simulation question. Predict first. The simulation below unlocks when you answer, so you can test it.';
 function genSim(topic) {
   const S = SIMQ[topic], pr = drawBag('simq' + topic + OPTS.course, forCourse(S.list())), opts = pr.c.map(([h, ok, why, slip]) => opt(h, ok, why, slip));
   return { topic, tag: S.lab, stem: '', tip: SIM_TIP, sim: { k: S.k, id: pr.id, test: pr.test }, parts: [choicePart(pr.q, opts, { solution: opts.find(o => o.ok).why, hint: S.hint })] };
@@ -2275,8 +2276,9 @@ function afterSelect() {
 function startRound(kind) {
   closeLab();
   const avail = tiles().flatMap(tTopics); let plan;
-  if (kind === 'challenge') { plan = []; let bag = []; while (plan.length < 10) { if (!bag.length) bag = shuffle(avail); plan.push(bag.pop()); } }
-  if (kind === 'daily') { const pickN = (list, n) => { const out = []; let pool = list.filter(t => avail.includes(t)); while (out.length < n && pool.length) { const t = weightedTopic(pool); out.push(t); pool = pool.filter(x => x !== t); } return out; }; plan = [...pickN(TIER.easy, 2), ...pickN(TIER.medium, 2), ...pickN(TIER.hard, 1)]; while (plan.length < 5) plan.push(pick(avail)); }
+  const isLab = t => TOPICS[t].lab, labsA = shuffle(avail.filter(isLab)), rest = avail.filter(t => !isLab(t));
+  if (kind === 'challenge') { plan = []; if (rest.length) for (let i = 0; i < 3 && labsA.length; i++) plan.push(labsA[i % labsA.length]); let bag = []; while (plan.length < 10) { if (!bag.length) bag = shuffle(rest.length ? rest : avail); plan.push(bag.pop()); } plan = shuffle(plan); }
+  if (kind === 'daily') { const pickN = (list, n) => { const out = []; let pool = list.filter(t => avail.includes(t)); while (out.length < n && pool.length) { const t = weightedTopic(pool); out.push(t); pool = pool.filter(x => x !== t); } return out; }; plan = [...pickN(TIER.easy, 2), ...pickN(TIER.medium, 2), ...pickN(TIER.hard, 1)]; while (plan.length < 5) plan.push(pick(avail)); if (labsA.length && !plan.some(isLab)) plan[1] = labsA[0]; }
   state.ch = { kind, plan, i: 0, results: [] }; state.learn = null;
   renderChooser(); newQuestion(true); scrollToPlay();
 }
@@ -2306,12 +2308,14 @@ function weightedTopic(pool) {
   for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) return pool[i]; }
   return pool[0];
 }
-let lastTopic = null;
+let lastTopic = null, sinceSim = 2;
 function makeQuestion() {
   OPTS.course = state.course;
   if (state.ch) return generate(state.ch.plan[state.ch.i]);
-  let pool = [...state.sel]; if (pool.length > 1 && lastTopic) pool = pool.filter(t => t !== lastTopic || chance(0.3));
-  const t = weightedTopic(pool.length ? pool : [...state.sel]); lastTopic = t; return generate(t);
+  let pool = [...state.sel]; const labs = pool.filter(t => TOPICS[t].lab);
+  if (labs.length && labs.length < pool.length && sinceSim >= 2) pool = labs;
+  else if (pool.length > 1 && lastTopic) pool = pool.filter(t => t !== lastTopic || chance(0.3));
+  const t = weightedTopic(pool.length ? pool : [...state.sel]); lastTopic = t; sinceSim = TOPICS[t].lab ? 0 : sinceSim + 1; return generate(t);
 }
 function initWork(p) { if (!p) return null; if (p.kind === 'rank') return { order: [] }; return null; }
 function newQuestion(focus) {
@@ -2332,6 +2336,7 @@ function newQuestion(focus) {
   setFeedback('', '');
   setVideoFor(T.video);
   renderParts(); renderChooser(); paintIcons($('play')); setMood('idle');
+  if (q.sim) { showSimInline(q.sim, true); setMood('idle'); }
   if (focus) focusPart();
 }
 const coarse = () => { try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } };
@@ -2439,7 +2444,7 @@ function finishQuestion() {
   $('nextBtn').hidden = false; $('nextBtn').innerHTML = (state.ch && state.ch.i === state.ch.plan.length - 1 ? 'See my results ' : 'Next question ') + ico('arrow');
   if (!coarse()) try { $('nextBtn').focus({ preventScroll: true }); } catch (e) {}
   save(); renderStats(); checkAch(); renderChooser();
-  if (q.sim) showSimInline(q.sim);
+  if (q.sim) unlockSimInline(q.sim);
 }
 function setFeedback(kind, html) { const f = $('feedback'); f.className = 'feedback' + (kind ? ' ' + kind : ''); f.innerHTML = html; }
 function showStep() {
@@ -2558,9 +2563,10 @@ const lab = { open: false, sim: null, pred: null, locked: true, paused: false, r
 const LAB_F = { H2O: 'H₂O', NH3: 'NH₃', HF: 'HF', CH3OH: 'CH₃OH', CH4: 'CH₄' };
 const LAB_BP = { H2O: 100, NH3: -33, HF: 20, CH3OH: 65, CH4: -162 };
 function closeLab() { if (lab.open) { lab.open = false; cancelAnimationFrame(lab.raf); $('labBox').hidden = true; } if (hc.open) { hc.open = false; cancelAnimationFrame(hc.raf); $('hcBox').hidden = true; } if (pd.open) { pd.open = false; pdStop(); $('pdBox').hidden = true; } if (cl.open) { cl.open = false; cancelAnimationFrame(cl.raf); $('clBox').hidden = true; } if (cg.open) { cg.open = false; $('cgBox').hidden = true; } if (fl.open) { fl.open = false; $('flBox').hidden = true; } GEN_LABS.forEach(L => { if (L.open) L.close(); }); if (mx.open) mx.close(); detachInline(); }
+function cvScale(cv, W) { return Math.min(3, (window.devicePixelRatio || 1) * Math.max(1, cv.parentElement.clientWidth / W)); }
 function labSize() { const st = $('labCanvas').parentElement, W = Math.max(280, Math.min(520, Math.round(st.clientWidth))), H = W < 400 ? 300 : 330; return { W, H, n: W < 400 ? 8 : 12 }; }
 function labBuild() {
-  const z = labSize(), cv = $('labCanvas'), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const z = labSize(), cv = $('labCanvas'), dpr = cvScale(cv, z.W);
   cv.width = z.W * dpr; cv.height = z.H * dpr; cv.style.height = z.H + 'px'; lab.dpr = dpr; lab.W = z.W;
   lab.sim = makeSim(lab.mol, z.n, z.W, z.H); lab.sim.TK = lab.TC + 273; lab.shown = 0;
   labDraw(); if (lab.locked) { lab.cap = ''; $('labCaption').textContent = 'Solid lines are covalent bonds. Dot pairs are lone pairs. Dashed lines are hydrogen bonds.'; $('labCount').textContent = '0.0'; $('labMeter').style.width = '0%'; } else labReadout();
@@ -2612,7 +2618,7 @@ function labReadout() {
   const s = lab.sim, v = s.def.donor ? s.avg : 0, name = cap(LAB_NAME[lab.mol]);
   $('labCount').textContent = v.toFixed(1); $('labMeter').style.width = Math.min(100, v / 2.5 * 100) + '%';
   const txt = !s.def.donor ? `${name} at ${degC(lab.TC)}: no hydrogen bonds. Its H atoms are on carbon, so only weak dispersion forces act.`
-    : `${name} at ${degC(lab.TC)}: ` + (v >= 1 ? 'hydrogen bonds hold most molecules together.' : v >= 0.45 ? 'hydrogen bonds flicker. They break and re-form as the molecules jostle.' : 'the molecules move too fast for hydrogen bonds to last.') + ' Every molecule stays whole.';
+    : `${name} at ${degC(lab.TC)}: ` + (v >= 1 ? 'hydrogen bonds hold most molecules together.' : s.t < 6 ? 'the molecules are still finding each other. Watch for dashed lines.' : v >= 0.45 ? 'hydrogen bonds flicker. They break and re-form as the molecules jostle.' : 'the molecules move too fast for hydrogen bonds to last.') + ' Every molecule stays whole.';
   if (txt !== lab.cap) { lab.cap = txt; $('labCaption').textContent = txt; }
 }
 function labDraw() { simDraw($('labCanvas'), lab.sim, lab.dpr, 1, lab.labels); }
@@ -2669,7 +2675,7 @@ const HC_CAP = {
 };
 function hcSize() { const st = $('hcCanvas').parentElement, W = Math.max(250, Math.min(500, Math.round(st.clientWidth))); return W; }
 function hcBuild() {
-  const W = hcSize(), cv = $('hcCanvas'), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const W = hcSize(), cv = $('hcCanvas'), dpr = cvScale(cv, W);
   hc.W = W; hc.sc = W / 500; hc.dpr = dpr; cv.width = W * dpr; cv.height = Math.round(430 * hc.sc * dpr); cv.style.height = Math.round(430 * hc.sc) + 'px';
   hc.sim = makePhaseSim(500, 430); const st = hcState(hc.u);
   for (let i = 0; i < (hc.u > 1 ? 360 : 1); i++) { phaseSync(hc.sim, st, 1 / 120); stepSim(hc.sim, 1 / 120); }   // let a liquid or gas starting point settle
@@ -2842,7 +2848,7 @@ const bathBy = k => BATHS.find(b => b.k === k);
 function clNewCell() { const b = bathBy(cl.bath); cl.cell = { V: 1, type: cl.type, cout: b.c, burst: false, tint: 0, inRate: 0, outRate: 0 }; cellStep(cl.cell, 0); }
 function clSize() { return Math.max(250, Math.min(520, Math.round($('clCanvas').parentElement.clientWidth))); }
 function clBuild() {
-  const W = clSize(), cv = $('clCanvas'), dpr = Math.min(2, window.devicePixelRatio || 1); cl.W = W; cl.sc = W / 520; cl.dpr = dpr; cv.width = W * dpr; cv.height = Math.round(340 * cl.sc * dpr); cv.style.height = Math.round(340 * cl.sc) + 'px';
+  const W = clSize(), cv = $('clCanvas'), dpr = cvScale(cv, W); cl.W = W; cl.sc = W / 520; cl.dpr = dpr; cv.width = W * dpr; cv.height = Math.round(340 * cl.sc * dpr); cv.style.height = Math.round(340 * cl.sc) + 'px';
   if (!cl.dots) { cl.dots = []; while (cl.dots.length < 64) { const x = 14 + Math.random() * 492, y = 14 + Math.random() * 312; if (Math.abs(x - 260) > 128 || Math.abs(y - 170) > 108) cl.dots.push([x, y, Math.random() * 6.28]); } cl.inside = Array.from({ length: 9 }, (_, i) => [0.2 + 0.6 * ((i * 0.37) % 1), i * 2.4]); }
   clPaint();
 }
@@ -3234,16 +3240,23 @@ const LAB_UNLOCK = {
 };
 function detachInline() {
   const slot = $('simSlot'); if (!slot || !inlineLab) return;
-  [...slot.querySelectorAll('section.example')].forEach(b => { b.classList.remove('simq-inline'); b.hidden = true; $('playArea').before(b); });
+  [...slot.querySelectorAll('section.example')].forEach(b => { b.classList.remove('simq-inline', 'simq-locked'); b.inert = false; b.hidden = true; $('playArea').before(b); });
   slot.hidden = true; slot.innerHTML = ''; inlineLab = null;
 }
-function showSimInline(sim) {
+const simHead = (L, sim, locked) => `<div class="simq-head">${ico('flask')}<div><b>${locked ? 'Simulation: ' : 'Now test it: '}${L.name}</b><span>${locked ? 'Answer the question above. Then this simulation unlocks so you can test your answer.' : sim.test || ''}</span></div></div>`;
+function unlockSimInline(sim) {
+  const box = $(sim.k + 'Box'), L = LABS.find(x => x.k === sim.k);
+  if (inlineLab !== sim.k || !L || !box.classList.contains('simq-locked')) return showSimInline(sim);
+  box.classList.remove('simq-locked'); box.inert = false; LAB_UNLOCK[sim.k](sim);
+  const h = $('simSlot').querySelector('.simq-head'); if (h) { h.outerHTML = simHead(L, sim, false); paintIcons($('simSlot')); }
+}
+function showSimInline(sim, locked) {
   const L = LABS.find(x => x.k === sim.k); if (!L || !L.courses.includes(state.course)) return;
   const keep = { ch: state.ch, q: state.q, learn: state.learn, title: $('playTitle').textContent, skip: $('skipBtn').hidden, modes: Object.assign({}, P.modes) };
   SIM_FORCE = sim.id || '~none~'; try { L.open(); } finally { SIM_FORCE = null; }
   Object.assign(state, { ch: keep.ch, q: keep.q, learn: keep.learn }); P.modes = keep.modes; $('playTitle').textContent = keep.title; $('skipBtn').hidden = keep.skip; $('playArea').hidden = false;
-  LAB_UNLOCK[sim.k](sim); inlineLab = sim.k;
-  const slot = $('simSlot'), box = $(sim.k + 'Box'); slot.innerHTML = `<div class="simq-head">${ico('flask')}<div><b>Now test it: ${L.name}</b><span>${sim.test || ''}</span></div></div>`; box.classList.add('simq-inline'); slot.appendChild(box); slot.hidden = false;
+  if (!locked) LAB_UNLOCK[sim.k](sim); inlineLab = sim.k;
+  const slot = $('simSlot'), box = $(sim.k + 'Box'); slot.innerHTML = simHead(L, sim, locked); box.classList.add('simq-inline'); box.classList.toggle('simq-locked', !!locked); box.inert = !!locked; slot.appendChild(box); slot.hidden = false;
   renderChooser(); setVideoFor(TOPICS[state.q.topic].video);
 }
 
