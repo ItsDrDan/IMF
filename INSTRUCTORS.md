@@ -4,12 +4,12 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v10.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v11.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
 
 ## New in v10 (2026-11-13)
 
-- **"Go to your question" button.** After a tile is picked, the question appears below the tiles, the topic picker and the practice modes. On a phone that is more than a screen away, and inside Canvas the embedded game is about 4,000 px tall, so nothing visible changed. A button now appears right under the tiles and jumps to the question (or to the lesson in Learn).
+- **"Go to your question" button.** After a tile is picked, the question appears below the tiles, the topic picker and the practice modes. On a phone that is more than a screen away, and inside Canvas the embedded game is about 4,000 px tall, so nothing visible changed. A button now appears right under the tiles and jumps to the question (or to the lesson in Learn). On narrow screens it stays pinned to the bottom of the screen while the tiles are in view (v11), because the tiles alone fill more than one phone screen.
 - **In Canvas (Fall 2026):** the game has its own page in CHEM 1A (listed under Study Game in Chapters 10 and 11) and in both CHEM 3A sections (Chapter 6, Chapters 7 and 10: Properties of Liquids, and Chapter 7: Solids, Liquids, and Phase Changes).
 - **Phone check:** done in a browser's phone emulation with real taps (tiles, hints, answers, a lab opening under its question, dragging the phase diagram point). Not yet tried on a physical phone.
 
