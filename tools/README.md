@@ -3,7 +3,7 @@
 These run the game's own question code outside the browser, using the JavaScript engine that ships with macOS.
 
 ```bash
-tools/extract.sh sticky-molecules-v16.html
+tools/extract.sh index.html
 ```
 
 ```bash
