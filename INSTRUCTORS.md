@@ -4,8 +4,15 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v12.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v13.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v13 (2026-11-13)
+
+- **Mixing Beaker shows molecules.** Every particle is drawn as a small molecule with coloured atoms and a key under the beaker: bent water, methane, fluoromethane, methanol, zigzag carbon chains for hexane and pentane (H atoms left out), and Na⁺ and Cl⁻ ions.
+- **Solvation is shown.** When something mixes well, each particle sits in a dashed ring with solvent molecules around it. Water's O atoms face Na⁺ and its H atoms face Cl⁻; dashed hydrogen bonds join water to methanol; hexane chains lie around methane and pentane. A gold outline marks what was dropped in, and the loose solvent is faded so the shells stand out.
+- The cases that do not mix use the same molecules: gas leaving in bubbles, a floating or sunken layer, or the salt lattice on the bottom.
+- It is a still drawing, not an animation. Molecules are flat and far larger than real ones.
 
 ## New in v12 (2026-11-13)
 

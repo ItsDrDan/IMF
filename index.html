@@ -3172,18 +3172,75 @@ const cfLab = mkLab({ key: 'cf', title: 'Electron Coin-Flip', label: 'Electron C
 /* ---------- Mixing Beaker (§6.6): predict before every drop ---------- */
 const mx = { open: false, solvent: 'water', item: null, shown: false, key: 'mx' };
 function mxSvg() {
-  const S = MIXLAB[mx.solvent], it = mx.item, f1 = v => v.toFixed(1), dot = (x, y, col, r = 5) => `<circle cx="${f1(x)}" cy="${f1(y)}" r="${r}" fill="${col}" stroke="#3d4a73" stroke-width="1"/>`, sol = '#e0577f';
-  let h = `<path d="M110 30v150a12 12 0 0 0 12 12h146a12 12 0 0 0 12-12V30" fill="#fff" stroke="#3d4a73" stroke-width="3"/><path d="M100 30h190" stroke="#3d4a73" stroke-width="3" stroke-linecap="round"/><rect x="113" y="70" width="164" height="118" rx="8" fill="${S.color}"/><text x="195" y="210" text-anchor="middle" font-size="12" font-weight="800" fill="#26326a">${S.name}, ${S.f}</text>`;
-  const scatter = (n, x0, y0, w, hh, col) => { let s = ''; for (let i = 0; i < n; i++) s += dot(x0 + ((i * 0.618) % 1) * w, y0 + ((i * 0.377 + 0.13) % 1) * hh, col); return s; };
-  if (!it) return `<svg class="cg-svg" viewBox="0 0 390 220" role="img" aria-label="A beaker of ${S.name}.">${h}</svg>`;
-  if (!mx.shown) h += `<g>${scatter(8, 165, 4, 60, 22, sol)}</g><text x="195" y="50" text-anchor="middle" font-size="12" font-weight="800" fill="#b83d63">${it.name}, ${it.f}</text><path d="M195 54v10M195 64l-5-6M195 64l5-6" stroke="#b83d63" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
-  else if (it.look === 'mix') h += scatter(14, 122, 78, 146, 100, sol) + `<text x="195" y="56" text-anchor="middle" font-size="12" font-weight="800" fill="#23704f">mixed evenly</text>`;
-  else if (it.look === 'ions') h += scatter(8, 122, 78, 146, 100, '#e8963a') + scatter(8, 130, 86, 138, 92, '#23804f') + `<text x="195" y="56" text-anchor="middle" font-size="12" font-weight="800" fill="#23704f">dissolved: separate Na⁺ and Cl⁻ ions</text>`;
-  else if (it.look === 'top') h += `<rect x="113" y="48" width="164" height="22" fill="#fbeebd" stroke="#c9a94a"/>` + scatter(9, 120, 52, 150, 12, sol) + `<text x="300" y="62" font-size="11" font-weight="800" fill="#7a5200">${it.name} layer</text>`;
-  else if (it.look === 'bottom') h += `<rect x="113" y="${it.v === 'some' ? 160 : 156}" width="164" height="${it.v === 'some' ? 28 : 32}" rx="6" fill="${it.k === 'H2O' ? '#bcdcf5' : '#f5d0dc'}" stroke="#8a93ab"/>` + scatter(9, 120, 164, 150, 18, sol) + (it.v === 'some' ? scatter(3, 130, 90, 130, 50, sol) : '') + `<text x="300" y="176" font-size="11" font-weight="800" fill="#4f5a74">${it.name} layer</text>`;
-  else if (it.look === 'crystal') { for (let i = 0; i < 12; i++) h += `<rect x="${170 + (i % 4) * 13}" y="${148 + Math.floor(i / 4) * 13}" width="12" height="12" fill="${(i + Math.floor(i / 4)) % 2 ? '#e8963a' : '#23804f'}" stroke="#3d4a73" stroke-width="1"/>`; h += `<text x="300" y="170" font-size="11" font-weight="800" fill="#4f5a74">solid NaCl</text>`; }
-  else h += scatter(it.v === 'some' ? 3 : 0, 130, 100, 130, 70, sol) + [[150, 60], [185, 44], [225, 56], [205, 20], [165, 22], [240, 30]].map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="8" fill="#fff" stroke="${sol}" stroke-width="2.5"/>`).join('') + `<text x="300" y="40" font-size="11" font-weight="800" fill="#b83d63">gas escapes</text>`;
-  return `<svg class="cg-svg" viewBox="0 0 390 220" role="img" aria-label="A beaker of ${S.name}${mx.shown ? `: ${it.name} ${it.v === 'yes' ? 'has mixed in evenly' : it.v === 'some' ? 'has mixed in only a little' : 'has stayed separate'}` : ` with ${it.name} about to be added`}.">${h}</svg>`;
+  /* v13: particles are drawn as small molecules, and a dissolved particle is shown with solvent molecules around it */
+  const S = MIXLAB[mx.solvent], it = mx.item, f1 = v => v.toFixed(1), rad = d => d * Math.PI / 180, used = {};
+  const COL = { C: '#8b93a7', H: '#ffffff', O: '#e5533d', F: '#5fbf74', Na: '#a47be0', Cl: '#3fa66b' }, KEY = { Na: 'Na⁺', Cl: 'Cl⁻' };
+  const rnd = i => { const v = Math.sin(i * 12.9898 + 4.1) * 43758.5453; return v - Math.floor(v); };
+  const px = (x, d, a) => x + d * Math.cos(rad(a)), py = (y, d, a) => y + d * Math.sin(rad(a));
+  const atom = (el, x, y, r) => { used[el] = 1; return `<circle cx="${f1(x)}" cy="${f1(y)}" r="${r}" fill="${COL[el]}" stroke="#3d4a73" stroke-width=".8"/>`; };
+  const hs = (x, y, a, list) => list.map(d => atom('H', px(x, 5.8, a + d), py(y, 5.8, a + d), 2.6)).join('');
+  const chain = n => (x, y, a) => { let s = ''; const c = Math.cos(rad(a)), q = Math.sin(rad(a)); for (let i = 0; i < n; i++) { const t = (i - (n - 1) / 2) * 5.6, w = i % 2 ? 1.9 : -1.9; s += atom('C', x + t * c - w * q, y + t * q + w * c, 3.2); } return s; };
+  const ion = (el, x, y, r) => atom(el, x, y, r) + `<text x="${f1(x)}" y="${f1(y + 3)}" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">${el === 'Na' ? '+' : '−'}</text>`;
+  const G = {
+    H2O: (x, y, a) => atom('H', px(x, 5.4, a - 52), py(y, 5.4, a - 52), 2.7) + atom('H', px(x, 5.4, a + 52), py(y, 5.4, a + 52), 2.7) + atom('O', x, y, 4.6),   // a = the way the two H atoms point
+    CH4: (x, y, a) => hs(x, y, a, [45, 135, 225, 315]) + atom('C', x, y, 4.8),
+    CH3F: (x, y, a) => hs(x, y, a, [120, 180, 240]) + atom('C', x, y, 4.8) + atom('F', px(x, 7.6, a), py(y, 7.6, a), 4.2),
+    CH3OH: (x, y, a) => { const ox = px(x, 8, a), oy = py(y, 8, a); return hs(x, y, a, [110, 180, 250]) + atom('C', x, y, 4.8) + atom('H', px(ox, 5.4, a + 55), py(oy, 5.4, a + 55), 2.6) + atom('O', ox, oy, 4.4); },
+    C6H14: chain(6), C5H12: chain(5)
+  };
+  const hl = g => g.replace(/stroke="#3d4a73" stroke-width="\.8"/g, 'stroke="#f5b921" stroke-width="4.6"') + g;
+  const lattice = (cx, y, cols, rows) => { let s = ''; for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) s += atom((r + c) % 2 ? 'Cl' : 'Na', cx + (c - (cols - 1) / 2) * 11, y + r * 11, 5.4); return s; };
+  const dash = (x1, y1, x2, y2, t1 = 0, t2 = 0) => { const d = Math.hypot(x2 - x1, y2 - y1) || 1, ux = (x2 - x1) / d, uy = (y2 - y1) / d; x1 += ux * t1; y1 += uy * t1; x2 -= ux * t2; y2 -= uy * t2; return `<path d="M${f1(x1)} ${f1(y1)}L${f1(x2)} ${f1(y2)}" stroke="#1c3f94" stroke-width="1.5" stroke-dasharray="1.6 1.6" fill="none"/>`; };
+  const solvG = mx.solvent === 'water' ? G.H2O : G.C6H14;
+  /* loose solvent molecules that fill a region, leaving room around the listed particles */
+  const bulk = (x0, y0, x1, y1, avoid, seed) => {
+    const wat = mx.solvent === 'water', sx = wat ? 25 : 41, sy = wat ? 22 : 15, mxm = wat ? 9 : 20, mym = wat ? 9 : 6; let s = '', n = seed || 0;
+    for (let y = y0 + mym, row = 0; y <= y1 - mym + 0.5; y += sy, row++) for (let x = x0 + mxm + (row % 2 ? sx / 2 : 0); x <= x1 - mxm + 0.5; x += sx) {
+      n++; const X = x + (rnd(n) - 0.5) * (wat ? 7 : 6), Y = y + (rnd(n + 50) - 0.5) * (wat ? 6 : 3);
+      if ((avoid || []).some(p => Math.hypot(X - p[0], Y - p[1]) < p[2] + (wat ? 7 : 12))) continue;
+      s += solvG(X, Y, wat ? rnd(n + 99) * 360 : (rnd(n + 99) - 0.5) * 44);
+    }
+    return `<g opacity=".45">${s}</g>`;
+  };
+  /* one dissolved particle with its shell of solvent molecules */
+  const shell = (k, x, y, i) => {
+    const a = i * 67 + 20, halo = mx.solvent === 'water' ? 29 : k === 'C5H12' ? 23 : 25; let s = `<circle cx="${x}" cy="${y}" r="${halo}" fill="#ffffff70" stroke="#2f5fb8" stroke-width="1" stroke-dasharray="3 3"/>`;
+    if (k === 'Na' || k === 'Cl') { const R = k === 'Na' ? 15.5 : 18.5; for (let j = 0; j < 5; j++) { const th = a + j * 72; s += G.H2O(px(x, R, th), py(y, R, th), k === 'Na' ? th : th + 180 - 52); } return s + ion(k, x, y, k === 'Na' ? 6 : 7.6); }   // O toward Na⁺, an H toward Cl⁻
+    if (mx.solvent === 'water' && k === 'CH3OH') {
+      const cx = px(x, -6, a), cy = py(y, -6, a), ox = px(cx, 8, a), oy = py(cy, 8, a), hx = px(ox, 5.4, a + 55), hy = py(oy, 5.4, a + 55);
+      const w1 = [px(ox, 15.5, a - 50), py(oy, 15.5, a - 50)], w2 = [px(hx, 11.5, a + 55), py(hy, 11.5, a + 55)];
+      s += G.H2O(w1[0], w1[1], a - 50 + 180 - 52) + G.H2O(w2[0], w2[1], a + 55);
+      [150, 215, 280].forEach((d, j) => { s += G.H2O(px(x, 20.5, a + d), py(y, 20.5, a + d), rnd(i * 7 + j) * 360); });
+      return s + hl(G.CH3OH(cx, cy, a)) + dash(px(w1[0], 5.4, a - 50 + 180), py(w1[1], 5.4, a - 50 + 180), ox, oy, 2.7, 4.4) + dash(hx, hy, w2[0], w2[1], 2.6, 4.6);   // dashed lines: hydrogen bonds
+    }
+    if (mx.solvent === 'water' && k === 'CH3F') { const fx = px(x, 7.6, a), fy = py(y, 7.6, a); [-40, 40].forEach(d => { s += G.H2O(px(fx, 13, a + d), py(fy, 13, a + d), a + d + 180 - 52); }); [150, 215].forEach((d, j) => { s += G.H2O(px(x, 18, a + d), py(y, 18, a + d), rnd(i * 5 + j) * 360); }); return s + hl(G.CH3F(x, y, a)); }
+    if (k === 'CH4') { for (let j = 0; j < 3; j++) { const th = a + j * 120; s += G.C6H14(px(x, 14, th), py(y, 14, th), th + 90); } return s + hl(G.CH4(x, y, a)); }
+    if (k === 'C5H12') { const b = (rnd(i) - 0.5) * 50; [-10, 10].forEach(d => { s += G.C6H14(px(x, d, b + 90), py(y, d, b + 90), b); }); return s + hl(G.C5H12(x, y, b)); }
+    return s + G[k](x, y, a);
+  };
+  const P6 = [[108, 122], [195, 118], [282, 122], [108, 204], [195, 208], [282, 204]], L = { x0: 63, x1: 327, y0: 78, y1: 244 };
+  const label = (t, col) => `<text x="195" y="14" text-anchor="middle" font-size="12" font-weight="800" fill="${col}">${t}</text>`;
+  const row = (k, y, n, x0, x1, seed) => { let s = ''; for (let i = 0; i < n; i++) s += G[k](x0 + (x1 - x0) * (i + 0.5) / n, y + (rnd(seed + i) - 0.5) * 4, k === 'H2O' ? rnd(seed + i + 9) * 360 : k === 'CH3OH' ? (i % 2 ? 180 : 0) + (rnd(seed + i + 9) - 0.5) * 50 : (rnd(seed + i + 9) - 0.5) * 40); return s; };
+  let h = `<path d="M60 30v205a12 12 0 0 0 12 12h246a12 12 0 0 0 12-12V30" fill="#fff" stroke="#3d4a73" stroke-width="3"/><path d="M50 30h290" stroke="#3d4a73" stroke-width="3" stroke-linecap="round"/><rect x="63" y="78" width="264" height="166" rx="8" fill="${S.color}"/>`, body = '';
+  const sol = it && it.k;
+  if (!it) body = bulk(L.x0, L.y0, L.x1, L.y1);
+  else if (!mx.shown) body = bulk(L.x0, L.y0, L.x1, L.y1) + (sol === 'NaCl' ? lattice(195, 46, 5, 2) : row(sol, 54, sol === 'C6H14' || sol === 'C5H12' ? 4 : 5, 110, 280, 3)) + label(`${it.name}, ${it.f} ↓`, '#b83d63');
+  else if (it.look === 'mix') { const av = P6.map(p => [p[0], p[1], mx.solvent === 'water' ? 28 : 22]); body = bulk(L.x0, L.y0, L.x1, L.y1, av) + P6.map((p, i) => shell(sol, p[0], p[1], i)).join('') + label(`mixed evenly: ${S.name} surrounds each ${it.name} molecule`, '#23704f'); }
+  else if (it.look === 'ions') { const av = P6.map(p => [p[0], p[1], 28]); body = bulk(L.x0, L.y0, L.x1, L.y1, av) + P6.map((p, i) => shell(i % 2 ? 'Cl' : 'Na', p[0], p[1], i)).join('') + label('dissolved: water surrounds each Na⁺ and Cl⁻ ion', '#23704f'); }
+  else if (it.look === 'top') body = `<rect x="63" y="78" width="264" height="36" fill="#fbeebd" stroke="#c9a94a"/>` + row(sol, 88, 6, 68, 322, 1) + row(sol, 103, 6, 68, 322, 20) + bulk(L.x0, 114, L.x1, L.y1) + label(`${it.name} floats on top as its own layer`, '#7a5200');
+  else if (it.look === 'bottom') {
+    const some = it.v === 'some', up = some ? [[120, 130], [250, 150]] : [];
+    body = `<rect x="63" y="202" width="264" height="42" rx="8" fill="${sol === 'H2O' ? '#bcdcf5' : '#f5d0dc'}" stroke="#8a93ab"/>` + bulk(L.x0, L.y0, L.x1, 202, up.map(p => [p[0], p[1], 9])) + up.map((p, i) => hl(G[sol](p[0], p[1], i * 140 + 30))).join('') + row(sol, 213, sol === 'CH3OH' ? 7 : 9, 68, 322, 1) + row(sol, 233, sol === 'CH3OH' ? 7 : 9, 68, 322, 30) + label(some ? `only a little ${it.name} mixes in. The rest is its own layer` : `${it.name} stays together as its own layer`, '#4f5a74');
+  }
+  else if (it.look === 'crystal') body = bulk(L.x0, L.y0, L.x1, 200) + bulk(L.x0, 200, 150, L.y1, null, 300) + bulk(240, 200, L.x1, L.y1, null, 400) + lattice(195, 208, 6, 3) + label('solid NaCl stays on the bottom', '#4f5a74');
+  else {   // a gas that bubbles out
+    const some = it.v === 'some', in1 = some ? [[150, 190]] : [], bub = [[110, 52], [160, 44], [215, 56], [270, 46], [130, 100], [250, 108]];
+    body = bulk(L.x0, L.y0, L.x1, L.y1, bub.slice(4).map(p => [p[0], p[1], 12]).concat(in1.map(p => [p[0], p[1], 28]))) + in1.map((p, i) => shell(sol, p[0], p[1], i + 2)).join('') + bub.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="12.5" fill="#ffffffb8" stroke="#e0577f" stroke-width="1.8"/>` + G[sol](p[0], p[1], i * 50)).join('') + label(some ? `only a little ${it.name} dissolves. Most leaves as gas` : `${it.name} leaves as gas`, '#b83d63');
+  }
+  h += body + `<text x="195" y="264" text-anchor="middle" font-size="12" font-weight="800" fill="#26326a">${S.name}, ${S.f}</text>`;
+  const ks = ['C', 'H', 'O', 'F', 'Na', 'Cl'].filter(e => used[e]), kw = 40, k0 = 195 - ks.length * kw / 2;
+  h += ks.map((e, i) => `<circle cx="${k0 + i * kw + 6}" cy="280" r="4.5" fill="${COL[e]}" stroke="#3d4a73" stroke-width=".8"/><text x="${k0 + i * kw + 14}" y="284" font-size="11" font-weight="800" fill="#4f5a74">${KEY[e] || e}</text>`).join('');
+  return `<svg class="cg-svg" viewBox="22 0 346 292" role="img" aria-label="A beaker of ${S.name}${!it ? '' : mx.shown ? `: ${it.name} ${it.v === 'yes' ? 'has mixed in evenly, and each particle is surrounded by ' + S.name + ' molecules' : it.v === 'some' ? 'has mixed in only a little' : 'has stayed separate'}` : ` with ${it.name} about to be added`}. Particles are drawn as small molecules.">${h}</svg>`;
 }
 function mxPaint() {
   const S = MIXLAB[mx.solvent]; $('mxFig').innerHTML = mxSvg();
@@ -3196,7 +3253,7 @@ function mxGuess(yes) {
   const it = mx.item, S = MIXLAB[mx.solvent]; if (!it || mx.shown) return; const truth = it.v === 'yes', ok = yes === truth;
   const xp = labScore('mixlab', 'Mixing Beaker', `Mixing: ${it.k} in ${mx.solvent}`, { ok, slip: 'like-dissolves-like' }); mx.shown = true;
   $('mxFeedback').className = 'feedback ' + (ok ? 'good' : 'bad'); $('mxFeedback').innerHTML = `<b>${ok ? 'Good prediction!' : 'Not quite.'}</b> <span class="xp-pop">+${xp} XP</span> ${it.why}`;
-  $('mxCaption').textContent = `${cap(it.name)} in ${S.name}: ${it.v === 'yes' ? 'mixes well. The forces match.' : it.v === 'some' ? 'only a little mixes. The forces only partly match.' : 'stays apart. The forces do not match.'}`; mxPaint();
+  $('mxCaption').textContent = `${cap(it.name)} in ${S.name}: ${it.v === 'yes' ? 'mixes well. The forces match, so solvent molecules surround each particle.' : it.v === 'some' ? 'only a little mixes. The forces only partly match.' : 'stays apart. The forces do not match.'}`; mxPaint();
 }
 function openMX() {
   showLabBox('mx', 'Mixing Beaker'); mx.open = true; mx.item = null; mx.shown = false; setMood('thinking'); mxPaint(); renderChooser(); paintIcons($('mxBox')); setVideoFor('p3');
@@ -3208,7 +3265,7 @@ function mountMX() {
    <div class="lab-side" id="mxSide"><fieldset><legend>1. Liquid in the beaker</legend><div class="lab-mols" id="mxSolv"><button type="button" data-mxsolv="water">Water</button><button type="button" data-mxsolv="hexane">Hexane</button></div></fieldset><fieldset><legend>2. Drop in</legend><div class="lab-mols" id="mxItems"></div></fieldset>
    <fieldset id="mxAsk" hidden><legend>3. Predict</legend><p id="mxQ" style="margin:0 0 8px;font-weight:700"></p><div class="lab-btns"><button type="button" class="btn primary" data-mxguess="1">Mixes well</button><button type="button" class="btn primary" data-mxguess="0">Does not mix well</button></div></fieldset></div></div>
    <div class="feedback" id="mxFeedback" role="status" aria-live="polite"></div>
-   <p class="note-small">A teaching model of “like dissolves like”. Matching forces mix; mismatched forces stay apart. Hexane floats on water because it is less dense.</p></section>`);
+   <p class="note-small">A teaching model of “like dissolves like”. Matching forces mix; mismatched forces stay apart. Hexane floats on water because it is less dense. A gold outline marks what was dropped in, and a dashed ring marks the solvent molecules around a dissolved particle. Molecules are drawn flat and far larger than real ones, and the H atoms on hexane and pentane chains are left out.</p></section>`);
   $('mxBox').addEventListener('click', e => { const s = e.target.closest('[data-mxsolv]'); if (s) { mx.solvent = s.dataset.mxsolv; mx.item = null; mx.shown = false; return mxPaint(); } const i = e.target.closest('[data-mxitem]'); if (i) { mx.item = MIXLAB[mx.solvent].items.find(x => x.k === i.dataset.mxitem); mx.shown = false; $('mxFeedback').className = 'feedback'; $('mxFeedback').innerHTML = ''; $('mxCaption').textContent = 'Make your prediction to drop it in.'; return mxPaint(); } const g = e.target.closest('[data-mxguess]'); if (g) mxGuess(g.dataset.mxguess === '1'); });
 }
 /* one list of every lab, for the menu, the URL and closing */
@@ -3236,7 +3293,7 @@ const LAB_UNLOCK = {
   fl: () => { fl.locked = false; flControls(); },
   ew: () => { ewLab.locked = false; ewLab.lock(); ewLab.paint(); },
   cf: () => { cfLab.locked = false; cfLab.lock(); cfLab.paint(); },
-  mx: sim => { mx.solvent = sim.solvent; mx.item = MIXLAB[sim.solvent].items.find(x => x.k === sim.item); mx.shown = true; $('mxFeedback').className = 'feedback'; $('mxFeedback').innerHTML = ''; mxPaint(); $('mxCaption').textContent = `${cap(mx.item.name)} in ${MIXLAB[sim.solvent].name}: ${mx.item.v === 'yes' ? 'mixes well. The forces match.' : mx.item.v === 'some' ? 'only a little mixes. The forces only partly match.' : 'stays apart. The forces do not match.'}`; }
+  mx: sim => { mx.solvent = sim.solvent; mx.item = MIXLAB[sim.solvent].items.find(x => x.k === sim.item); mx.shown = true; $('mxFeedback').className = 'feedback'; $('mxFeedback').innerHTML = ''; mxPaint(); $('mxCaption').textContent = `${cap(mx.item.name)} in ${MIXLAB[sim.solvent].name}: ${mx.item.v === 'yes' ? 'mixes well. The forces match, so solvent molecules surround each particle.' : mx.item.v === 'some' ? 'only a little mixes. The forces only partly match.' : 'stays apart. The forces do not match.'}`; }
 };
 function detachInline() {
   const slot = $('simSlot'); if (!slot || !inlineLab) return;
