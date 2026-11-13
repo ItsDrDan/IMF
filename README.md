@@ -4,7 +4,7 @@ ItsDrDan study game on **intermolecular forces, phase changes and colligative pr
 
 Live at https://itsdrdan.github.io/IMF/
 
-Current version: v16
+Current version: v17
 
 - `index.html`: the whole game (standalone; no build step). It loads the brand kit (`games/brand/itsdrdan.css`, `icons.js`, `embed.js`) and `games/track.js` for anonymous stats, and reads its art from `assets/`.
 - `?course=3A` (default), `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden.
@@ -34,7 +34,7 @@ Art notes are in [assets/ART-NOTES.md](assets/ART-NOTES.md).
 
 ## Still to do
 
-- Dr. Dan decides the open items in section 7 of `AUDIT-2026-11-13.md` (pentane vapor pressure, nine new questions, XP for a hinted answer).
+- Dr. Dan reads the 26 questions added in v16 and v17 (listed in `INSTRUCTORS.md`).
 - Dr. Dan reviews the values listed under "Values that still need Dr. Dan's review" in `INSTRUCTORS.md`.
 - Confirm the nightly question-bank build keeps working with `tools/samplers/IMF.js` in `ItsDrDan/questionbank`.
 
