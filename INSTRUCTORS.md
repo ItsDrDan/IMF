@@ -4,8 +4,20 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v22.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v23.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v23 (2026-11-13)
+
+Edits Dr. Dan left to my judgment, all applying things he had already asked for.
+
+- **Main controls above the picture in three more labs**, as in the Energy Well and H-Bond Lab:
+  - *Protein Fold Lab:* the temperature slider and the Cool and Heat buttons sit above the chain.
+  - *Heating Curve Lab:* Add heat, Remove heat, Pause and the slider sit above the curve and the box of molecules.
+  - *Solutions Lab:* on a narrow screen the experiment tabs and sliders come before the picture.
+  - The Cell Lab and Phase Diagram Explorer are unchanged: in the first the student picks a bath and watches, and in the second the student drags the point on the picture itself.
+- **Lab and round links open at the lab.** A link such as `?mode=fold` or `?mode=daily` now folds the tiles into the "Working on" bar, so the lab or round sits near the top of the page. This matters for the lab links in the CHEM 3B textbook and in Canvas. A plain link still shows the tiles.
+- During a Challenge or Daily 5 the bar reads "Challenge · 10 mixed questions" or "Daily 5 · 5 questions", without tile names, because a round draws from every tile.
 
 ## New in v22 (2026-11-13)
 

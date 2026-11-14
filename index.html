@@ -505,7 +505,8 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
 .tmast{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:2px;font-size:.78rem;font-weight:800;color:var(--tc,var(--muted))}.tbar{display:block;width:84px;height:6px;border-radius:99px;background:var(--tcl,#e3e6f0);overflow:hidden}.tbar i{display:block;height:100%;background:var(--tc,var(--accent))}
 .mline{margin-top:8px;font-weight:800}.mline.got{display:flex;gap:6px;align-items:center}
 .tag.again{background:var(--amber);color:var(--amber-ink)}
-.lab-top{margin-bottom:10px}.simq-locked .lab-top{opacity:.55}
+.lab-top{margin-bottom:10px}
+@media(max-width:860px){#cgBox .lab-grid{display:flex;flex-direction:column}#cgBox .lab-grid>*{min-width:0}#cgSide{order:-1}}.simq-locked .lab-top{opacity:.55}
 .mopt::before{content:'☐ ';font-weight:900}.mopt.on::before{content:'☑ '}.mopt.on{border-color:var(--accent);background:var(--accent-soft)}
 .pips.due i.on{background:#e0a100;border-color:#b98500}
 .focusbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;margin:10px 0 14px;background:#fff;border:2px solid var(--line2);border-radius:16px;box-shadow:0 3px 0 var(--line2);padding:8px 10px 8px 16px}
@@ -580,6 +581,10 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
    <span class="ex-label">Heating Curve Lab · a teaching model</span>
    <div class="part current" id="hcPredict"></div>
    <div class="feedback" id="hcFeedback" role="status" aria-live="polite"></div>
+   <div class="lab-side lab-top" id="hcSide">
+    <div class="lab-btns"><button type="button" class="btn" id="hcHeat">Add heat</button><button type="button" class="btn" id="hcCool">Remove heat</button><button type="button" class="btn" id="hcPause">Pause</button></div>
+    <input type="range" id="hcRange" min="0" max="500" step="1" value="0" aria-label="Position along the heating curve, from ice at −20 °C to steam at 145 °C">
+   </div>
    <div class="hc-grid">
     <div>
      <div class="figure" id="hcCurve"></div>
@@ -589,10 +594,6 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
     <div><div class="lab-stage"><canvas id="hcCanvas" role="img" aria-label="Box of water molecules. Hydrogen bonds are dashed lines. The caption below describes what is happening."></canvas><div class="lab-lock" id="hcLock">Make your prediction first. Then you control the heat.</div></div></div>
    </div>
    <p class="lab-caption" id="hcCaption" aria-live="polite"></p>
-   <div class="lab-side" id="hcSide">
-    <div class="lab-btns"><button type="button" class="btn" id="hcHeat">Add heat</button><button type="button" class="btn" id="hcCool">Remove heat</button><button type="button" class="btn" id="hcPause">Pause</button></div>
-    <input type="range" id="hcRange" min="0" max="500" step="1" value="0" aria-label="Position along the heating curve, from ice at −20 °C to steam at 145 °C">
-   </div>
    <details class="vs-hint"><summary>Where the 47.2 kJ goes</summary><div class="tbl-scroll"><table class="sheet"><thead><tr><th scope="col">Step</th><th scope="col">Heat</th><th scope="col">Share</th></tr></thead><tbody id="hcTable"></tbody></table></div><p class="note-small">15.0 g of water. Ice 2.06, liquid 4.184, steam 2.02 J g⁻¹ °C⁻¹. ΔH<sub>fus</sub> = 6.02 kJ mol⁻¹, ΔH<sub>vap</sub> = 40.70 kJ mol⁻¹.</p></details>
    <p class="note-small">This is a teaching model, not a real simulation. Ice is shown as one flat slice of its open hexagonal lattice: each molecule has 4 hydrogen bonds in real ice, and here one of them points toward you, to the next layer. Molecules never break apart. For the calculations, use the <a href="https://itsdrdan.github.io/thermochemistry/" target="_blank" rel="noopener noreferrer">Thermochemistry game ↗</a>.</p>
    <div class="ex-actions"><button type="button" class="btn primary" id="hcNew">New prediction <span data-icon="arrow" aria-hidden="true"></span></button></div>
@@ -663,11 +664,11 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
    <div class="part current" id="flPredict"></div>
    <div class="feedback" id="flFeedback" role="status" aria-live="polite"></div>
    <div class="lab-grid cl-grid">
-    <div><div class="lab-stage pd-stage"><div class="figure" id="flFig"></div><div class="lab-lock" id="flLock">Make your prediction first. Then you control the temperature.</div></div>
+    <div><div class="lab-side lab-top" id="flTop"><fieldset><legend>Temperature</legend><div class="lab-temp"><span id="flT"></span></div><input type="range" id="flRT" min="25" max="100" step="1" aria-label="Temperature in degrees Celsius"><div class="lab-btns"><button type="button" class="btn" data-flgo="-15">Cool</button><button type="button" class="btn" data-flgo="15">Heat</button></div></fieldset></div><div class="lab-stage pd-stage"><div class="figure" id="flFig"></div><div class="lab-lock" id="flLock">Make your prediction first. Then you control the temperature.</div></div>
      <p class="cl-key" id="flKey"></p>
      <p class="lab-caption" id="flCaption" aria-live="polite"></p></div>
     <div class="lab-side" id="flSide">
-     <fieldset><legend>Temperature</legend><div class="lab-temp"><span id="flT"></span></div><input type="range" id="flRT" min="25" max="100" step="1" aria-label="Temperature in degrees Celsius"><div class="lab-btns"><button type="button" class="btn" data-flgo="-15">Cool</button><button type="button" class="btn" data-flgo="15">Heat</button></div></fieldset>
+     
      <div class="fl-chips" id="flChips"></div>
     </div>
    </div>
@@ -2468,6 +2469,7 @@ let focusOn = false;
 function focusLabel() {
   const L = inlineLab ? null : LABS.find(x => x.on());
   if (L) return 'Lab: ' + L.name;
+  if (state.ch) return ROUND[state.ch.kind].title + (state.ch.kind === 'challenge' ? ' · 10 mixed questions' : ' · 5 questions');   /* a round draws from every tile, so no tile names */
   const on = tiles().filter(catOn).map(T => T.title), what = on.length > 2 ? on.length + ' tiles' : on.join(' and ');
   return (what || 'Nothing picked yet') + ' · ' + (state.ch ? ROUND[state.ch.kind].title : state.mode === 'learn' ? 'Learn' : 'Practice');
 }
@@ -3297,7 +3299,7 @@ function flPaint() {
     : t < 1 && (st.hb || st.salt || st.core) ? 'Warming up. The weak attractions are letting go one by one, and the chain is loosening.'
       : 'Unfolded (denatured). Every attraction between side chains has let go, but the covalent bonds are all still there: the chain is in one piece and the two cysteines are still joined.';
 }
-function flControls() { $('flLock').hidden = !fl.locked; $('flSide').querySelectorAll('button, input').forEach(el => { el.disabled = fl.locked; }); }
+function flControls() { $('flLock').hidden = !fl.locked; ['flSide', 'flTop'].forEach(id => $(id).querySelectorAll('button, input').forEach(el => { el.disabled = fl.locked; })); }
 function openFL() {
   closeLab(); state.ch = null; state.q = null; state.learn = null; fl.open = true; markMode('lab');
   $('emptyBox').hidden = true; $('playArea').hidden = true; $('learnBox').hidden = true; $('reportBox').hidden = true; $('skipBtn').hidden = true; $('flBox').hidden = false;
@@ -3670,6 +3672,7 @@ function init() {
   bind(); bindLab(); bindHC(); bindPD(); bindCL(); bindCG(); bindFL(); GEN_LABS.forEach(L => L.mount()); mountMX(); $('hintBox').insertAdjacentHTML('afterend', '<div id="simSlot" hidden></div>'); $('clChamberFig').innerHTML = OSMO_SVG; setCourse(c); paintIcons();
   let m = ''; try { m = (new URLSearchParams(location.search).get('mode') || '').toLowerCase(); } catch (e) {}
   if (['daily', 'challenge'].includes(m)) startRound(m); else if (m === 'lab') openLab(); else if (m === 'curve' && TOPICS.curve.courses.includes(state.course)) openHC(); else if (m === 'diagram' && TOPICS.curve.courses.includes(state.course)) openPD(); else if (m === 'cell') openCL(); else if (m === 'solutions' && state.course === '1A') openCG(); else if (m === 'fold' && state.course === '3B') openFL(); else if (LABS.some(x => x.url === m && x.courses.includes(state.course))) LABS.find(x => x.url === m).open(); else if (m === 'learn' || m === 'practice') setMode(m);
+  if (state.ch || (!inlineLab && LABS.some(L => L.on()))) setFocus(true);   /* not for a lab that is only showing under a practice question */
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 </script>
