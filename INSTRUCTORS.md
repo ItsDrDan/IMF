@@ -4,8 +4,13 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v21.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v22.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v22 (2026-11-13)
+
+- **H-Bond Lab: choose how many molecules.** A "Number of molecules" slider sits under the molecule buttons. It starts at 12 (8 on a phone) and goes from 4 up to what the box can hold: 26 on a wide screen and 12 or 13 on a phone, depending on its width. The readout says "room for 26" or "the box is full". The limit is set so every molecule still has a place in the crystal and the gas has room to spread.
+- The choice is kept when a new prediction loads. Changing it rebuilds the box at the current temperature.
 
 ## New in v21 (2026-11-13)
 
@@ -173,7 +178,7 @@ Each is labeled on screen as a teaching model, with its simplifications stated. 
 
 | Lab | Courses | Spec | What it shows | Link |
 | --- | --- | --- | --- | --- |
-| H-Bond Lab | all | §6.1 | 8–12 molecules of H₂O, NH₃, HF, CH₃OH or CH₄ with a temperature slider. Shows a crystal layer below the melting point, a level pool of liquid, and a gas above the boiling point. Dashed hydrogen bonds form H → lone pair, flicker and break. Counter of hydrogen bonds per molecule. | `?mode=lab` |
+| H-Bond Lab | all | §6.1 | 4 to 26 molecules (the student chooses; 12 to start) of H₂O, NH₃, HF, CH₃OH or CH₄ with a temperature slider. Shows a crystal layer below the melting point, a level pool of liquid, and a gas above the boiling point. Dashed hydrogen bonds form H → lone pair, flicker and break. Counter of hydrogen bonds per molecule. | `?mode=lab` |
 | Energy Well | 3A, 1A | §6.3 | Potential energy curve for a pair. Raise the kinetic energy above the top of the well and the pair separates. Ion–dipole well in 1A only. Relative depths, no numbers. | `?mode=well` |
 | Electron Coin-Flip | 1A | §6.5 | Two atoms of He, Ne, Ar, Kr or Xe. Flip the electrons of atom 1 left or right; atom 2's cloud is pushed the same way and the two attract. Even-split chance beside each boiling point. | `?mode=coin` |
 | Mixing Beaker | 1A, 3B | §6.6 | Drop a substance into water or hexane. A prediction is required before every drop. | `?mode=mix` |

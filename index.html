@@ -566,6 +566,7 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
      <p class="lab-caption" id="labCaption" aria-live="polite">Solid lines are covalent bonds. Dot pairs are lone pairs. Dashed lines are hydrogen bonds.</p></div>
     <div class="lab-side" id="labSide">
      <fieldset><legend>Molecule</legend><div class="lab-mols" id="labMols"></div></fieldset>
+     <fieldset><legend>Number of molecules</legend><div class="lab-temp"><span id="labN">12</span><small id="labNmax"></small></div><input type="range" id="labNum" min="4" max="24" step="1" value="12" aria-label="Number of molecules in the box"><div class="lab-temp"><small>fewer</small><small>more</small></div></fieldset>
      <fieldset class="lab-count"><legend>Hydrogen bonds per molecule</legend><b id="labCount">0.0</b><div class="lab-meter" aria-hidden="true"><span id="labMeter"></span></div></fieldset>
      <div class="lab-btns"><button type="button" class="btn" id="labPause">Pause</button><button type="button" class="btn" id="labStep">Step</button></div>
      <label class="chk"><input type="checkbox" id="labLabels" checked> Show δ+ and δ− labels</label>
@@ -1434,9 +1435,11 @@ function latticeSites(key, n, W, H) {
   const def = SIM_MOLS[key], pad = def.group ? 40 : 31, d = SIM.L + def.R + SIM.gap, out = [];
   const c = key === 'H2O' ? { a: 90, dx: 2 * d * Math.cos(rad(38)), dy: d * Math.sin(rad(38)), stag: true } : key === 'CH4' ? { a: null, dx: 56, dy: 48, stag: true } : { a: key === 'CH3OH' ? -52 : 0, dx: d, dy: key === 'CH3OH' ? 80 : key === 'NH3' ? 60 : 48, stag: false };
   const per = Math.max(2, Math.floor((W - 2 * pad) / c.dx) + 1);
-  for (let r = 0; out.length < n && r < 12; r++) { const cnt = c.stag && r % 2 ? per - 1 : per, take = Math.min(cnt, n - out.length), j0 = Math.floor((cnt - take) / 2); for (let j = j0; j < j0 + take; j++) out.push({ x: W / 2 + (j - (cnt - 1) / 2) * c.dx, y: H - pad - r * c.dy, a: c.a }); }
+  for (let r = 0; out.length < n && H - pad - r * c.dy >= pad; r++) { const cnt = c.stag && r % 2 ? per - 1 : per, take = Math.min(cnt, n - out.length), j0 = Math.floor((cnt - take) / 2); for (let j = j0; j < j0 + take; j++) out.push({ x: W / 2 + (j - (cnt - 1) / 2) * c.dx, y: H - pad - r * c.dy, a: c.a }); }
   return out;
 }
+/* the most molecules a box can hold: every one needs a crystal site, and the gas needs elbow room */
+const simCapacity = (key, W, H) => Math.min(latticeSites(key, 99, W, H).length, Math.floor(W * H / 6500));
 function setSimPhase(s, ph) {
   s.phase = ph; s.level = 220; s.grav = 90;   /* tuned so the liquid lies as a level pool and water still shows more hydrogen bonds than methanol or HF */
   s.mols.forEach((m, i) => { m.home = null; m.gas = ph === 'gas'; m.nb = ph === 'gas'; if (ph === 'gas') simRelease(s, i); });
@@ -2803,7 +2806,8 @@ function labSize() { const st = $('labCanvas').parentElement, W = Math.max(280, 
 function labBuild() {
   const z = labSize(), cv = $('labCanvas'), dpr = cvScale(cv, z.W);
   cv.width = z.W * dpr; cv.height = z.H * dpr; cv.style.height = z.H + 'px'; lab.dpr = dpr; lab.W = z.W;
-  lab.sim = makeSim(lab.mol, z.n, z.W, z.H); lab.sim.TK = lab.TC + 273; lab.shown = 0; setSimPhase(lab.sim, simPhase(lab.mol, lab.TC));
+  const room = simCapacity(lab.mol, z.W, z.H), n = Math.max(4, Math.min(lab.n || z.n, room)); lab.room = room;
+  lab.sim = makeSim(lab.mol, n, z.W, z.H); lab.sim.TK = lab.TC + 273; lab.shown = 0; setSimPhase(lab.sim, simPhase(lab.mol, lab.TC));
   labDraw(); if (lab.locked) { lab.cap = ''; $('labCaption').textContent = 'Solid lines are covalent bonds. Dot pairs are lone pairs. Dashed lines are hydrogen bonds.'; $('labCount').textContent = '0.0'; $('labMeter').style.width = '0%'; } else labReadout();
 }
 function openLab() {
@@ -2826,6 +2830,7 @@ function labControls() {
   $('labLock').hidden = !lab.locked;
   ['labSide', 'labTop'].forEach(id => $(id).querySelectorAll('button, input').forEach(el => { el.disabled = lab.locked; }));
   document.querySelectorAll('#labMols button').forEach(b => { b.classList.toggle('on', b.dataset.labmol === lab.mol); b.setAttribute('aria-pressed', b.dataset.labmol === lab.mol); });
+  if (lab.sim) { const n = lab.sim.mols.length; $('labNum').max = lab.room; $('labNum').value = n; $('labN').textContent = n + ' molecules'; $('labNmax').textContent = n >= lab.room ? 'the box is full' : `room for ${lab.room}`; }
   $('labRange').value = lab.TC; $('labT').textContent = degC(lab.TC); $('labBp').innerHTML = `<b>${cap(simPhase(lab.mol, lab.TC))}</b> · melts at ${degC(SIM_PTS[lab.mol][0])} · boils at ${degC(SIM_PTS[lab.mol][1])}`;
   $('labPause').textContent = lab.paused ? 'Play' : 'Pause'; $('labPause').hidden = lab.reduce; $('labStep').hidden = !(lab.reduce || lab.paused);
 }
@@ -2859,14 +2864,15 @@ function labReadout() {
   if (txt !== lab.cap) { lab.cap = txt; $('labCaption').textContent = txt; }
 }
 function labDraw() { simDraw($('labCanvas'), lab.sim, lab.dpr, 1, lab.labels); }
-function labSet(k, v) { lab[k] = v; if ((k === 'TC' || k === 'mol') && lab.paused && !lab.reduce) lab.paused = false;   /* changing the temperature or molecule starts the box moving again, so the picture never lags behind the slider */
-  if (k === 'mol') labBuild(); if (k === 'TC') { lab.sim.TK = v + 273; const ph = simPhase(lab.mol, v); if (ph !== lab.sim.phase) { setSimPhase(lab.sim, ph); lab.sim.t = 0; } } labControls(); labReadout(); labDraw(); labRun(); }
+function labSet(k, v) { lab[k] = v; if ((k === 'TC' || k === 'mol' || k === 'n') && lab.paused && !lab.reduce) lab.paused = false;   /* changing the temperature or molecule starts the box moving again, so the picture never lags behind the slider */
+  if (k === 'mol' || k === 'n') labBuild(); if (k === 'TC') { lab.sim.TK = v + 273; const ph = simPhase(lab.mol, v); if (ph !== lab.sim.phase) { setSimPhase(lab.sim, ph); lab.sim.t = 0; } } labControls(); labReadout(); labDraw(); labRun(); }
 function bindLab() {
   $('labBox').addEventListener('click', e => {
     const c = e.target.closest('[data-labchoice]'); if (c) return labAnswer(+c.dataset.labchoice);
     const m = e.target.closest('[data-labmol]'); if (m && !lab.locked) return labSet('mol', m.dataset.labmol);
   });
   $('labRange').addEventListener('input', e => labSet('TC', +e.target.value));
+  $('labNum').addEventListener('input', e => labSet('n', +e.target.value));
   $('labPause').onclick = () => labSet('paused', !lab.paused);
   $('labStep').onclick = () => { labAdvance(0.25); labDraw(); labReadout(); };
   $('labLabels').onchange = e => labSet('labels', e.target.checked);
