@@ -4,8 +4,15 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v20.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v21.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v21 (2026-11-13)
+
+A follow-up from testing v20 on a phone.
+
+- **H-Bond Lab:** the temperature slider now sits above the box of molecules, as in the Energy Well. On a phone the slider and the box fit on one screen, so a student can watch the phase change while sliding. Before, the slider was a full screen below the box.
+- Changing the temperature or the molecule while the lab is paused starts it moving again, so the picture never lags behind the readout.
 
 ## New in v20 (2026-11-13)
 

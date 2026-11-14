@@ -562,11 +562,10 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
    <div class="part current" id="labPredict"></div>
    <div class="feedback" id="labFeedback" role="status" aria-live="polite"></div>
    <div class="lab-grid">
-    <div><div class="lab-stage"><canvas id="labCanvas" role="img" aria-label="Box of moving molecules. Hydrogen bonds are drawn as dashed lines. The caption below describes what is happening."></canvas><div class="lab-lock" id="labLock">Make your prediction first. Then the molecules start moving.</div></div>
+    <div><div class="lab-side lab-top" id="labTop"><fieldset><legend>Temperature</legend><div class="lab-temp"><span id="labT">25 °C</span><small id="labBp"></small></div><input type="range" id="labRange" min="-200" max="200" step="5" value="25" aria-label="Temperature in degrees Celsius"><div class="lab-temp"><small>cold</small><small>hot</small></div></fieldset></div><div class="lab-stage"><canvas id="labCanvas" role="img" aria-label="Box of moving molecules. Hydrogen bonds are drawn as dashed lines. The caption below describes what is happening."></canvas><div class="lab-lock" id="labLock">Make your prediction first. Then the molecules start moving.</div></div>
      <p class="lab-caption" id="labCaption" aria-live="polite">Solid lines are covalent bonds. Dot pairs are lone pairs. Dashed lines are hydrogen bonds.</p></div>
     <div class="lab-side" id="labSide">
      <fieldset><legend>Molecule</legend><div class="lab-mols" id="labMols"></div></fieldset>
-     <fieldset><legend>Temperature</legend><div class="lab-temp"><span id="labT">25 °C</span><small id="labBp"></small></div><input type="range" id="labRange" min="-200" max="200" step="5" value="25" aria-label="Temperature in degrees Celsius"><div class="lab-temp"><small>cold</small><small>hot</small></div></fieldset>
      <fieldset class="lab-count"><legend>Hydrogen bonds per molecule</legend><b id="labCount">0.0</b><div class="lab-meter" aria-hidden="true"><span id="labMeter"></span></div></fieldset>
      <div class="lab-btns"><button type="button" class="btn" id="labPause">Pause</button><button type="button" class="btn" id="labStep">Step</button></div>
      <label class="chk"><input type="checkbox" id="labLabels" checked> Show δ+ and δ− labels</label>
@@ -2825,7 +2824,7 @@ function labPrediction() {
 }
 function labControls() {
   $('labLock').hidden = !lab.locked;
-  $('labSide').querySelectorAll('button, input').forEach(el => { el.disabled = lab.locked; });
+  ['labSide', 'labTop'].forEach(id => $(id).querySelectorAll('button, input').forEach(el => { el.disabled = lab.locked; }));
   document.querySelectorAll('#labMols button').forEach(b => { b.classList.toggle('on', b.dataset.labmol === lab.mol); b.setAttribute('aria-pressed', b.dataset.labmol === lab.mol); });
   $('labRange').value = lab.TC; $('labT').textContent = degC(lab.TC); $('labBp').innerHTML = `<b>${cap(simPhase(lab.mol, lab.TC))}</b> · melts at ${degC(SIM_PTS[lab.mol][0])} · boils at ${degC(SIM_PTS[lab.mol][1])}`;
   $('labPause').textContent = lab.paused ? 'Play' : 'Pause'; $('labPause').hidden = lab.reduce; $('labStep').hidden = !(lab.reduce || lab.paused);
@@ -2860,7 +2859,8 @@ function labReadout() {
   if (txt !== lab.cap) { lab.cap = txt; $('labCaption').textContent = txt; }
 }
 function labDraw() { simDraw($('labCanvas'), lab.sim, lab.dpr, 1, lab.labels); }
-function labSet(k, v) { lab[k] = v; if (k === 'mol') labBuild(); if (k === 'TC') { lab.sim.TK = v + 273; const ph = simPhase(lab.mol, v); if (ph !== lab.sim.phase) { setSimPhase(lab.sim, ph); lab.sim.t = 0; } } labControls(); labReadout(); labDraw(); labRun(); }
+function labSet(k, v) { lab[k] = v; if ((k === 'TC' || k === 'mol') && lab.paused && !lab.reduce) lab.paused = false;   /* changing the temperature or molecule starts the box moving again, so the picture never lags behind the slider */
+  if (k === 'mol') labBuild(); if (k === 'TC') { lab.sim.TK = v + 273; const ph = simPhase(lab.mol, v); if (ph !== lab.sim.phase) { setSimPhase(lab.sim, ph); lab.sim.t = 0; } } labControls(); labReadout(); labDraw(); labRun(); }
 function bindLab() {
   $('labBox').addEventListener('click', e => {
     const c = e.target.closest('[data-labchoice]'); if (c) return labAnswer(+c.dataset.labchoice);
