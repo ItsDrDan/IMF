@@ -1,4 +1,4 @@
-load(arguments[0] + "/logic.js");
+load(arguments[0] + '/logic.js');
 let fails = 0, n = 0; const seen = {};
 const bad = (t, m, q) => { fails++; const k = t + '|' + m; seen[k] = (seen[k] || 0) + 1; if (seen[k] <= 2) print('FAIL ' + t + ': ' + m + (q ? '\n   ' + String(q).slice(0, 260) : '')); };
 const strip = h => String(h).replace(/<[^>]+>/g, '').trim();
@@ -32,6 +32,11 @@ for (const c of ['3A', '1A', '3B']) {
             const r2 = checkNum(f, String(f.answer)); if (!r2.ok) bad(c + ' ' + t, 'exact answer rejected', p.ask + ' ' + f.answer);
             if (!f.exact) { const r3 = checkNum(f, String(f.answer * 1.05)); if (r3.ok) bad(c + ' ' + t, '5% off accepted', p.ask); if (r.ok && r.sf) bad(c + ' ' + t, 'shown answer flagged for sig figs: ' + f.show, p.ask); }
           });
+        } else if (p.kind === 'multi') {
+          const hs = p.choices.map(x => strip(x.html)); if (new Set(hs).size !== hs.length) bad(c + ' ' + t, 'duplicate multi options', hs.join(' / '));
+          const okIdx = p.choices.map((x, k) => k).filter(k => p.choices[k].ok); if (!okIdx.length) bad(c + ' ' + t, 'multi with no correct option', p.ask);
+          const r = checkMulti(p, okIdx); if (!r || !r.ok) bad(c + ' ' + t, 'multi key rejected', p.ask);
+          p.choices.forEach((x, k) => { if (!x.ok && !strip(x.why)) bad(c + ' ' + t, 'multi wrong option without feedback', strip(x.html)); if (junk(x.html) || junk(x.why || '')) bad(c + ' ' + t, 'junk in multi option', x.html); const on = x.ok ? okIdx.filter(i => i !== k) : okIdx.concat(k); if (on.length) { const rr = checkMulti(p, on); if (!rr || rr.ok || !strip(rr.why)) bad(c + ' ' + t, 'multi: one-off answer accepted or no feedback', p.ask + ' :: ' + strip(x.html)); } });
         } else if (p.kind === 'rank') {
           if (!p.want || p.want.length !== p.items.length || new Set(p.want).size !== p.want.length) bad(c + ' ' + t, 'bad rank key', p.ask);
           const r = checkRank(p, p.want); if (!r || !r.ok) bad(c + ' ' + t, 'rank key rejected', p.ask);

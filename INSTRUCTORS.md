@@ -4,8 +4,18 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v18.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v19.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v19 (2026-11-13)
+
+Changes aimed at the weak points named in an honest review of the game.
+
+- **Shorter page.** Once a student taps "Go to your question", picks a mode, opens a lab or taps Next, the tiles and modes fold into one bar: "Working on: Spot the Forces · Practice", with a "Change topics or mode" button. The question then sits near the top of the page. On a desktop-width page the question moved from about 1,260 px down to about 290 px. The achievements list is folded behind "Show all achievements".
+- **Tap all that apply.** A new question type with more than one right choice, so a student cannot succeed by recognizing a single answer. It is used in "Who can hydrogen bond?" (about 4 in 10 questions: tap every molecule that can) and in the last step of "Lewis structure → all the forces" (about half: tap every force). Feedback names a wrongly tapped choice and why; a missed one gets a nudge without being named.
+- **Mastery needs a re-check.** A mastered topic's dots turn yellow one week after the last unaided correct answer, and the topic stops counting as mastered until one more is answered with no hint. Due topics come up more often.
+- **Nine more questions:** ion–dipole (3), sugars (3), surface tension and viscosity (3). They are at the end of `REVIEW-NEW-QUESTIONS.md` and have not been read by Dr. Dan yet.
+- **Not changed:** the game is still one file, and the Electron Coin-Flip and Protein Fold labs are as they were.
 
 ## New in v18 (2026-11-13)
 
@@ -156,8 +166,9 @@ Each is labeled on screen as a teaching model, with its simplifications stated. 
 
 - **Feedback:** every wrong choice has its own explanation and a named slip. Every correct answer shows its explanation too.
 - **Hints:** every step has one. Most have a second: it rules out one wrong choice and says why, shows the setup with the last number left as "?", or gives the first item of a ranking. Using any hint marks the answer as helped.
-- **Mastery:** each topic keeps its last six results (on your own, with a hint, or missed). Three in a row on your own is "mastered". It is a count, not an estimate, and a later miss removes it.
+- **Mastery:** each topic keeps its last six results (on your own, with a hint, or missed). Three in a row on your own is "mastered". It is a count, not an estimate, and a later miss removes it. After a week with no unaided answer the topic asks for one more (yellow dots).
 - **Second look:** a topic missed in Practice returns about three questions later. At most one question in three is a second look, and at most three topics wait. After a second miss a "See a worked example" button opens Learn on that topic.
+- **Tap all that apply:** every right choice must be tapped and no wrong one. The question bank does not sample these (it takes single-answer and typed-number steps only).
 - **Multi-step questions:** a question counts as correct only when every step is right on the first try. In Challenge a missed step shows the student's answer, the reason and the correct answer.
 - **Typed numbers:** accepted within 1% of the unrounded answer, so rounding in earlier steps is not punished. E notation (`7.84E0`), `×10^` and superscripts (`×10³`) are accepted, and a unit typed after the number is ignored. A decimal comma gets a "use a period" message. Where a dilute solution puts a wrong-method value inside the 1% window (mole fraction, Raoult's law), that value is rejected. A ± key sits beside boxes that can take a negative answer.
 - **Sig figs:** a numerically correct answer with the wrong number of sig figs is marked correct with a yellow "Close, but fix your sig figs" notice. Trailing zeros with no decimal point do not count (100 has 1 sig fig; `100.` has 3), so the game displays such answers as `100.`. An answer that is a correct rounding to too few sig figs (12 for 11.5) gets a nudge and is not a miss.

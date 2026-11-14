@@ -260,3 +260,86 @@ CHEM 3B.
 
 In the lab afterward: Heat it all the way and look at the dark backbone line.
 
+
+# Nine more questions added in v19 (not yet read by Dr. Dan)
+
+Numbering continues from the list above.
+
+## Ion–dipole
+
+CHEM 1A.
+
+### 28. When NaCl dissolves, each ion ends up surrounded by a shell of water molecules. What is this called?
+
+- **✓ Hydration (solvation)**: Water molecules crowd around each ion: oxygen toward Na⁺, hydrogen toward Cl⁻. The ion–dipole attractions keep the ions apart in solution.
+- Hydrogenation: Hydrogenation is a reaction that adds H₂ to a C=C double bond. Surrounding an ion with water is hydration.
+- Crenation: Crenation is a red blood cell shrinking in a hypertonic solution.
+- Precipitation: Precipitation is the reverse: ions leaving the solution to form a solid.
+
+### 29. As NaCl dissolves in water, which attraction is overcome, and which one replaces it?
+
+- **✓ The ionic bonds between Na⁺ and Cl⁻ are replaced by ion–dipole attractions to water**: Many ion–dipole attractions to water make up for the energy needed to pull the ions out of the crystal.
+- Covalent bonds in NaCl are replaced by hydrogen bonds: NaCl has no covalent bonds between Na and Cl. It is held together by ionic bonds.
+- Hydrogen bonds in NaCl are replaced by dispersion forces: NaCl has no hydrogen. The crystal is held together by ionic bonds.
+- Nothing is overcome: the crystal just floats apart: The ions attract each other strongly. Water has to pull them apart, and ion–dipole attractions are what do it.
+
+Hint: What holds the crystal together? What can water offer an ion?
+
+### 30. Which liquid should dissolve the most NaCl?
+
+- **✓ Water, H₂O**: Water is very polar, so it forms strong ion–dipole attractions with Na⁺ and Cl⁻.
+- Hexane, C₆H₁₄: Hexane is nonpolar. It has no partial charges to attract the ions.
+- Carbon tetrachloride, CCl₄: CCl₄ is nonpolar: its four bond dipoles cancel. It cannot pull ions out of the crystal.
+- Octane, C₈H₁₈: Octane is nonpolar. It has no partial charges to attract the ions.
+
+Hint: Which one is polar enough to attract ions?
+
+## Sugars, starch and cellulose
+
+CHEM 3B.
+
+### 31. Glucose is C₆H₁₂O₆. How many O–H groups does one glucose molecule have?
+
+- **✓ 5**: Five of the six oxygens are in O–H groups. The sixth is the ring oxygen (or the C=O of the open chain).
+- 6: One of the six oxygens has no H on it: it is in the ring (or is the C=O of the open chain).
+- 12: There are 12 H atoms, but seven of them are bonded to carbon. Only five are on oxygen.
+- 0: Glucose is covered in O–H groups, which is why it dissolves so well in water.
+
+### 32. Honey is mostly sugars with a little water, and it pours very slowly. What makes it so viscous?
+
+- **✓ The sugar molecules and water are held to each other by many hydrogen bonds**: Each sugar has several O–H groups, so the molecules cling to their neighbors and resist sliding past each other.
+- Covalent bonds between the sugar molecules: The sugar molecules are not bonded to each other. They are held by hydrogen bonds, which are attractions.
+- The sugars are nonpolar: Sugars are very polar: every O–H group is polar.
+- Dispersion forces only: Sugars have dispersion forces too, but their many O–H groups make hydrogen bonding the main attraction.
+
+### 33. Starch and cellulose are both long chains of glucose, yet we can digest starch and not cellulose. What is different about them?
+
+- **✓ The way the glucose units are linked: α links in starch, β links in cellulose**: The α links let starch coil, and our enzymes fit them. The β links make straight chains that pack into fibers our enzymes cannot break down.
+- Cellulose has no –OH groups: Both have the same –OH groups. The difference is how the glucose units are joined.
+- Cellulose is made from a different sugar: Both are made of glucose. Only the linkage differs.
+- Cellulose chains are joined by disulfide bonds: Disulfide bonds are found in proteins. Carbohydrates contain no sulfur.
+
+## Surface tension and viscosity
+
+CHEM 3A and 1A.
+
+### 34. Drops of water pile up into a dome on a penny before they spill over. Which property of water is this?
+
+- **✓ Surface tension**: Water molecules at the surface are pulled inward by hydrogen bonds, so the surface acts like a stretched skin that holds the dome together.
+- Viscosity: Viscosity is resistance to flowing. The dome is held by the pull at the surface.
+- Vapor pressure: Vapor pressure is about molecules escaping into the gas. The dome is held by surface tension.
+- Boiling point: Nothing is boiling. The dome is held by surface tension.
+
+### 35. Water climbs up a thin glass tube, and up a paper towel, against gravity. What is this called, and why does it happen?
+
+- **✓ Capillary action: water is attracted to the polar glass or paper, and it pulls more water along behind it**: Water hydrogen bonds to the O–H groups on glass and on paper (cellulose), and to itself, so the liquid is drawn upward.
+- Osmosis: water is moving toward more solute: Osmosis is water crossing a membrane. Climbing a narrow tube is capillary action.
+- Evaporation: the water turns to gas and rises: The water stays liquid as it climbs. This is capillary action.
+- Viscosity: thick liquids climb: Viscosity resists flow. The climb comes from attraction to the walls of the tube.
+
+### 36. Which liquid should have the higher surface tension: water or hexane (C₆H₁₄)?
+
+- **✓ Water**: Water molecules hydrogen bond to each other, so the surface is hard to stretch: 72 mN/m. Hexane has dispersion forces only, and its surface tension is about a quarter of that.
+- Hexane: Hexane has dispersion forces only. Weaker attractions give a lower surface tension.
+- They are the same: Surface tension follows the strength of the attractions, and water’s hydrogen bonds are much stronger.
+

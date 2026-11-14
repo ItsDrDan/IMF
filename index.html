@@ -505,6 +505,12 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
 .tmast{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:2px;font-size:.78rem;font-weight:800;color:var(--tc,var(--muted))}.tbar{display:block;width:84px;height:6px;border-radius:99px;background:var(--tcl,#e3e6f0);overflow:hidden}.tbar i{display:block;height:100%;background:var(--tc,var(--accent))}
 .mline{margin-top:8px;font-weight:800}.mline.got{display:flex;gap:6px;align-items:center}
 .tag.again{background:var(--amber);color:var(--amber-ink)}
+.mopt::before{content:'☐ ';font-weight:900}.mopt.on::before{content:'☑ '}.mopt.on{border-color:var(--accent);background:var(--accent-soft)}
+.pips.due i.on{background:#e0a100;border-color:#b98500}
+.focusbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;margin:10px 0 14px;background:#fff;border:2px solid var(--line2);border-radius:16px;box-shadow:0 3px 0 var(--line2);padding:8px 10px 8px 16px}
+.fb-text{display:flex;flex-direction:column;line-height:1.25;min-width:0}.fb-text small{font-size:.74rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}.fb-text b{font-family:var(--font-display);font-weight:600;font-size:1.05rem}
+.focusbar .btn{min-height:44px}
+.achbox>summary{cursor:pointer;font-weight:800;color:#3d4a73;padding:10px 2px;min-height:44px;display:flex;align-items:center;list-style:none}.achbox>summary::-webkit-details-marker{display:none}.achbox>summary::after{content:'▾';margin-left:8px;color:var(--faint)}.achbox[open]>summary::after{transform:rotate(180deg)}
 .pmrow{display:flex;gap:6px}.pmrow input{flex:1;min-width:0}.btn.pm{min-width:54px;min-height:54px;padding:0 10px;font-size:1.3rem;font-weight:800}
 .next-row{flex-wrap:wrap}
 @media(max-width:760px){.next-row .btn{width:100%}}
@@ -527,9 +533,10 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
   <h1><span class="t1">Sticky</span> <span class="t2">Molecules</span></h1>
   <p class="lede">Intermolecular forces: what makes molecules stick, and what that does to boiling points and mixing.</p>
  </div></div>
- <details class="howuse"><summary>How to use this game</summary><ul><li><b>Pick your course</b> at the top, then tap one or more tiles. Tap <b>Go to your question</b> to jump down to it.</li><li><b>Learn</b> shows a worked example. <b>Practice</b> gives hints and feedback. <b>Challenge</b> and <b>Daily 5</b> are short quizzes.</li><li><b>Lab questions:</b> make a prediction, and the lab opens under the question so you can test it.</li><li><b>Stuck?</b> Tap Hint (many questions have a second hint), then Show answer. The Sticky Sheet (top right) has the rules and the data.</li><li><b>Missed one?</b> A question like it comes back a little later so you can try again. Three right in a row with no hint masters a topic.</li><li><b>On a keyboard:</b> press 1, 2, 3 or 4 to pick a choice, and Enter for the next question.</li><li><b>Want to explore?</b> Open “Labs and more” below the practice modes.</li></ul></details>
+ <div class="focusbar" id="focusBar" hidden><span class="fb-text"><small>Working on</small><b id="focusText"></b></span><button type="button" class="btn" id="focusChange">Change topics or mode</button></div>
+ <details class="howuse" id="howUse"><summary>How to use this game</summary><ul><li><b>Pick your course</b> at the top, then tap one or more tiles. Tap <b>Go to your question</b> to jump down to it.</li><li><b>Learn</b> shows a worked example. <b>Practice</b> gives hints and feedback. <b>Challenge</b> and <b>Daily 5</b> are short quizzes.</li><li><b>Lab questions:</b> make a prediction, and the lab opens under the question so you can test it.</li><li><b>Stuck?</b> Tap Hint (many questions have a second hint), then Show answer. The Sticky Sheet (top right) has the rules and the data.</li><li><b>Tap all that apply:</b> some questions have more than one right choice. Tap each one, then Check.</li><li><b>Missed one?</b> A question like it comes back a little later so you can try again. Three right in a row with no hint masters a topic.</li><li><b>On a keyboard:</b> press 1, 2, 3 or 4 to pick a choice, and Enter for the next question.</li><li><b>Want to explore?</b> Open “Labs and more” below the practice modes.</li></ul></details>
 
- <section class="chooser" aria-labelledby="pickTitle">
+ <section class="chooser" id="chooserSec" aria-labelledby="pickTitle">
   <h2 class="pick-title" id="pickTitle"><span class="stepnum">1</span>What do you want to work on? <small>Pick one or more.</small></h2>
   <div class="cats" id="cats"></div>
   <div class="go-row" id="goRow" hidden><button type="button" class="btn primary" id="goPlay">Go to your question <span aria-hidden="true">↓</span></button><span class="go-note">It is ready below. Step 2 changes how you practice.</span></div>
@@ -683,7 +690,7 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
  <section class="panel section" aria-labelledby="progressTitle">
   <div class="section-head"><h2 id="progressTitle">Progress &amp; achievements</h2><span id="achCount"></span></div>
   <div class="stat-row"><div class="stat rank"><strong id="rankLine">Lone Molecule</strong><div class="xpbar" aria-hidden="true"><span id="xpFill"></span></div><small id="xpText">0 XP</small></div><div class="stat"><strong id="sCorrect">0</strong><small>Correct</small></div><div class="stat"><strong id="sTried">0</strong><small>Tried</small></div><div class="stat"><strong id="sStreak">0</strong><small>Streak</small></div><div class="stat"><strong id="sBest">0</strong><small>Best streak</small></div></div>
-  <div class="badges" id="achGrid"></div>
+  <details class="achbox"><summary>Show all achievements</summary><div class="badges" id="achGrid"></div></details>
   <div class="section-foot"><span class="note-small" style="margin:0">XP: +10 for a question with no misses and no hint, plus a streak bonus. +6 if you used a hint. A topic is mastered when you get 3 in a row with no hint. Each course keeps its own progress on this device.</span><button type="button" class="reset-btn" id="resetBtn">Reset my progress</button></div>
  </section>
 
@@ -912,6 +919,16 @@ function checkRank(p, order) {
   const i = order.findIndex((x, j) => x !== p.want[j]);
   return { ok: false, slip: p.slip || 'rank-order', why: `Check position ${i + 1}: ${p.items[order[i]].html} doesn’t go there. ${p.orderHint || ''}` };
 }
+/* tap every one that fits. options: { html, ok, why (shown when this one is wrongly picked), slip, nudge (shown when it is wrongly left out) } */
+function multiPart(ask, options, o = {}) { const opts = o.keep ? options : shuffle(options); return Object.assign({ kind: 'multi', ask, choices: opts, answer: opts.filter(x => x.ok).map(x => x.html).join(', ') || 'none of them' }, o); }
+/* → null (nothing picked yet), { ok: true } or { ok: false, slip, why } */
+function checkMulti(p, on) {
+  if (!on.length) return null;
+  const extra = on.filter(k => !p.choices[k].ok), missed = p.choices.map((c, k) => k).filter(k => p.choices[k].ok && !on.includes(k));
+  if (!extra.length && !missed.length) return { ok: true };
+  if (extra.length) { const c = p.choices[extra[0]]; return { ok: false, slip: c.slip || 'concept', why: `<b>${c.html}</b> does not belong. ${c.why}` }; }
+  const c = p.choices[missed[0]]; return { ok: false, slip: c.missSlip || p.missSlip || 'concept', why: `Those are right, but ${missed.length === 1 ? 'one more belongs' : missed.length + ' more belong'}. ${c.nudge || ''}` };
+}
 function staticQ(topic, it) {
   const opts = it.c.map(([h, ok, why, slip]) => opt(h, ok, why, slip || it.slip));
   return { topic, tag: it.tag || '', stem: it.art ? `<div class="figure">${it.art}</div>` : '', tip: it.tip, parts: [choicePart(it.q, opts, { solution: it.sol || opts.find(x => x.ok).why, hint: it.hint })] };
@@ -1003,7 +1020,15 @@ function whyNoHB(m) {
   if (/C(?![a-z])/.test(m.f)) return `In ${fo(m)} every H is bonded to carbon.`;
   return `In ${fo(m)} the H is bonded to ${m.f.replace(/H\d?/, '').replace(/\d/g, '')}, which is not N, O or F.`;
 }
+function genHbondAll() {
+  const c = OPTS.course, nY = rint(1, 3), ys = shuffle(HB_YES[c]).slice(0, nY).map(k => M[k]), ns = shuffle(HB_NO[c]).slice(0, 5 - nY).map(k => M[k]);
+  const opts = [...ys.map(m => ({ html: fo(m), ok: true, why: `${fo(m)} has an H bonded directly to ${donorAtom(m)}.`, nudge: 'Check every H again: is one of them on N, O or F?', missSlip: 'missed-hbond' })), ...ns.map(m => ({ html: fo(m), ok: false, why: whyNoHB(m), slip: 'any-h-hbonds' }))];
+  const p = multiPart('Tap <b>every one</b> that can form hydrogen bonds between its own molecules. Then tap Check.', opts, { hint: 'Find the H atoms in each formula. What is each one attached to?' });
+  p.solution = p.choices.filter(x => x.ok).map(x => x.why).join(' ') + ' The others have no H on N, O or F.';
+  return { topic: 'hbond', tag: 'find every donor', stem: '', tip: 'Hydrogen bonding needs N–H, O–H or F–H in the molecule. Having N, O or F somewhere is not enough.', parts: [p] };
+}
 function genHbond() {
+  if (chance(0.4)) return genHbondAll();
   const c = OPTS.course, yes = M[drawBag('hbY' + c, HB_YES[c])], no = shuffle(HB_NO[c]).slice(0, 3).map(k => M[k]);
   const opts = [opt(fo(yes), true, `${fo(yes)} has an H bonded directly to ${donorAtom(yes)}.`), ...no.map(m => opt(fo(m), false, whyNoHB(m), 'any-h-hbonds'))];
   return { topic: 'hbond', tag: 'find the donor', stem: '', tip: 'Hydrogen bonding needs N–H, O–H or F–H in the molecule. Having N, O or F somewhere is not enough.', parts: [choicePart('Which of these can form hydrogen bonds between <b>its own molecules</b>?', opts, { solution: `Only ${fo(yes)} has H bonded directly to N, O or F.`, hint: 'Find the H atoms. What is each one attached to?' })] };
@@ -1036,7 +1061,13 @@ function genForces() {
     opt('Dispersion, dipole–dipole and hydrogen bonding', s === 'hb', s === 'hb' ? 'It has all three. Hydrogen bonding is the strongest type.' : 'Hydrogen bonding needs an H on N, O or F, and this molecule has none.', 'any-h-hbonds'),
     opt('Dipole–dipole only', false, SLIP['forgot-dispersion'], 'forgot-dispersion')
   ], { keep: true, solution: `${cap(allForces(m))}. Strongest type: ${FORCE[s].toLowerCase()}.`, hint: 'Start with dispersion (everything has it), then add dipole–dipole if polar, then hydrogen bonding if H is on N, O or F.' });
-  return { topic: 'forces', tag: F(m.f), stem: figure(molCard(m)), tip: 'Lewis structure in, forces out: polar? → H on N, O or F? → list the forces.', parts: [polarPart(m), donorPart, all] };
+  const allTap = multiPart(`Tap <b>every</b> force that acts between ${m.name} molecules. Then tap Check.`, [
+    { html: 'Dispersion', ok: true, why: SLIP['forgot-dispersion'], nudge: 'Which force does every substance have, because it has electrons?', missSlip: 'forgot-dispersion' },
+    { html: 'Dipole–dipole', ok: s !== 'd', why: `${cap(m.name)} is nonpolar, so there is no dipole–dipole force. ${m.pw}`, slip: m.trap ? 'polar-bonds-polar-molecule' : 'polarity', nudge: 'Is the molecule polar?', missSlip: 'missed-dipole' },
+    { html: 'Hydrogen bonding', ok: s === 'hb', why: 'Hydrogen bonding needs an H on N, O or F, and this molecule has none.', slip: 'any-h-hbonds', nudge: 'Is there an H bonded directly to N, O or F?', missSlip: 'missed-hbond' },
+    { html: 'Ion–dipole', ok: false, why: SLIP['no-ions'], slip: 'no-ions' }
+  ], { keep: true, solution: `${cap(allForces(m))}. Strongest type: ${FORCE[s].toLowerCase()}.`, hint: 'Start with dispersion (everything has it), then add dipole–dipole if polar, then hydrogen bonding if H is on N, O or F.' });
+  return { topic: 'forces', tag: F(m.f), stem: figure(molCard(m)), tip: 'Lewis structure in, forces out: polar? → H on N, O or F? → list the forces.', parts: [polarPart(m), donorPart, chance(0.5) ? allTap : all] };
 }
 
 const T_IONDIP = [
@@ -1071,7 +1102,22 @@ const T_IONDIP = [
     ['K⁺ and H₂O', true, 'An ion (K⁺) and a polar molecule (H₂O): ion–dipole.'],
     ['H₂O and H₂O', false, 'Two water molecules attract by hydrogen bonding. Neither one is an ion.', 'no-ions'],
     ['Na⁺ and Cl⁻ in a salt crystal', false, 'Two ions attract by ionic bonding. Ion–dipole needs a polar molecule as the partner.'],
-    ['CH₄ and CH₄', false, 'Two nonpolar molecules attract by dispersion forces only.', 'no-ions']] }
+    ['CH₄ and CH₄', false, 'Two nonpolar molecules attract by dispersion forces only.', 'no-ions']] },
+  { q: 'When NaCl dissolves, each ion ends up surrounded by a shell of water molecules. What is this called?', c: [
+    ['Hydration (solvation)', true, 'Water molecules crowd around each ion: oxygen toward Na⁺, hydrogen toward Cl⁻. The ion–dipole attractions keep the ions apart in solution.'],
+    ['Hydrogenation', false, 'Hydrogenation is a reaction that adds H₂ to a C=C double bond. Surrounding an ion with water is hydration.'],
+    ['Crenation', false, 'Crenation is a red blood cell shrinking in a hypertonic solution.'],
+    ['Precipitation', false, 'Precipitation is the reverse: ions leaving the solution to form a solid.']] },
+  { q: 'As NaCl dissolves in water, which attraction is overcome, and which one replaces it?', hint: 'What holds the crystal together? What can water offer an ion?', c: [
+    ['The ionic bonds between Na⁺ and Cl⁻ are replaced by ion–dipole attractions to water', true, 'Many ion–dipole attractions to water make up for the energy needed to pull the ions out of the crystal.'],
+    ['Covalent bonds in NaCl are replaced by hydrogen bonds', false, 'NaCl has no covalent bonds between Na and Cl. It is held together by ionic bonds.', 'hbond-is-covalent'],
+    ['Hydrogen bonds in NaCl are replaced by dispersion forces', false, 'NaCl has no hydrogen. The crystal is held together by ionic bonds.', 'any-h-hbonds'],
+    ['Nothing is overcome: the crystal just floats apart', false, 'The ions attract each other strongly. Water has to pull them apart, and ion–dipole attractions are what do it.']] },
+  { q: 'Which liquid should dissolve the most NaCl?', hint: 'Which one is polar enough to attract ions?', c: [
+    ['Water, H₂O', true, 'Water is very polar, so it forms strong ion–dipole attractions with Na⁺ and Cl⁻.'],
+    ['Hexane, C₆H₁₄', false, 'Hexane is nonpolar. It has no partial charges to attract the ions.', 'like-dissolves-like'],
+    ['Carbon tetrachloride, CCl₄', false, 'CCl₄ is nonpolar: its four bond dipoles cancel. It cannot pull ions out of the crystal.', 'like-dissolves-like'],
+    ['Octane, C₈H₁₈', false, 'Octane is nonpolar. It has no partial charges to attract the ions.', 'like-dissolves-like']] }
 ];
 function genIonDip() { return staticQ('iondipole', drawBag('iondip', T_IONDIP)); }
 
@@ -1248,7 +1294,10 @@ const T_LIQ = [
   { for: ['1A'], q: 'Mercury’s surface tension (458.48 mN/m) is far above water’s (71.99 mN/m). What holds mercury atoms together so strongly?', c: [['Metallic bonding', true, 'Liquid mercury is a metal: its atoms share a sea of electrons, a much stronger attraction than hydrogen bonding.'], ['Hydrogen bonding', false, 'Mercury has no hydrogen.', 'any-h-hbonds'], ['Dipole–dipole forces', false, 'Single Hg atoms have no dipole.'], ['Ion–dipole forces', false, 'There are no ions and no dipoles in pure mercury.', 'no-ions']] },
   { for: ['1A'], q: 'Hexane (C₆H₁₄) and 1-hexanol (C₆H₁₃OH) are about the same size. Which is more viscous, and why?', c: [['1-Hexanol: its O–H groups hydrogen bond, so molecules resist sliding past each other', true, 'Adding hydrogen bonding on top of similar dispersion forces raises the viscosity.'], ['Hexane: it has more hydrogen atoms', false, SLIP['any-h-hbonds'], 'any-h-hbonds'], ['Hexane: nonpolar liquids are always thicker', false, 'Weak forces make a liquid runny. Hexane has dispersion forces only.'], ['They are the same, because they are the same size', false, SLIP['size-ignores-type'], 'size-ignores-type']] },
   { for: ['3A', '1A'], q: 'Rain beads up on a freshly waxed car instead of spreading out. Why?', c: [['Water molecules attract each other much more than they attract the nonpolar wax', true, 'Hydrogen bonds pull the water inward into a bead. That inward pull is surface tension.'], ['Wax is polar and pushes the water away', false, 'Wax is nonpolar. Water simply attracts other water molecules more than it attracts wax.', 'like-dissolves-like'], ['Water has a low surface tension', false, 'It is the reverse: water’s high surface tension is what pulls it into beads.'], ['The water reacts with the wax', false, 'Nothing reacts. Beading is a physical effect of the attractions between water molecules.']] },
-  { for: ['3A', '1A'], q: 'Motor oil and gasoline are both mixtures of nonpolar hydrocarbons, but motor oil pours much more slowly. Why?', c: [['Oil molecules are much longer, so their dispersion forces are stronger and the chains tangle', true, 'Gasoline molecules have about 5 to 12 carbons. Motor oil molecules have 20 or more, so a higher molar mass and stronger dispersion forces: a higher viscosity.'], ['Motor oil can hydrogen bond', false, 'Hydrocarbons have every H on carbon. ' + SLIP['any-h-hbonds'], 'any-h-hbonds'], ['Motor oil is polar', false, 'Both are nonpolar hydrocarbons.', 'polarity'], ['Gasoline molecules are the bigger ones', false, 'Gasoline molecules are the smaller ones, which is why gasoline also evaporates faster.', 'chain-length']] }
+  { for: ['3A', '1A'], q: 'Motor oil and gasoline are both mixtures of nonpolar hydrocarbons, but motor oil pours much more slowly. Why?', c: [['Oil molecules are much longer, so their dispersion forces are stronger and the chains tangle', true, 'Gasoline molecules have about 5 to 12 carbons. Motor oil molecules have 20 or more, so a higher molar mass and stronger dispersion forces: a higher viscosity.'], ['Motor oil can hydrogen bond', false, 'Hydrocarbons have every H on carbon. ' + SLIP['any-h-hbonds'], 'any-h-hbonds'], ['Motor oil is polar', false, 'Both are nonpolar hydrocarbons.', 'polarity'], ['Gasoline molecules are the bigger ones', false, 'Gasoline molecules are the smaller ones, which is why gasoline also evaporates faster.', 'chain-length']] },
+  { for: ['3A', '1A'], q: 'Drops of water pile up into a dome on a penny before they spill over. Which property of water is this?', c: [['Surface tension', true, 'Water molecules at the surface are pulled inward by hydrogen bonds, so the surface acts like a stretched skin that holds the dome together.'], ['Viscosity', false, 'Viscosity is resistance to flowing. The dome is held by the pull at the surface.'], ['Vapor pressure', false, 'Vapor pressure is about molecules escaping into the gas. The dome is held by surface tension.'], ['Boiling point', false, 'Nothing is boiling. The dome is held by surface tension.']] },
+  { for: ['3A', '1A'], q: 'Water climbs up a thin glass tube, and up a paper towel, against gravity. What is this called, and why does it happen?', c: [['Capillary action: water is attracted to the polar glass or paper, and it pulls more water along behind it', true, 'Water hydrogen bonds to the O–H groups on glass and on paper (cellulose), and to itself, so the liquid is drawn upward.'], ['Osmosis: water is moving toward more solute', false, 'Osmosis is water crossing a membrane. Climbing a narrow tube is capillary action.'], ['Evaporation: the water turns to gas and rises', false, 'The water stays liquid as it climbs. This is capillary action.'], ['Viscosity: thick liquids climb', false, 'Viscosity resists flow. The climb comes from attraction to the walls of the tube.']] },
+  { for: ['3A', '1A'], q: 'Which liquid should have the higher surface tension: water or hexane (C₆H₁₄)?', c: [['Water', true, 'Water molecules hydrogen bond to each other, so the surface is hard to stretch: 72 mN/m. Hexane has dispersion forces only, and its surface tension is about a quarter of that.'], ['Hexane', false, 'Hexane has dispersion forces only. Weaker attractions give a lower surface tension.', 'weak-vs-strong'], ['They are the same', false, 'Surface tension follows the strength of the attractions, and water’s hydrogen bonds are much stronger.', 'weak-vs-strong']] }
 ];
 function genLiquids() {
   if (OPTS.course === '1A' && chance(0.45)) {
@@ -2022,7 +2071,10 @@ const T_CARB = [
   { q: 'In a sugar’s –OH group, which atoms can take part in hydrogen bonding with water?', c: [['Both: the H can donate and the O’s lone pairs can accept', true, 'One –OH group can make up to three hydrogen bonds: one through H and two through the lone pairs on O.'], ['Only the H', false, 'The O also has two lone pairs that accept hydrogen bonds.'], ['Only the O', false, 'The H on oxygen is δ+ and donates a hydrogen bond too.'], ['Neither', false, 'An O–H group is exactly what hydrogen bonding needs.', 'any-h-hbonds']] },
   { q: 'Hexane (C₆H₁₄) and glucose (C₆H₁₂O₆) both have six carbons. Glucose is a solid that dissolves in water; hexane is a liquid that does not. Why?', c: [['Glucose hydrogen bonds through its –OH groups; hexane has only dispersion forces', true, 'Strong attractions between glucose molecules make it a solid, and its –OH groups attract water.'], ['Glucose is heavier', false, 'Mass alone does not explain it. The –OH groups change the type of force.', 'size-ignores-type'], ['Hexane has more hydrogen atoms, so it hydrogen bonds more', false, SLIP['any-h-hbonds'], 'any-h-hbonds']] },
   { q: 'Table sugar (sucrose) is a molecular compound, yet it is a hard solid at room temperature. What mainly holds one sucrose molecule to the next in the crystal?', c: [['Hydrogen bonds between –OH groups on neighboring molecules', true, 'Sucrose has eight O–H groups, so each molecule hydrogen bonds to several neighbors.'], ['Ionic bonds', false, 'Sucrose is molecular. It has no ions.'], ['Covalent bonds between the molecules', false, 'The molecules are not bonded to each other: they separate as whole molecules when sugar dissolves.', 'hbond-is-covalent'], ['Dispersion forces only', false, 'It has dispersion forces too, but with eight O–H groups the hydrogen bonds matter most.', 'missed-hbond']] },
-  { q: 'A cotton towel is mostly cellulose. Why does cotton soak up water so well?', c: [['The –OH groups on cellulose hydrogen bond with water', true, 'Water clings to the many –OH groups on the fibers. The fibers themselves stay solid, because the chains are also hydrogen bonded to each other.'], ['Cellulose dissolves in water', false, 'Cotton does not dissolve: its chains hold on to each other. Water sticks to the –OH groups on the surface of the fibers.'], ['Cellulose is nonpolar', false, 'A nonpolar fiber would repel water. Cellulose is covered in polar –OH groups.', 'like-dissolves-like'], ['Water breaks the covalent bonds in cellulose', false, 'Wetting a towel is a physical change. No covalent bond breaks.', 'boil-breaks-bonds']] }
+  { q: 'A cotton towel is mostly cellulose. Why does cotton soak up water so well?', c: [['The –OH groups on cellulose hydrogen bond with water', true, 'Water clings to the many –OH groups on the fibers. The fibers themselves stay solid, because the chains are also hydrogen bonded to each other.'], ['Cellulose dissolves in water', false, 'Cotton does not dissolve: its chains hold on to each other. Water sticks to the –OH groups on the surface of the fibers.'], ['Cellulose is nonpolar', false, 'A nonpolar fiber would repel water. Cellulose is covered in polar –OH groups.', 'like-dissolves-like'], ['Water breaks the covalent bonds in cellulose', false, 'Wetting a towel is a physical change. No covalent bond breaks.', 'boil-breaks-bonds']] },
+  { q: 'Glucose is C₆H₁₂O₆. How many O–H groups does one glucose molecule have?', c: [['5', true, 'Five of the six oxygens are in O–H groups. The sixth is the ring oxygen (or the C=O of the open chain).'], ['6', false, 'One of the six oxygens has no H on it: it is in the ring (or is the C=O of the open chain).'], ['12', false, 'There are 12 H atoms, but seven of them are bonded to carbon. Only five are on oxygen.', 'any-h-hbonds'], ['0', false, 'Glucose is covered in O–H groups, which is why it dissolves so well in water.', 'missed-hbond']] },
+  { q: 'Honey is mostly sugars with a little water, and it pours very slowly. What makes it so viscous?', c: [['The sugar molecules and water are held to each other by many hydrogen bonds', true, 'Each sugar has several O–H groups, so the molecules cling to their neighbors and resist sliding past each other.'], ['Covalent bonds between the sugar molecules', false, 'The sugar molecules are not bonded to each other. They are held by hydrogen bonds, which are attractions.', 'hbond-is-covalent'], ['The sugars are nonpolar', false, 'Sugars are very polar: every O–H group is polar.', 'like-dissolves-like'], ['Dispersion forces only', false, 'Sugars have dispersion forces too, but their many O–H groups make hydrogen bonding the main attraction.', 'missed-hbond']] },
+  { q: 'Starch and cellulose are both long chains of glucose, yet we can digest starch and not cellulose. What is different about them?', c: [['The way the glucose units are linked: α links in starch, β links in cellulose', true, 'The α links let starch coil, and our enzymes fit them. The β links make straight chains that pack into fibers our enzymes cannot break down.'], ['Cellulose has no –OH groups', false, 'Both have the same –OH groups. The difference is how the glucose units are joined.'], ['Cellulose is made from a different sugar', false, 'Both are made of glucose. Only the linkage differs.'], ['Cellulose chains are joined by disulfide bonds', false, 'Disulfide bonds are found in proteins. Carbohydrates contain no sulfur.']] }
 ];
 function genCarbs() { return staticQ('carbs', Object.assign({ tip: 'Every –OH group can hydrogen bond: to water (dissolving) or to a neighboring chain (fibers).' }, drawBag('carb', T_CARB))); }
 function bilayerFig() { let h = `<rect x="0" y="0" width="300" height="34" fill="#dff0fb"/><rect x="0" y="126" width="300" height="34" fill="#dff0fb"/><text x="150" y="14" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2c64a0">water</text><text x="150" y="154" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2c64a0">water</text>`; for (let i = 0; i < 9; i++) { const x = 22 + i * 32; h += `<path d="M${x - 5} 44v32M${x + 5} 44v32M${x - 5} 84v32M${x + 5} 84v32" stroke="#c98a1b" stroke-width="3" stroke-linecap="round"/><circle cx="${x}" cy="36" r="10" fill="#8fb8f0" stroke="#346cc3" stroke-width="2"/><circle cx="${x}" cy="124" r="10" fill="#8fb8f0" stroke="#346cc3" stroke-width="2"/>`; } return `<svg viewBox="0 0 300 160" style="width:100%;max-width:360px" role="img" aria-label="Phospholipid bilayer: two rows of molecules with round heads facing the water on each side and tails pointing toward each other in the middle.">${h}</svg><small class="figcap">Round heads, two tails each</small>`; }
@@ -2311,7 +2363,7 @@ function renderStats() {
   $('achGrid').innerHTML = A.map(a => `<div class="badge${P.ach[a[0]] ? ' got' : ''}">${badgeImg(a[3], a[4])}<b>${a[1]}</b><small>${a[2]}</small></div>`).join('');
 }
 function setCourse(c) {
-  state.course = c; OPTS.course = c; loadCourse(c); reviewQ = []; shown.clear();
+  setFocus(false); state.course = c; OPTS.course = c; loadCourse(c); reviewQ = []; shown.clear();
   state.sel = new Set((P.sel || []).filter(t => TOPICS[t] && TOPICS[t].courses.includes(c))); state.mode = ['learn', 'practice'].includes(P.mode) ? P.mode : 'practice'; state.ch = null; state.learn = null; closeLab();
   document.querySelectorAll('#course button').forEach(b => { b.classList.toggle('active', b.dataset.course === c); b.setAttribute('aria-pressed', b.dataset.course === c); });
   $('eyebrow').textContent = EYEBROW[c];
@@ -2328,7 +2380,8 @@ function renderChooser() {
   $('chipsWrap').hidden = !open.length;
   const nOn = open.reduce((n, c) => n + tTopics(c).filter(t => state.sel.has(t)).length, 0), nAll = open.reduce((n, c) => n + tTopics(c).length, 0);
   $('topicCount').textContent = nOn === nAll ? `· all ${nAll} topics on` : `· ${nOn} of ${nAll} topics on`;
-  $('chips').innerHTML = (nOn < nAll ? `<button type="button" class="resetsel" data-allon="1">Turn all topics back on</button>` : '') + open.map(c => `<div class="chip-row" style="${tileVars(c.id)}"><span>${c.title}</span>${tTopics(c).map(t => { const s = P.topic[t], T = TOPICS[t]; return `<button type="button" class="chip${state.sel.has(t) ? ' on' : ''}" data-topic="${t}" aria-pressed="${state.sel.has(t)}">${T.label}${T.lab ? ' <span class="ctag">lab</span>' : ''}${s && s.a ? ` ${pips(t)}<span class="cstat">${s.c}/${s.a}</span>` : ''}</button>`; }).join('')}</div>`).join('') + '<p class="note-small" style="margin:2px 0 0">Dots count your answers in a row with no hint and no miss. Three dots: topic mastered.</p>';
+  $('chips').innerHTML = (nOn < nAll ? `<button type="button" class="resetsel" data-allon="1">Turn all topics back on</button>` : '') + open.map(c => `<div class="chip-row" style="${tileVars(c.id)}"><span>${c.title}</span>${tTopics(c).map(t => { const s = P.topic[t], T = TOPICS[t]; return `<button type="button" class="chip${state.sel.has(t) ? ' on' : ''}" data-topic="${t}" aria-pressed="${state.sel.has(t)}">${T.label}${T.lab ? ' <span class="ctag">lab</span>' : ''}${s && s.a ? ` ${pips(t)}<span class="cstat">${s.c}/${s.a}</span>` : ''}</button>`; }).join('')}</div>`).join('') + '<p class="note-small" style="margin:2px 0 0">Dots count your answers in a row with no hint and no miss. Three dots: topic mastered. After a week the dots turn yellow: answer one more to keep it.</p>';
+  if (focusOn) $('focusText').textContent = focusLabel();
   $('goRow').hidden = !state.sel.size; $('goPlay').firstChild.textContent = state.mode === 'learn' && !state.ch ? 'Go to the lesson ' : 'Go to your question ';
   const curMode = (inlineLab ? '' : (LABS.find(L => L.on()) || {}).k) || (state.ch ? state.ch.kind : state.mode);
   document.querySelectorAll('#modes button').forEach(b => { b.classList.toggle('active', b.dataset.mode === curMode); b.setAttribute('aria-pressed', b.dataset.mode === curMode); });
@@ -2372,13 +2425,22 @@ function refresh() {
   if (state.mode === 'learn') return showLearn();
   newQuestion();
 }
-function showEmpty() { closeLab(); state.q = null; $('emptyBox').hidden = false; $('playArea').hidden = true; $('learnBox').hidden = true; $('reportBox').hidden = true; $('playTitle').textContent = state.mode === 'learn' ? 'Learn' : 'Practice'; $('skipBtn').hidden = true; }
+/* once a student is working, the tiles and modes fold into one bar so the question sits near the top of the page */
+let focusOn = false;
+function focusLabel() {
+  const L = inlineLab ? null : LABS.find(x => x.on());
+  if (L) return 'Lab: ' + L.name;
+  const on = tiles().filter(catOn).map(T => T.title), what = on.length > 2 ? on.length + ' tiles' : on.join(' and ');
+  return (what || 'Nothing picked yet') + ' · ' + (state.ch ? ROUND[state.ch.kind].title : state.mode === 'learn' ? 'Learn' : 'Practice');
+}
+function setFocus(on) { focusOn = !!on; $('chooserSec').hidden = focusOn; $('howUse').hidden = focusOn; $('focusBar').hidden = !focusOn; if (focusOn) $('focusText').textContent = focusLabel(); }
+function showEmpty() { setFocus(false); closeLab(); state.q = null; $('emptyBox').hidden = false; $('playArea').hidden = true; $('learnBox').hidden = true; $('reportBox').hidden = true; $('playTitle').textContent = state.mode === 'learn' ? 'Learn' : 'Practice'; $('skipBtn').hidden = true; }
 const smoothB = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'; } catch (e) { return 'auto'; } };
 function scrollToPlay() { try { $('play').scrollIntoView({ behavior: smoothB(), block: 'start' }); } catch (e) {} }
 
 /* ---------- making questions ---------- */
 function weightedTopic(pool) {
-  const w = pool.map(t => { const s = P.topic[t]; return 1 + (s && s.a ? 3 * (1 - s.c / s.a) : 1.5); });
+  const w = pool.map(t => { const s = P.topic[t]; return 1 + (s && s.a ? 3 * (1 - s.c / s.a) : 1.5) + (isDue(t) ? 3 : 0); });
   let r = Math.random() * w.reduce((a, b) => a + b, 0);
   for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) return pool[i]; }
   return pool[0];
@@ -2404,7 +2466,7 @@ function makeQuestion() {
   const first = nextNew(pool), t = first && (pool.every(isNew) || chance(0.6)) ? first : weightedTopic(pool);
   lastTopic = t; shown.add(t); sinceSim = TOPICS[t].lab ? 0 : sinceSim + 1; return generate(t);
 }
-function initWork(p) { if (!p) return null; if (p.kind === 'rank') return { order: [] }; return null; }
+function initWork(p) { if (!p) return null; if (p.kind === 'rank') return { order: [] }; if (p.kind === 'multi') return { on: [] }; return null; }
 function newQuestion(focus) {
   closeLab();
   const q = makeQuestion();
@@ -2441,6 +2503,7 @@ function partBody(p) {
   const w = state.work;
   if (p.kind === 'choice') return `<div class="choices${p.choices.length === 2 ? ' two' : ''}">${p.choices.map((c, k) => `<button type="button" class="choice" data-choice="${k}">${c.html}</button>`).join('')}</div>`;
   if (p.kind === 'nums') return `<div class="fields">${p.fields.map(f => `<div class="field" id="field-${f.key}"><label for="in-${f.key}">${f.label}</label>${f.sign ? '<span class="pmrow">' : ''}<input id="in-${f.key}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false">${f.sign ? `<button type="button" class="btn pm" data-pm="in-${f.key}" aria-label="Change the sign: plus or minus">±</button></span>` : ''}</div>`).join('')}</div><div class="checkrow"><button type="button" class="btn primary" data-check>Check</button></div>${p.note ? `<p class="typing-note">${p.note}</p>` : ''}`;
+  if (p.kind === 'multi') return `<div class="choices${p.choices.length === 2 ? ' two' : ''}">${p.choices.map((c, k) => `<button type="button" class="choice mopt${w.on.includes(k) ? ' on' : ''}" data-multi="${k}" aria-pressed="${w.on.includes(k)}">${c.html}</button>`).join('')}</div><div class="checkrow"><button type="button" class="btn primary" data-check>Check</button></div>`;
   if (p.kind === 'rank') return `<div class="ranklist">${p.items.map((s, i) => { const k = w.order.indexOf(i); return `<button type="button" class="rankbtn${k >= 0 ? ' on' : ''}" data-rank="${i}" aria-label="${esc(s.aria)}${k >= 0 ? ', position ' + (k + 1) : ''}"><span class="pos">${k >= 0 ? k + 1 : ''}</span><span>${s.html}</span></button>`; }).join('')}</div><div class="checkrow"><button type="button" class="btn primary" data-check>Check</button><button type="button" class="btn" data-clear>Clear</button></div>`;
   return '';
 }
@@ -2470,6 +2533,7 @@ function checkCurrent() {
     state.sfNote = sf ? `<div class="sfnote">Close, but fix your sig figs: the answer should have ${sf.sf}, so write ${sf.show}.</div>` : '';
     return right(sf ? `${p.solution || ''}${state.sfNote}` : '');
   }
+  if (p.kind === 'multi') { const r = checkMulti(p, state.work.on); if (!r) return setFeedback('info', 'Tap every one that fits, then tap Check.'); return r.ok ? right(p.solution) : wrong(r.slip, r.why); }
   if (p.kind === 'rank') { const r = checkRank(p, state.work.order); if (!r) return setFeedback('info', 'Tap every one to put them all in order.'); return r.ok ? right() : wrong(r.slip, r.why); }
 }
 function choose(k) {
@@ -2496,6 +2560,7 @@ function givenText(p) {
   try {
     if (p.kind === 'choice') { const b = document.querySelector('#parts .part.current .choice.wrong'); return b ? '<s>' + b.innerHTML + '</s>' : ''; }
     if (p.kind === 'nums') return p.fields.map(f => { const el = $('in-' + f.key); return el ? '<s>' + esc(el.value.trim()) + '</s>' : ''; }).join(' · ');
+    if (p.kind === 'multi') return '<s>' + state.work.on.map(k => p.choices[k].html).join(', ') + '</s>';
     if (p.kind === 'rank') return '<s>' + state.work.order.map(i => p.items[i].html).join(' &lt; ') + '</s>';
   } catch (e) {}
   return '';
@@ -2515,18 +2580,20 @@ function advancePart() {
   renderParts(); focusPart();
 }
 /* per-topic record: a = tried, c = right with no miss, h = how many of those used a hint, r = the last 6 results (2 = on your own, 1 = with a hint, 0 = missed or shown) */
-function bumpTopic(t, ok, helped) { const s = P.topic[t] || (P.topic[t] = { c: 0, a: 0 }); s.a++; if (ok) s.c++; if (ok && helped) s.h = (s.h || 0) + 1; s.r = (s.r || []).concat(ok ? (helped ? 1 : 2) : 0).slice(-6); }
+function bumpTopic(t, ok, helped) { const s = P.topic[t] || (P.topic[t] = { c: 0, a: 0 }); s.a++; if (ok) s.c++; if (ok && helped) s.h = (s.h || 0) + 1; s.r = (s.r || []).concat(ok ? (helped ? 1 : 2) : 0).slice(-6); if (ok && !helped) s.t = Date.now(); }
+/* a mastered topic asks for one more answer once a week has passed since the last unaided one */
+const WEEK = 7 * 864e5, isDue = t => { const s = P.topic[t]; return !!(s && s.t && runOf(t) >= MASTER_N && Date.now() - s.t > WEEK); };
 /* mastery says only what the record shows: 0 not started, 1 practicing, 2 almost (2 in a row on your own), 3 mastered (3 in a row on your own) */
 const MASTER_N = 3, MASTER_WORD = ['Not started', 'Practicing', 'Almost there', 'Mastered'];
 function runOf(t) { const r = (P.topic[t] || {}).r || []; let n = 0; for (let i = r.length - 1; i >= 0 && r[i] === 2; i--) n++; return n; }
-function mastery(t) { const s = P.topic[t]; if (!s || !s.a) return 0; const n = runOf(t); return n >= MASTER_N ? 3 : n === MASTER_N - 1 ? 2 : 1; }
-const pips = t => { const n = Math.min(MASTER_N, runOf(t)); return `<span class="pips" role="img" aria-label="${MASTER_WORD[mastery(t)]}: ${n} of ${MASTER_N} in a row with no hint">${[0, 1, 2].map(i => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span>`; };
+function mastery(t) { const s = P.topic[t]; if (!s || !s.a) return 0; const n = runOf(t); return n >= MASTER_N ? (isDue(t) ? 2 : 3) : n === MASTER_N - 1 ? 2 : 1; }
+const pips = t => { const n = Math.min(MASTER_N, runOf(t)); return `<span class="pips${isDue(t) ? ' due' : ''}" role="img" aria-label="${isDue(t) ? 'Mastered over a week ago: answer one to keep it' : `${MASTER_WORD[mastery(t)]}: ${n} of ${MASTER_N} in a row with no hint`}">${[0, 1, 2].map(i => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span>`; };
 function tileMast(T) { const ts = tTopics(T); if (!ts.some(t => P.topic[t] && P.topic[t].a)) return ''; const m = ts.filter(t => mastery(t) === 3).length; return `<span class="tmast"><span class="tbar" aria-hidden="true"><i style="width:${Math.round(m / ts.length * 100)}%"></i></span>${m} of ${ts.length} topics mastered</span>`; }
 function finishQuestion() {
   const q = state.q, ok = !state.wrong && !state.revealed, solo = ok && !state.helped, T = TOPICS[q.topic]; state.done = true;
   renderParts();
   if (!state.logged) ddLog(ok, state.revealed ? 'gave-up' : '');
-  const was = mastery(q.topic);
+  const was = mastery(q.topic), wasDue = isDue(q.topic);
   P.tried++; bumpTopic(q.topic, ok, state.helped); markMode(state.ch ? state.ch.kind : 'practice');
   /* XP (style guide): 10 per independent correct answer + 2 per streak step (max +10); 6 for a correct answer that used a hint (the streak neither grows nor resets); 2 for a reveal or a finish after a miss */
   let xp = 2;
@@ -2537,7 +2604,7 @@ function finishQuestion() {
   const many = q.parts.length > 1, now = mastery(q.topic), practice = !state.ch, newly = now === 3 && was < 3;
   if (practice && !ok) queueReview(q.topic);
   const why = /sfnote/.test(state.lastWhy || '') ? state.lastWhy : (state.lastWhy || '') + (state.sfNote || ''), xpPop = `<span class="xp-pop">+${xp} XP</span>`;
-  const mline = newly ? `<div class="mline got">${ico('check')}<span>Topic mastered: <b>${T.label}</b>. That is ${MASTER_N} in a row with no hint.</span></div>` : solo && now < 3 ? `<div class="mline">${T.label}: ${runOf(q.topic)} of ${MASTER_N} in a row on your own.</div>` : '';
+  const mline = newly && wasDue ? `<div class="mline got">${ico('check')}<span>Still got it after a week: <b>${T.label}</b> stays mastered.</span></div>` : newly ? `<div class="mline got">${ico('check')}<span>Topic mastered: <b>${T.label}</b>. That is ${MASTER_N} in a row with no hint.</span></div>` : solo && now < 3 ? `<div class="mline">${T.label}: ${runOf(q.topic)} of ${MASTER_N} in a row on your own.</div>` : '';
   let msg;
   if (solo) msg = `<b>${pick(['Stuck the landing!', 'Nailed it!', 'That one stuck!', 'Strong attraction!'])}</b> ${xpPop} ${q.review ? 'You missed one like this earlier, and now you have it. ' : ''}${many ? 'Every step was right. ' : ''}${why}${mline}`;
   else if (ok) msg = `<b>Correct, with a hint.</b> ${xpPop} ${why}<div class="mline">Get one like this with no hint and it counts toward mastery.</div>`;
@@ -2545,7 +2612,7 @@ function finishQuestion() {
   else msg = `<b>${state.revealed ? 'Answer shown.' : 'You got there.'}</b> ${xpPop} ${state.revealed ? 'Read the explanation above.' : why}${practice ? `<div class="mline">${q.review ? 'That is two misses on this topic. A worked example may help before the next one.' : 'One like this will come back in a few questions, so you can try it again.'}</div>` : ''}`;
   setFeedback(ok ? 'good' : 'info', msg);
   if (ok) setMood(newly || (solo && P.streak && P.streak % 5 === 0) ? 'victory' : 'correct');
-  if (newly) confetti();
+  if (newly && !wasDue) confetti();
   $('exBtn').hidden = ok || !practice; $('hintBtn').disabled = $('solBtn').disabled = true;
   if (state.ch) $('skipBtn').hidden = true;
   $('nextBtn').hidden = false; $('nextBtn').innerHTML = (state.ch && state.ch.i === state.ch.plan.length - 1 ? 'See my results ' : 'Next question ') + ico('arrow');
@@ -2572,6 +2639,7 @@ function hintSteps(p) {
   const out = [p.hint || 'Go back to the Professor Tip above, or open the Sticky Sheet.'];
   if (p.hint2) out.push(p.hint2);
   else if (p.kind === 'nums') { const s = !p.fields.some(f => f.exact) && p.solution ? setupHint(p.solution) : ''; if (s) out.push('Set it up like this: ' + s); }
+  else if (p.kind === 'multi') { const n = p.choices.filter(c => c.ok).length; out.push(`${n === 1 ? 'Only <b>one</b> of these fits' : `<b>${n}</b> of these fit`}.`); }
   else if (p.kind === 'rank') out.push(`<b>${p.items[p.want[0]].html}</b> goes first. ${p.orderHint || ''}`);
   else if (p.kind === 'choice' && p.choices.length >= 3) out.push(null);   // rule one option out, picked when asked
   return out;
@@ -3507,8 +3575,9 @@ function showSimInline(sim, locked) {
 /* ---------- events ---------- */
 function bind() {
   $('course').addEventListener('click', e => { const b = e.target.closest('button[data-course]'); if (b && b.dataset.course !== state.course) setCourse(b.dataset.course); });
-  $('modes').addEventListener('click', e => { const b = e.target.closest('button[data-mode]'); if (b) setMode(b.dataset.mode); });
-  $('specials').addEventListener('click', e => { const b = e.target.closest('[data-round]'); if (b) return startRound(b.dataset.round); const ol = e.target.closest('[data-openlab]'); if (ol) { LABS.find(L => L.k === ol.dataset.openlab).open(); return scrollToPlay(); } if (e.target.closest('[data-lab]')) { openLab(); scrollToPlay(); } if (e.target.closest('[data-hc]')) { openHC(); scrollToPlay(); } if (e.target.closest('[data-pd]')) { openPD(); scrollToPlay(); } if (e.target.closest('[data-cl]')) { openCL(); scrollToPlay(); } if (e.target.closest('[data-cg]')) { openCG(); scrollToPlay(); } if (e.target.closest('[data-fl]')) { openFL(); scrollToPlay(); } });
+  $('modes').addEventListener('click', e => { const b = e.target.closest('button[data-mode]'); if (b) { setMode(b.dataset.mode); if (state.ch || state.sel.size) { setFocus(true); scrollToPlay(); } } });
+  $('focusChange').onclick = () => { setFocus(false); try { $('chooserSec').scrollIntoView({ behavior: smoothB(), block: 'start' }); } catch (e) {} };
+  $('specials').addEventListener('click', e => { const b = e.target.closest('[data-round]'); if (b) return startRound(b.dataset.round); const ol = e.target.closest('[data-openlab]'); if (ol) { LABS.find(L => L.k === ol.dataset.openlab).open(); setFocus(true); return scrollToPlay(); } if (e.target.closest('[data-lab]')) { openLab(); scrollToPlay(); } if (e.target.closest('[data-hc]')) { openHC(); scrollToPlay(); } if (e.target.closest('[data-pd]')) { openPD(); scrollToPlay(); } if (e.target.closest('[data-cl]')) { openCL(); scrollToPlay(); } if (e.target.closest('[data-cg]')) { openCG(); scrollToPlay(); } if (e.target.closest('[data-fl]')) { openFL(); scrollToPlay(); } });
   document.addEventListener('click', e => {
     const t = e.target;
     const cat = t.closest('[data-cat]'); if (cat) return toggleCat(cat.dataset.cat);
@@ -3518,6 +3587,7 @@ function bind() {
     if (t.closest('#parts [data-check]')) return checkCurrent();
     const pm = t.closest('#parts [data-pm]'); if (pm) { const el = $(pm.dataset.pm); el.value = /^\s*[-−–]/.test(el.value) ? el.value.replace(/^\s*[-−–]\s*/, '') : '-' + el.value.trim(); try { el.focus({ preventScroll: true }); } catch (e) {} return; }
     if (t.closest('#parts [data-clear]')) return clearWork();
+    const mo = t.closest('#parts .part.current [data-multi]'); if (mo) { const w = state.work, i = +mo.dataset.multi; if (state.done || !w) return; w.on = w.on.includes(i) ? w.on.filter(x => x !== i) : w.on.concat(i); return rerenderCurrent(`[data-multi="${i}"]`); }
     const rk = t.closest('#parts [data-rank]'); if (rk) { const w = state.work, i = +rk.dataset.rank; if (state.done || !w) return; w.order = w.order.includes(i) ? w.order.filter(x => x !== i) : w.order.concat(i); return rerenderCurrent(`[data-rank="${i}"]`); }
     const lt = t.closest('[data-learntile]'); if (lt) { state.learn = { tile: lt.dataset.learntile }; return showLearn(); }
     const lp = t.closest('[data-learntopic]'); if (lp) { state.learn.topic = lp.dataset.learntopic; state.learn.q = null; return showLearn(); }
@@ -3534,7 +3604,7 @@ function bind() {
   $('exBtn').onclick = () => { const q = state.q; if (!q) return; const t = q.topic; state.sel.add(t); state.mode = 'learn'; state.ch = null; markMode('learn'); state.learn = { tile: TOPICS[t].tile, topic: t }; save(); renderChooser(); showLearn(); scrollToPlay(); };
   /* in a round, Skip reveals the rest of the question and counts it as missed; it never re-rolls a round slot */
   $('skipBtn').onclick = () => { if (state.ch) { if (state.q && !state.done) { while (!state.done) showStep(); } return; } newQuestion(true); scrollToPlay(); };
-  $('nextBtn').onclick = next; $('goPlay').onclick = scrollToPlay;
+  $('nextBtn').onclick = () => { setFocus(true); next(); }; $('goPlay').onclick = () => { setFocus(true); scrollToPlay(); };
   $('hintBtn').onclick = showHint; $('solBtn').onclick = showStep;
   $('sheetBtn').onclick = () => { renderSheet(); try { $('sheetDialog').showModal(); } catch (e) { $('sheetDialog').setAttribute('open', ''); } };
   $('closeSheet').onclick = () => $('sheetDialog').close();
