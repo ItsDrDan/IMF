@@ -261,7 +261,7 @@ CHEM 3B.
 In the lab afterward: Heat it all the way and look at the dark backbone line.
 
 
-# Nine more questions added in v19 (not yet read by Dr. Dan)
+# Nine more questions added in v19 (read and approved as written by Dr. Dan on 2026-11-13)
 
 Numbering continues from the list above.
 
@@ -342,4 +342,78 @@ CHEM 3A and 1A.
 - **✓ Water**: Water molecules hydrogen bond to each other, so the surface is hard to stretch: 72 mN/m. Hexane has dispersion forces only, and its surface tension is about a quarter of that.
 - Hexane: Hexane has dispersion forces only. Weaker attractions give a lower surface tension.
 - They are the same: Surface tension follows the strength of the attractions, and water’s hydrogen bonds are much stronger.
+
+
+# Seven lab questions added in v20 (not yet read by Dr. Dan)
+
+These go with the lab changes Dr. Dan asked for. Numbering continues from the list above.
+
+## Protein Fold Lab: change the temperature and watch
+
+CHEM 3B. The temperatures quoted are where this model lets each link go.
+
+### 37. You are going to raise the temperature a little at a time. Which link do you predict will let go first?
+
+- **✓ The hydrogen bond between Ser and Gln**: One hydrogen bond is the weakest of these links. In this model it lets go near 54 °C, before the salt bridge (near 59 °C) and the hydrophobic core (near 65 °C).
+- The salt bridge between Lys and Asp: The attraction between two full charges is stronger than one hydrogen bond, so the salt bridge holds a little longer.
+- The disulfide bond between the two Cys: A disulfide bond (–S–S–) is a real covalent bond between two cysteines. The other side-chain interactions are attractions, not shared electrons. It does not let go at all.
+
+In the lab afterward: Move the slider up slowly from 25 °C. Write down the temperature where each link disappears from the list.
+
+### 38. You are going to set the temperature to 60 °C. Which links do you predict will still be holding?
+
+- **✓ The hydrophobic core and the covalent bonds**: In this model the hydrogen bond and the salt bridge have let go by 60 °C. The nonpolar side chains are still clustered, and no covalent bond has broken.
+- Every link: 60 °C is too cool to change anything: By 60 °C the hydrogen bond and the salt bridge have already let go in this model.
+- Only the peptide bonds: The disulfide bond is covalent too, and at 60 °C the nonpolar side chains are still clustered together.
+
+In the lab afterward: Slide to 60 °C and read the list of links beside the picture.
+
+### 39. You are going to drag the temperature from 25 °C up to 100 °C. How do you predict the shape of the chain will change?
+
+- **✓ It opens from a compact fold into a loose, stretched-out chain**: As the attractions between side chains let go, nothing holds the fold together. The backbone is the same length, and still in one piece.
+- It breaks into shorter pieces: That would need peptide bonds to break. Boiling pulls whole molecules apart from each other. No covalent bond breaks: the steam is still H₂O.
+- It curls up tighter: Heat makes every part of the chain move more, which pulls the fold apart.
+
+In the lab afterward: Drag the slider from one end to the other and watch the dark backbone line.
+
+## Electron Coin-Flip: two atoms
+
+CHEM 1A.
+
+### 40. For an instant, atom 1 has extra electrons on its right side, next to atom 2. What will atom 2’s electrons do?
+
+- **✓ Shift away, to the far side of atom 2**: Electrons repel electrons. That leaves the near side of atom 2 a little positive, facing the negative side of atom 1, so the two atoms attract.
+- Shift toward atom 1: Electrons repel each other, so atom 2’s electrons are pushed away from the crowded side of atom 1.
+- Nothing: atom 2 is not affected: An electron cloud is easy to push. The lopsided cloud of atom 1 pushes atom 2’s cloud the same way, and that is what makes the attraction.
+
+In the lab afterward: Tap “Flip once” several times. Each time atom 1 is lopsided, look at which way atom 2’s electrons have moved.
+
+### 41. On a flip where atom 1’s electrons split exactly evenly, how strong is the pull between the two atoms at that instant?
+
+- **✓ There is no pull at that instant**: With an even split there is no temporary dipole, so nothing pushes atom 2’s electrons. The pull comes and goes as the clouds shift.
+- It is at its strongest: The pull is strongest when the cloud is most lopsided. An even split gives no dipole at all.
+- The same as on any other flip: The pull depends on how lopsided the cloud is at that instant, so it changes from flip to flip.
+
+In the lab afterward: Flip once at a time until you get an even split, and read “Pull this instant”.
+
+## H-Bond Lab: solid, liquid and gas
+
+All three courses.
+
+### 42. The liquid water is cooled from 25 °C to −20 °C. What will the molecules do?
+
+- **✓ Lock into a regular pattern held by hydrogen bonds, and only vibrate**: Below the freezing point the molecules move too slowly to break away, so each one settles into a fixed place: a crystal.
+- Stop moving completely: Even in ice the molecules vibrate in place. They only stop sliding past each other.
+- Spread out to fill the box: That is what a gas does. Cooling brings molecules together and holds them in place.
+- Break apart into H and O atoms: Boiling pulls whole molecules apart from each other. No covalent bond breaks: the steam is still H₂O.
+
+In the lab afterward: Slide the temperature below 0 °C and watch the pattern form. Then warm it back up past 0 °C.
+
+### 43. The liquid water is heated past 100 °C. What will you see?
+
+- **✓ The molecules spread out to fill the box, and the dashed hydrogen bonds are gone**: Above the boiling point the molecules have enough energy to escape each other. Each one is still a whole H₂O molecule.
+- The molecules stay in a pool at the bottom, only moving faster: That describes hot liquid water. Past the boiling point the molecules leave the pool and fill the box.
+- The molecules split into H and O atoms: Boiling pulls whole molecules apart from each other. No covalent bond breaks: the steam is still H₂O.
+
+In the lab afterward: Slide the temperature past 100 °C, then bring it back below 100 °C.
 

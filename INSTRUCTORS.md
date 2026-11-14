@@ -4,8 +4,22 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v19.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v20.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v20 (2026-11-13)
+
+Four lab changes Dr. Dan asked for.
+
+- **H-Bond Lab shows solid, liquid and gas.** Each substance follows its own melting and boiling points (water 0 and 100 °C, ammonia −78 and −33, HF −84 and 20, methanol −98 and 65, methane −182 and −162).
+  - *Solid:* the molecules move onto a flat crystal layer and only vibrate. Water makes a net where a molecule in the middle has 4 hydrogen bonds. Ammonia, HF and methanol make chains, each H pointing at the next molecule's lone pair. Methane packs closely with no hydrogen bonds.
+  - *Liquid:* the molecules lie in a level pool across the bottom, sliding past each other while hydrogen bonds form and break.
+  - *Gas:* the molecules fill the box and no hydrogen bonds are drawn.
+  - The readout beside the slider names the phase and both transition temperatures. In the liquid, water still shows more hydrogen bonds per molecule than methanol or HF (about 1.2, 0.9 and 0.8 in test runs).
+- **Energy Well:** the "Shine light to add energy" slider now sits above the diagram, so on a phone it is reachable without scrolling past the picture.
+- **Electron Coin-Flip shows two atoms.** Atom 1 is the coin flip. Atom 2's electrons are pushed the same way, so a δ+ side always faces a δ− side, and a dashed "attract" line between them gets thicker as the clouds get more lopsided. On an even split it reads "no pull this instant".
+- **Protein Fold Lab** has three new predictions that send the student to the slider: which link lets go first, which are still holding at 60 °C, and how the shape changes from 25 to 100 °C. In this model the hydrogen bond lets go near 54 °C, the salt bridge near 59 °C and the hydrophobic core near 65 °C.
+- **Seven new lab questions** in all (3 Protein Fold, 2 Coin-Flip, 2 H-Bond Lab), numbers 37 to 43 in `REVIEW-NEW-QUESTIONS.md`. Dr. Dan has not read these yet.
 
 ## New in v19 (2026-11-13)
 
@@ -14,8 +28,8 @@ Changes aimed at the weak points named in an honest review of the game.
 - **Shorter page.** Once a student taps "Go to your question", picks a mode, opens a lab or taps Next, the tiles and modes fold into one bar: "Working on: Spot the Forces · Practice", with a "Change topics or mode" button. The question then sits near the top of the page. On a desktop-width page the question moved from about 1,260 px down to about 290 px. The achievements list is folded behind "Show all achievements".
 - **Tap all that apply.** A new question type with more than one right choice, so a student cannot succeed by recognizing a single answer. It is used in "Who can hydrogen bond?" (about 4 in 10 questions: tap every molecule that can) and in the last step of "Lewis structure → all the forces" (about half: tap every force). Feedback names a wrongly tapped choice and why; a missed one gets a nudge without being named.
 - **Mastery needs a re-check.** A mastered topic's dots turn yellow one week after the last unaided correct answer, and the topic stops counting as mastered until one more is answered with no hint. Due topics come up more often.
-- **Nine more questions:** ion–dipole (3), sugars (3), surface tension and viscosity (3). They are at the end of `REVIEW-NEW-QUESTIONS.md` and have not been read by Dr. Dan yet.
-- **Not changed:** the game is still one file, and the Electron Coin-Flip and Protein Fold labs are as they were.
+- **Nine more questions:** ion–dipole (3), sugars (3), surface tension and viscosity (3). They are numbers 28 to 36 in `REVIEW-NEW-QUESTIONS.md`. Dr. Dan read and approved them on 2026-11-13.
+- **Not changed in v19:** the game is still one file. The labs were reworked in v20.
 
 ## New in v18 (2026-11-13)
 
@@ -152,9 +166,9 @@ Each is labeled on screen as a teaching model, with its simplifications stated. 
 
 | Lab | Courses | Spec | What it shows | Link |
 | --- | --- | --- | --- | --- |
-| H-Bond Lab | all | §6.1 | 8–12 molecules of H₂O, NH₃, HF, CH₃OH or CH₄ with a temperature slider. Dashed hydrogen bonds form H → lone pair, flicker and break. Counter of hydrogen bonds per molecule. | `?mode=lab` |
+| H-Bond Lab | all | §6.1 | 8–12 molecules of H₂O, NH₃, HF, CH₃OH or CH₄ with a temperature slider. Shows a crystal layer below the melting point, a level pool of liquid, and a gas above the boiling point. Dashed hydrogen bonds form H → lone pair, flicker and break. Counter of hydrogen bonds per molecule. | `?mode=lab` |
 | Energy Well | 3A, 1A | §6.3 | Potential energy curve for a pair. Raise the kinetic energy above the top of the well and the pair separates. Ion–dipole well in 1A only. Relative depths, no numbers. | `?mode=well` |
-| Electron Coin-Flip | 1A | §6.5 | Flip the electrons of He, Ne, Ar, Kr or Xe left or right. Even-split chance beside each boiling point. | `?mode=coin` |
+| Electron Coin-Flip | 1A | §6.5 | Two atoms of He, Ne, Ar, Kr or Xe. Flip the electrons of atom 1 left or right; atom 2's cloud is pushed the same way and the two attract. Even-split chance beside each boiling point. | `?mode=coin` |
 | Mixing Beaker | 1A, 3B | §6.6 | Drop a substance into water or hexane. A prediction is required before every drop. | `?mode=mix` |
 | Heating Curve Lab | 3A, 1A | §6.2 | Curve beside a box of 18 water molecules. Add or remove heat; the thermometer holds on each plateau while attractions break or form. | `?mode=curve` |
 | Phase Diagram Explorer | 3A, 1A | §6.4 | Drag a state point on water or CO₂ (hydrazine added in 1A). Reports each change and where it happened. Sealed-tube picture in 1A. | `?mode=diagram` |
@@ -280,7 +294,7 @@ Added by the game:
 
 - **Animations were not watched in real time.** The test browser throttled animation, so the models were stepped by script. Playback speed and smoothness on real devices are unverified.
 - **Small text on phones** in the phase diagram and the Protein Fold Lab picture.
-- **H-Bond Lab below about −33 °C:** water and methanol both read about 2 hydrogen bonds per molecule, because a flat box cannot build water's full four-bond network.
+- **H-Bond Lab crystals are simplified.** Each solid is one flat layer drawn so the hydrogen bonds are easy to see, not the real crystal structure, and with only 8 to 12 molecules the edge molecules have fewer bonds (frozen water averages about 2.2 per molecule though a middle molecule has 4). The gas is drawn with no hydrogen bonds at all.
 - **No matched videos for the 3B biomolecule topics;** they fall back to the general intermolecular forces video.
 - **The CHEM 3B Exam #3 Reference Sheet was not available** when the 3B questions were written. Examples follow the spec's description of it.
 

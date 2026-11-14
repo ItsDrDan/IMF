@@ -4,7 +4,7 @@ ItsDrDan study game on **intermolecular forces, phase changes and colligative pr
 
 Live at https://itsdrdan.github.io/IMF/
 
-Current version: v19
+Current version: v20
 
 - `index.html`: the whole game (standalone; no build step). It loads the brand kit (`games/brand/itsdrdan.css`, `icons.js`, `embed.js`) and `games/track.js` for anonymous stats, and reads its art from `assets/`.
 - `?course=3A` (default), `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden.

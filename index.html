@@ -505,6 +505,7 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
 .tmast{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:2px;font-size:.78rem;font-weight:800;color:var(--tc,var(--muted))}.tbar{display:block;width:84px;height:6px;border-radius:99px;background:var(--tcl,#e3e6f0);overflow:hidden}.tbar i{display:block;height:100%;background:var(--tc,var(--accent))}
 .mline{margin-top:8px;font-weight:800}.mline.got{display:flex;gap:6px;align-items:center}
 .tag.again{background:var(--amber);color:var(--amber-ink)}
+.lab-top{margin-bottom:10px}.simq-locked .lab-top{opacity:.55}
 .mopt::before{content:'☐ ';font-weight:900}.mopt.on::before{content:'☑ '}.mopt.on{border-color:var(--accent);background:var(--accent-soft)}
 .pips.due i.on{background:#e0a100;border-color:#b98500}
 .focusbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;margin:10px 0 14px;background:#fff;border:2px solid var(--line2);border-radius:16px;box-shadow:0 3px 0 var(--line2);padding:8px 10px 8px 16px}
@@ -572,7 +573,7 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
      <label class="chk"><input type="checkbox" id="labReduce"> Reduce motion (step frame by frame)</label>
     </div>
    </div>
-   <p class="note-small">This is a teaching model, not a real simulation. The molecules are flat, CH₃ is drawn as one ball, and each substance’s stickiness is set from its heat of vaporization or boiling point. Molecules never break apart.</p>
+   <p class="note-small">This is a teaching model, not a real simulation. The molecules are flat, CH₃ is drawn as one ball, and each substance’s stickiness is set from its heat of vaporization or boiling point. Solid, liquid and gas follow each substance’s real melting and boiling points. The solid is one flat layer of a crystal, drawn as simply as possible, and the gas is shown with no hydrogen bonds at all. Molecules never break apart.</p>
    <div class="ex-actions"><button type="button" class="btn primary" id="labNew">New prediction <span data-icon="arrow" aria-hidden="true"></span></button></div>
   </section>
   <section id="hcBox" class="example" hidden>
@@ -1384,6 +1385,7 @@ function stepSim(s, dt) {
     const A = M_[i], B = M_[j]; if (A.pin && B.pin) continue;
     const dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 1;
     if (d > 110) continue;
+    if (s.phase === 'liquid' && d < 66) { const f = (s.level || 0) * (1 - d / 66) * (dx < 0 ? -1 : 1); A.vx -= f * dt; B.vx += f * dt; }   // H-Bond Lab liquid: a sideways nudge so the pool spreads level across the floor
     if (d > 44 && d < 96 && !A.gas && !B.gas) { const f = SIM.disp * st * (1 - (d - 44) / 52), fx = f * dx / d, fy = f * dy / d; A.vx += fx * dt; A.vy += fy * dt; B.vx -= fx * dt; B.vy -= fy * dt; }
     for (const p of atoms[i]) for (const q of atoms[j]) { const ex = q[0] - p[0], ey = q[1] - p[1], e = Math.hypot(ex, ey) || 1, min = p[2] + q[2] - 3; if (e < min) { const f = 420 * (min - e), fx = f * ex / e, fy = f * ey / e; push(A, p[0], p[1], -fx, -fy, dt, I); push(B, q[0], q[1], fx, fy, dt, I); } }
   }
@@ -1423,11 +1425,31 @@ function stepSim(s, dt) {
   s.t += dt; const now = 2 * s.bonds.length / n; s.avg += (now - s.avg) * Math.min(1, dt / 2.5);
 }
 const simPerMol = s => 2 * s.bonds.length / s.mols.length;
+/* phases in the H-Bond Lab (v20): below the melting point the molecules sit on a flat crystal layer, between the two points
+   they pool at the bottom as a liquid, and above the boiling point they spread out as a gas with no hydrogen bonds */
+const SIM_PTS = { H2O: [0, 100], NH3: [-78, -33], HF: [-84, 20], CH3OH: [-98, 65], CH4: [-182, -162] };   // melting and boiling points, °C (handbook, rounded)
+const simPhase = (key, TC) => TC < SIM_PTS[key][0] ? 'solid' : TC < SIM_PTS[key][1] ? 'liquid' : 'gas';
+/* crystal sites, bottom row first. Water: every molecule points the same way, so each H meets a neighbor's lone pair (a net with up to
+   4 hydrogen bonds each). NH3, HF and CH3OH: chains, each H pointing at the next molecule's lone pair. CH4: close-packed, no hydrogen bonds. */
+function latticeSites(key, n, W, H) {
+  const def = SIM_MOLS[key], pad = def.group ? 40 : 31, d = SIM.L + def.R + SIM.gap, out = [];
+  const c = key === 'H2O' ? { a: 90, dx: 2 * d * Math.cos(rad(38)), dy: d * Math.sin(rad(38)), stag: true } : key === 'CH4' ? { a: null, dx: 56, dy: 48, stag: true } : { a: key === 'CH3OH' ? -52 : 0, dx: d, dy: key === 'CH3OH' ? 80 : key === 'NH3' ? 60 : 48, stag: false };
+  const per = Math.max(2, Math.floor((W - 2 * pad) / c.dx) + 1);
+  for (let r = 0; out.length < n && r < 12; r++) { const cnt = c.stag && r % 2 ? per - 1 : per, take = Math.min(cnt, n - out.length), j0 = Math.floor((cnt - take) / 2); for (let j = j0; j < j0 + take; j++) out.push({ x: W / 2 + (j - (cnt - 1) / 2) * c.dx, y: H - pad - r * c.dy, a: c.a }); }
+  return out;
+}
+function setSimPhase(s, ph) {
+  s.phase = ph; s.level = 220; s.grav = 90;   /* tuned so the liquid lies as a level pool and water still shows more hydrogen bonds than methanol or HF */
+  s.mols.forEach((m, i) => { m.home = null; m.gas = ph === 'gas'; m.nb = ph === 'gas'; if (ph === 'gas') simRelease(s, i); });
+  if (ph !== 'solid') return;
+  const free = s.mols.map((_, i) => i), far = (i, S) => Math.hypot(s.mols[i].x - S.x, s.mols[i].y - S.y);
+  latticeSites(s.key, s.mols.length, s.W, s.H).forEach(S => { let b = 0; free.forEach((mi, k) => { if (far(mi, S) < far(free[b], S)) b = k; }); const m = s.mols[free.splice(b, 1)[0]]; m.home = { x: S.x, y: S.y, a: S.a == null ? m.a : rad(S.a), t: 0 }; });
+}
 
 /* predictions the student makes before the molecules start moving */
 const LAB_NAME = { H2O: 'water', NH3: 'ammonia', HF: 'hydrogen fluoride', CH3OH: 'methanol', CH4: 'methane' };
 const LAB_PRED = [
-  { id: 'water-nh3', mol: 'H2O', T: 25, q: 'Water and ammonia both hydrogen bond. At the same temperature, which will show <b>more hydrogen bonds per molecule</b>?', test: 'Run water at 25 °C, then switch to NH₃ and compare the counter. At 25 °C ammonia is a gas, so also cool both down: ammonia still tops out near 2 per molecule, water near 4.', c: [
+  { id: 'water-nh3', mol: 'H2O', T: 25, q: 'Water and ammonia both hydrogen bond. At the same temperature, which will show <b>more hydrogen bonds per molecule</b>?', test: 'Run water at 25 °C, then switch to NH₃ and compare the counter. At 25 °C ammonia is a gas, so also cool both until they freeze: in the crystal an ammonia molecule never has more than 2 hydrogen bonds, and a water molecule in the middle has 4.', c: [
     ['Water, H₂O', true, 'Each water molecule has 2 H atoms <b>and</b> 2 lone pairs, so it can be part of up to 4 hydrogen bonds. NH₃ has 3 H atoms but only 1 lone pair to accept with. That matches the boiling points: water 100 °C, ammonia −33 °C.'],
     ['Ammonia, NH₃, because it has more H atoms', false, 'A hydrogen bond needs an H <b>and</b> a lone pair to point it at. NH₃ has only 1 lone pair, so most of its H atoms have nowhere to go. Water (2 H, 2 lone pairs) makes more: it boils at 100 °C, ammonia at −33 °C.', 'hbond-needs-lone-pair'],
     ['The same, because both hydrogen bond', false, 'They hydrogen bond to different extents. Water has 2 H and 2 lone pairs per molecule; NH₃ has 3 H but only 1 lone pair.', 'hbond-needs-lone-pair']] },
@@ -1453,7 +1475,16 @@ const LAB_PRED = [
   { id: 'water-hf', for: ['3A', '1A'], mol: 'HF', T: 0, q: 'HF has the most polar H–X bond, but only one H. At the same temperature, which shows more hydrogen bonds per molecule: HF or water?', test: 'Run HF at 0 °C, then switch to water and compare the counter.', c: [
     ['Water', true, 'Each HF can donate only one H, so HF forms chains. Water donates two and accepts two, building a network. Boiling points: water 100 °C, HF 20 °C.'],
     ['HF, because F is the most electronegative atom', false, 'Each H–F···H–F bond is strong, but there is only one H per molecule. The number of bonds per molecule matters too: water makes about twice as many.', 'hbond-needs-lone-pair'],
-    ['The same', false, 'HF has 1 H per molecule; water has 2 H and 2 lone pairs, so water can be part of more hydrogen bonds.', 'hbond-needs-lone-pair']] }
+    ['The same', false, 'HF has 1 H per molecule; water has 2 H and 2 lone pairs, so water can be part of more hydrogen bonds.', 'hbond-needs-lone-pair']] },
+  { id: 'freeze', mol: 'H2O', T: 25, q: 'The liquid water is cooled from 25 °C to −20 °C. What will the molecules do?', test: 'Slide the temperature below 0 °C and watch the pattern form. Then warm it back up past 0 °C.', c: [
+    ['Lock into a regular pattern held by hydrogen bonds, and only vibrate', true, 'Below the freezing point the molecules move too slowly to break away, so each one settles into a fixed place: a crystal.'],
+    ['Stop moving completely', false, 'Even in ice the molecules vibrate in place. They only stop sliding past each other.', 'heat-makes-bonds'],
+    ['Spread out to fill the box', false, 'That is what a gas does. Cooling brings molecules together and holds them in place.', 'heat-makes-bonds'],
+    ['Break apart into H and O atoms', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds']] },
+  { id: 'steam', mol: 'H2O', T: 60, q: 'The liquid water is heated past 100 °C. What will you see?', test: 'Slide the temperature past 100 °C, then bring it back below 100 °C.', c: [
+    ['The molecules spread out to fill the box, and the dashed hydrogen bonds are gone', true, 'Above the boiling point the molecules have enough energy to escape each other. Each one is still a whole H₂O molecule.'],
+    ['The molecules stay in a pool at the bottom, only moving faster', false, 'That describes hot liquid water. Past the boiling point the molecules leave the pool and fill the box.', 'heat-makes-bonds'],
+    ['The molecules split into H and O atoms', false, SLIP['boil-breaks-bonds'], 'boil-breaks-bonds']] }
 ];
 
 /* ================= TILE 4: Phase Changes (CHEM 3A, 1A) ================= */
@@ -2103,6 +2134,9 @@ const FOLD_PRED = [
   { id: 'ss', T: 25, q: 'Which link between side chains will still be there after heating, because it is a covalent bond?', test: 'Heat it all the way and see which side-chain link is left.', c: [['The disulfide bond between the two cysteines', true, SLIP['disulfide-is-covalent']], ['The salt bridge between Lys and Asp', false, 'A salt bridge is an ionic attraction between charged groups. Heat can separate them.', 'disulfide-is-covalent'], ['The hydrogen bond between Ser and Gln', false, SLIP['hbond-is-covalent'], 'hbond-is-covalent']] },
   { id: 'salt', T: 25, q: 'Which two side chains in this chain can form a salt bridge?', test: 'Find the + and − side chains in the folded shape.', c: [['Lys (–NH₃⁺) and Asp (–COO⁻)', true, 'Lysine’s side chain is positive and aspartic acid’s is negative. Opposite charges attract, which makes a salt bridge.'], ['The two Cys side chains', false, 'Two cysteines form a covalent disulfide bond, –S–S–.', 'disulfide-is-covalent'], ['Leu and Val', false, 'Those are nonpolar and uncharged. They make hydrophobic contacts.', 'side-chain-salt']] },
   { id: 'cool', T: 95, q: 'This protein has been heated and has unfolded. If it is cooled gently, what can happen?', test: 'Lower the temperature and watch.', c: [['It can fold back up, because no covalent bond was broken', true, 'The sequence is intact, so the same attractions can form again. (Many real proteins tangle instead, like a cooked egg.)'], ['Nothing: the amino acids have been destroyed', false, 'Heating did not break any covalent bond. The chain is whole.', 'boil-breaks-bonds'], ['The chain falls apart into amino acids', false, 'That would need the peptide bonds to break (hydrolysis). Cooling does not do that.', 'boil-breaks-bonds']] },
+  { id: 'first', T: 25, q: 'You are going to raise the temperature a little at a time. Which link do you predict will let go <b>first</b>?', test: 'Move the slider up slowly from 25 °C. Write down the temperature where each link disappears from the list.', c: [['The hydrogen bond between Ser and Gln', true, 'One hydrogen bond is the weakest of these links. In this model it lets go near 54 °C, before the salt bridge (near 59 °C) and the hydrophobic core (near 65 °C).'], ['The salt bridge between Lys and Asp', false, 'The attraction between two full charges is stronger than one hydrogen bond, so the salt bridge holds a little longer.', 'side-chain-salt'], ['The disulfide bond between the two Cys', false, SLIP['disulfide-is-covalent'] + ' It does not let go at all.', 'disulfide-is-covalent']] },
+  { id: 'at60', T: 25, q: 'You are going to set the temperature to 60 °C. Which links do you predict will still be holding?', test: 'Slide to 60 °C and read the list of links beside the picture.', c: [['The hydrophobic core and the covalent bonds', true, 'In this model the hydrogen bond and the salt bridge have let go by 60 °C. The nonpolar side chains are still clustered, and no covalent bond has broken.'], ['Every link: 60 °C is too cool to change anything', false, 'By 60 °C the hydrogen bond and the salt bridge have already let go in this model.'], ['Only the peptide bonds', false, 'The disulfide bond is covalent too, and at 60 °C the nonpolar side chains are still clustered together.', 'disulfide-is-covalent']] },
+  { id: 'shape', T: 25, q: 'You are going to drag the temperature from 25 °C up to 100 °C. How do you predict the shape of the chain will change?', test: 'Drag the slider from one end to the other and watch the dark backbone line.', c: [['It opens from a compact fold into a loose, stretched-out chain', true, 'As the attractions between side chains let go, nothing holds the fold together. The backbone is the same length, and still in one piece.'], ['It breaks into shorter pieces', false, 'That would need peptide bonds to break. ' + SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'], ['It curls up tighter', false, 'Heat makes every part of the chain move more, which pulls the fold apart.']] },
   { id: 'peptide', T: 25, q: 'This chain of 12 amino acids is held together by 11 peptide bonds. It is heated until it is completely unfolded. How many peptide bonds will break?', test: 'Heat it all the way and look at the dark backbone line.', c: [['None', true, 'Peptide bonds are covalent. Heat unfolds the chain by breaking attractions, and the backbone stays in one piece.'], ['All 11', false, 'That would cut the protein into separate amino acids. ' + SLIP['boil-breaks-bonds'], 'boil-breaks-bonds'], ['About half', false, 'No peptide bond breaks. Only the attractions that hold the folded shape let go.', 'boil-breaks-bonds']] }
 ];
 function genFats() { const q = genFatsCore(); q.stem += `<div class="figure">${packFig()}</div>`; return q; }
@@ -2132,6 +2166,8 @@ const COIN_PRED = [
   { id: 'helium', n: 2, q: 'Helium has 2 electrons. Pretend each one is equally likely to be on the left or the right side of the atom. How often will they be split evenly, one on each side?', test: 'Flip helium 100 times and read the tally.', c: [['About half the time', true, 'Four equally likely arrangements: left-left, left-right, right-left, right-right. Two of the four are even.'], ['Always', false, 'Both electrons can land on the same side. That happens half the time.', 'coin-flip'], ['Never', false, 'One on each side is the most likely single outcome.', 'coin-flip']] },
   { id: 'trend', n: 2, q: 'As the number of electrons goes up from 2 to 54, what will happen to the chance of a perfectly even split?', test: 'Step through He, Ne, Ar, Kr and Xe and read the “even split” column.', c: [['It goes down', true, 'With more electrons there are many more lopsided arrangements, so the cloud is almost always a little uneven: 50.0% for He but only 10.8% for Xe.'], ['It goes up', false, 'More electrons means more ways to be uneven, so an exact tie gets rarer.', 'coin-flip'], ['It stays at 50%', false, 'It is 50% only for 2 electrons.', 'coin-flip']] },
   { id: 'xenon', n: 54, q: 'Which noble gas will have the strongest dispersion forces, and so the highest boiling point?', test: 'Compare the boiling point column with the electron counts.', c: [['Xenon, with 54 electrons', true, 'A big electron cloud is lopsided more often and by more, and its outer electrons are far from the nucleus, so the cloud is easy to distort (polarizable). That makes larger temporary dipoles. Xe boils at 165 K; He at 4.2 K.'], ['Helium, with 2 electrons', false, 'Two electrons can only make a tiny temporary dipole. Helium has the weakest dispersion forces of all.', 'dispersion-size'], ['They are all the same', false, 'Dispersion forces grow with the number of electrons.', 'dispersion-size']] },
+  { id: 'induce', n: 18, q: 'For an instant, atom 1 has extra electrons on its right side, next to atom 2. What will atom 2’s electrons do?', test: 'Tap “Flip once” several times. Each time atom 1 is lopsided, look at which way atom 2’s electrons have moved.', c: [['Shift away, to the far side of atom 2', true, 'Electrons repel electrons. That leaves the near side of atom 2 a little positive, facing the negative side of atom 1, so the two atoms attract.'], ['Shift toward atom 1', false, 'Electrons repel each other, so atom 2’s electrons are pushed away from the crowded side of atom 1.', 'coin-flip'], ['Nothing: atom 2 is not affected', false, 'An electron cloud is easy to push. The lopsided cloud of atom 1 pushes atom 2’s cloud the same way, and that is what makes the attraction.', 'coin-flip']] },
+  { id: 'evenpull', n: 10, q: 'On a flip where atom 1’s electrons split exactly evenly, how strong is the pull between the two atoms at that instant?', test: 'Flip once at a time until you get an even split, and read “Pull this instant”.', c: [['There is no pull at that instant', true, 'With an even split there is no temporary dipole, so nothing pushes atom 2’s electrons. The pull comes and goes as the clouds shift.'], ['It is at its strongest', false, 'The pull is strongest when the cloud is most lopsided. An even split gives no dipole at all.', 'coin-flip'], ['The same as on any other flip', false, 'The pull depends on how lopsided the cloud is at that instant, so it changes from flip to flip.', 'coin-flip']] },
   { id: 'argon', n: 18, q: 'Neon has 10 electrons and argon has 18. Which atom is caught more often with its electrons split <b>unevenly</b>?', test: 'Flip neon 100 times, then argon, and compare the “even split” tallies.', c: [['Argon', true, 'An exact even split gets rarer as electrons are added: about 25% of the time for neon and 19% for argon. So argon is lopsided more often, which fits its higher boiling point (87 K vs 27 K).'], ['Neon', false, 'Neon splits evenly about 25% of the time, argon only about 19%. More electrons means more ways to be uneven.', 'coin-flip'], ['Neither: electrons are always spread evenly', false, 'On average, yes. At any instant the cloud is usually a little lopsided, and that is where dispersion forces come from.', 'coin-flip']] }
 ];
 /* Mixing beaker: drop a substance into water or hexane. v: yes (mixes well), some (only a little), no (stays apart). */
@@ -2768,7 +2804,7 @@ function labSize() { const st = $('labCanvas').parentElement, W = Math.max(280, 
 function labBuild() {
   const z = labSize(), cv = $('labCanvas'), dpr = cvScale(cv, z.W);
   cv.width = z.W * dpr; cv.height = z.H * dpr; cv.style.height = z.H + 'px'; lab.dpr = dpr; lab.W = z.W;
-  lab.sim = makeSim(lab.mol, z.n, z.W, z.H); lab.sim.TK = lab.TC + 273; lab.shown = 0;
+  lab.sim = makeSim(lab.mol, z.n, z.W, z.H); lab.sim.TK = lab.TC + 273; lab.shown = 0; setSimPhase(lab.sim, simPhase(lab.mol, lab.TC));
   labDraw(); if (lab.locked) { lab.cap = ''; $('labCaption').textContent = 'Solid lines are covalent bonds. Dot pairs are lone pairs. Dashed lines are hydrogen bonds.'; $('labCount').textContent = '0.0'; $('labMeter').style.width = '0%'; } else labReadout();
 }
 function openLab() {
@@ -2791,7 +2827,7 @@ function labControls() {
   $('labLock').hidden = !lab.locked;
   $('labSide').querySelectorAll('button, input').forEach(el => { el.disabled = lab.locked; });
   document.querySelectorAll('#labMols button').forEach(b => { b.classList.toggle('on', b.dataset.labmol === lab.mol); b.setAttribute('aria-pressed', b.dataset.labmol === lab.mol); });
-  $('labRange').value = lab.TC; $('labT').textContent = degC(lab.TC); $('labBp').textContent = `${cap(LAB_NAME[lab.mol])} boils at ${degC(LAB_BP[lab.mol])}`;
+  $('labRange').value = lab.TC; $('labT').textContent = degC(lab.TC); $('labBp').innerHTML = `<b>${cap(simPhase(lab.mol, lab.TC))}</b> · melts at ${degC(SIM_PTS[lab.mol][0])} · boils at ${degC(SIM_PTS[lab.mol][1])}`;
   $('labPause').textContent = lab.paused ? 'Play' : 'Pause'; $('labPause').hidden = lab.reduce; $('labStep').hidden = !(lab.reduce || lab.paused);
 }
 function labAnswer(k) {
@@ -2817,12 +2853,14 @@ function labTick(ts) {
 function labReadout() {
   const s = lab.sim, v = s.def.donor ? s.avg : 0, name = cap(LAB_NAME[lab.mol]);
   $('labCount').textContent = v.toFixed(1); $('labMeter').style.width = Math.min(100, v / 2.5 * 100) + '%';
-  const txt = !s.def.donor ? `${name} at ${degC(lab.TC)}: no hydrogen bonds. Its H atoms are on carbon, so only weak dispersion forces act.`
-    : `${name} at ${degC(lab.TC)}: ` + (v >= 1 ? 'hydrogen bonds hold most molecules together.' : s.t < 6 ? 'the molecules are still finding each other. Watch for dashed lines.' : v >= 0.45 ? 'hydrogen bonds flicker. They break and re-form as the molecules jostle.' : 'the molecules move too fast for hydrogen bonds to last.') + ' Every molecule stays whole.';
+  const ph = simPhase(lab.mol, lab.TC), at = `${name} at ${degC(lab.TC)} is a ${ph}. `;
+  const txt = ph === 'solid' ? at + 'The molecules sit in a regular pattern and only vibrate. ' + (s.def.donor ? 'Hydrogen bonds hold the pattern together.' : 'No hydrogen bonds: only weak dispersion forces hold them, which is why methane must be this cold to freeze.') + ' Every molecule stays whole.'
+    : ph === 'gas' ? at + 'The molecules are far apart and fill the box. ' + (s.def.donor ? 'They move too fast, and meet too rarely, for hydrogen bonds to last.' : 'There are no hydrogen bonds: its H atoms are on carbon.') + ' Every molecule stays whole.'
+      : at + 'The molecules stay close together but slide past each other. ' + (!s.def.donor ? 'There are no hydrogen bonds: its H atoms are on carbon, so only weak dispersion forces act.' : v >= 1 ? 'Hydrogen bonds hold most of them to a neighbor.' : s.t < 6 ? 'Watch for dashed lines as they find each other.' : 'Hydrogen bonds flicker: they break and re-form as the molecules jostle.') + ' Every molecule stays whole.';
   if (txt !== lab.cap) { lab.cap = txt; $('labCaption').textContent = txt; }
 }
 function labDraw() { simDraw($('labCanvas'), lab.sim, lab.dpr, 1, lab.labels); }
-function labSet(k, v) { lab[k] = v; if (k === 'mol') labBuild(); if (k === 'TC') lab.sim.TK = v + 273; labControls(); labReadout(); labDraw(); labRun(); }
+function labSet(k, v) { lab[k] = v; if (k === 'mol') labBuild(); if (k === 'TC') { lab.sim.TK = v + 273; const ph = simPhase(lab.mol, v); if (ph !== lab.sim.phase) { setSimPhase(lab.sim, ph); lab.sim.t = 0; } } labControls(); labReadout(); labDraw(); labRun(); }
 function bindLab() {
   $('labBox').addEventListener('click', e => {
     const c = e.target.closest('[data-labchoice]'); if (c) return labAnswer(+c.dataset.labchoice);
@@ -3285,9 +3323,9 @@ function bindFL() {
 
 /* ---------- small labs built on one shared shell: predict first, then explore ---------- */
 const GEN_LABS = [];
-function labBoxHTML(key, label, side, note, lockText) {
+function labBoxHTML(key, label, side, note, lockText, top) {
   return `<section id="${key}Box" class="example" hidden><span class="ex-label">${label}</span><div class="part current" id="${key}Predict"></div><div class="feedback" id="${key}Feedback" role="status" aria-live="polite"></div>
-   <div class="lab-grid cl-grid"><div><div class="lab-stage pd-stage"><div class="figure" id="${key}Fig"></div><div class="lab-lock" id="${key}Lock">${lockText || 'Make your prediction first. Then the controls unlock.'}</div></div><p class="lab-caption" id="${key}Caption" aria-live="polite"></p></div><div class="lab-side" id="${key}Side">${side}</div></div>
+   <div class="lab-grid cl-grid"><div>${top ? `<div class="lab-side lab-top" id="${key}Top">${top}</div>` : ''}<div class="lab-stage pd-stage"><div class="figure" id="${key}Fig"></div><div class="lab-lock" id="${key}Lock">${lockText || 'Make your prediction first. Then the controls unlock.'}</div></div><p class="lab-caption" id="${key}Caption" aria-live="polite"></p></div><div class="lab-side" id="${key}Side">${side}</div></div>
    <p class="note-small">${note}</p><div class="ex-actions"><button type="button" class="btn primary" id="${key}New">New prediction <span data-icon="arrow" aria-hidden="true"></span></button></div></section>`;
 }
 function showLabBox(key, title) { closeLab(); state.ch = null; state.q = null; state.learn = null; markMode('lab'); $('emptyBox').hidden = true; $('playArea').hidden = true; $('learnBox').hidden = true; $('reportBox').hidden = true; $('skipBtn').hidden = true; $(key + 'Box').hidden = false; $('playTitle').textContent = title; }
@@ -3299,7 +3337,7 @@ function labScore(topic, mode, id, c) {
 }
 function mkLab(cfg) {
   const key = cfg.key, L = { key, open: false, locked: true, pred: null, paint: cfg.paint };
-  L.lock = () => { $(key + 'Lock').hidden = !L.locked; $(key + 'Side').querySelectorAll('button, input').forEach(el => { el.disabled = L.locked; }); };
+  L.lock = () => { $(key + 'Lock').hidden = !L.locked; [key + 'Side', key + 'Top'].forEach(id => { if ($(id)) $(id).querySelectorAll('button, input').forEach(el => { el.disabled = L.locked; }); }); };
   L.predict = () => {
     OPTS.course = state.course; const pr = drawBag(key + 'pred' + state.course, forCourse(cfg.preds)); L.pred = { id: pr.id, test: pr.test, choices: shuffle(pr.c.map(([h, ok, why, slip]) => opt(h, ok, why, slip))) }; L.locked = true;
     $(key + 'Predict').innerHTML = `<div class="pnum">Predict first</div><div class="ask">${pr.q}</div><div class="choices">${L.pred.choices.map((c, k) => `<button type="button" class="choice" data-gchoice="${k}">${c.html}</button>`).join('')}</div>`;
@@ -3315,7 +3353,7 @@ function mkLab(cfg) {
   };
   L.openIt = () => { showLabBox(key, cfg.title); L.open = true; setMood('thinking'); if (cfg.init) cfg.init(); L.predict(); renderChooser(); paintIcons($(key + 'Box')); setVideoFor(cfg.video); };
   L.close = () => { L.open = false; $(key + 'Box').hidden = true; };
-  L.mount = () => { $('playArea').insertAdjacentHTML('beforebegin', labBoxHTML(key, cfg.label, cfg.side, cfg.note)); $(key + 'Box').addEventListener('click', e => { const c = e.target.closest('[data-gchoice]'); if (c) return L.answer(+c.dataset.gchoice); if (!L.locked && cfg.click) cfg.click(e); }); $(key + 'Box').addEventListener('input', e => { if (!L.locked && cfg.input) cfg.input(e); }); $(key + 'New').onclick = () => { L.predict(); scrollToPlay(); }; };
+  L.mount = () => { $('playArea').insertAdjacentHTML('beforebegin', labBoxHTML(key, cfg.label, cfg.side, cfg.note, null, cfg.top)); $(key + 'Box').addEventListener('click', e => { const c = e.target.closest('[data-gchoice]'); if (c) return L.answer(+c.dataset.gchoice); if (!L.locked && cfg.click) cfg.click(e); }); $(key + 'Box').addEventListener('input', e => { if (!L.locked && cfg.input) cfg.input(e); }); $(key + 'New').onclick = () => { L.predict(); scrollToPlay(); }; };
   GEN_LABS.push(L); return L;
 }
 
@@ -3378,7 +3416,8 @@ function ewTick(ts) {
 }
 function ewRun() { ewStill(); if (!ew.raf) ew.raf = requestAnimationFrame(ewTick); }
 const ewLab = mkLab({ key: 'ew', title: 'Energy Well', label: 'Energy Well · a teaching model', topic: 'welllab', video: 'p1', preds: WELL_PRED,
-  side: `<fieldset><legend>Attraction</legend><div class="lab-mols" id="ewWells"></div></fieldset><fieldset><legend>Shine light to add energy</legend><input type="range" id="ewKE" min="0" max="100" step="1" aria-label="Light shining on the pair, which sets its kinetic energy"><div class="lab-temp"><small>dark, cold</small><small>bright, hot</small></div></fieldset><div class="hc-read cl-read" style="grid-template-columns:1fr"><div><small>The pair is</small><b id="ewState"></b></div></div>`,
+  top: `<fieldset><legend>Shine light to add energy</legend><input type="range" id="ewKE" min="0" max="100" step="1" aria-label="Light shining on the pair, which sets its kinetic energy"><div class="lab-temp"><small>dark, cold</small><small>bright, hot</small></div></fieldset>`,
+  side: `<fieldset><legend>Attraction</legend><div class="lab-mols" id="ewWells"></div></fieldset><div class="hc-read cl-read" style="grid-template-columns:1fr"><div><small>The pair is</small><b id="ewState"></b></div></div>`,
   note: 'A teaching model. The curve shows how the energy of two particles changes with the distance between them: the dip is the attraction. Well depths are relative, for particles of similar size, and dispersion wells get deeper as molecules get bigger. The lamp stands for any way of heating: energy the pair absorbs becomes motion (kinetic energy). The dot on the curve and the molecules below it show the same distance.',
   init: () => { OPTS.course = state.course; $('ewWells').innerHTML = forCourse(WELLS).map(w => `<button type="button" data-ewwell="${w.k}">${w.name}</button>`).join(''); },
   preset: pr => { ew.well = pr.well; ew.ke = pr.ke; },
@@ -3390,24 +3429,27 @@ const ewLab = mkLab({ key: 'ew', title: 'Energy Well', label: 'Energy Well · a 
 const cf = { n: 2, left: 1, flips: 0, even: 0, sides: [] };
 function cfFlip(times) { for (let t = 0; t < times; t++) { cf.sides = Array.from({ length: cf.n }, () => Math.random() < 0.5); cf.left = cf.sides.filter(x => x).length; cf.flips++; if (cf.left * 2 === cf.n) cf.even++; } }
 function cfSvg() {
-  const n = cf.n, L = cf.left, R = n - L, cx = 110, cy = 100, rad = 78, f1 = v => v.toFixed(1); let dots = '', li = 0, ri = 0;
-  cf.sides.forEach(s => { const idx = s ? li++ : ri++, cnt = s ? L : R, a = idx * 2.399963, r = 8 + 58 * Math.sqrt((idx + 0.5) / Math.max(1, cnt)), x = Math.abs(r * Math.cos(a)) * 0.92 + 7, y = r * Math.sin(a) * 0.95; dots += `<circle cx="${f1(cx + (s ? -x : x))}" cy="${f1(cy + y)}" r="${n > 30 ? 3.4 : 4.4}" fill="#346cc3"/>`; });
-  const lop = L === R ? '' : L > R ? 'left' : 'right';
-  let h = `<circle cx="${cx}" cy="${cy}" r="${rad}" fill="#eef3fd" stroke="#3d4a73" stroke-width="2.5"/><path d="M${cx} ${cy - rad}V${cy + rad}" stroke="#8a93ab" stroke-dasharray="4 4"/>${dots}<circle cx="${cx}" cy="${cy}" r="7" fill="#e0577f"/>`;
-  h += `<text x="${cx - 40}" y="${cy + rad + 20}" text-anchor="middle" font-size="12" font-weight="800" fill="#1f2a44">${L} left</text><text x="${cx + 40}" y="${cy + rad + 20}" text-anchor="middle" font-size="12" font-weight="800" fill="#1f2a44">${R} right</text>`;
-  if (lop) h += `<text x="${cx + (lop === 'left' ? -rad - 4 : rad + 4)}" y="${cy - rad + 8}" text-anchor="${lop === 'left' ? 'start' : 'end'}" font-size="14" font-weight="900" fill="#b83d63">δ−</text><text x="${cx + (lop === 'left' ? rad + 4 : -rad - 4)}" y="${cy - rad + 8}" text-anchor="${lop === 'left' ? 'end' : 'start'}" font-size="14" font-weight="900" fill="#2c64a0">δ+</text>`;
-  h += `<text x="${cx}" y="16" text-anchor="middle" font-size="11.5" font-weight="800" fill="${lop ? '#b83d63' : '#23704f'}">${lop ? `lopsided by ${Math.abs(L - R)}: a temporary dipole` : 'even split: no dipole this instant'}</text>`;
+  const n = cf.n, L = cf.left, R = n - L, diff = Math.abs(L - R), lop = L === R ? '' : L > R ? 'left' : 'right', f1 = v => v.toFixed(1), cy = 96, rad = 60, ax = 92, bx = 308;
+  /* atom 1 is the coin flip. Atom 2's electrons are pushed the same way, so the facing sides always carry opposite partial charges. */
+  const atom = cx => { let d = '', li = 0, ri = 0; cf.sides.forEach(s => { const idx = s ? li++ : ri++, cnt = s ? L : R, a = idx * 2.399963, r = 7 + 44 * Math.sqrt((idx + 0.5) / Math.max(1, cnt)), x = Math.abs(r * Math.cos(a)) * 0.92 + 6, y = r * Math.sin(a) * 0.95; d += `<circle cx="${f1(cx + (s ? -x : x))}" cy="${f1(cy + y)}" r="${n > 30 ? 2.7 : 3.7}" fill="#346cc3"/>`; });
+    return `<circle cx="${cx}" cy="${cy}" r="${rad}" fill="#eef3fd" stroke="#3d4a73" stroke-width="2.5"/><path d="M${cx} ${cy - rad}V${cy + rad}" stroke="#8a93ab" stroke-dasharray="4 4"/>${d}<circle cx="${cx}" cy="${cy}" r="6" fill="#e0577f"/>` + (lop ? `<text x="${cx - rad + 2}" y="${cy - rad + 4}" text-anchor="end" font-size="13" font-weight="900" fill="${lop === 'left' ? '#b83d63' : '#2c64a0'}">${lop === 'left' ? 'δ−' : 'δ+'}</text><text x="${cx + rad - 2}" y="${cy - rad + 4}" font-size="13" font-weight="900" fill="${lop === 'left' ? '#2c64a0' : '#b83d63'}">${lop === 'left' ? 'δ+' : 'δ−'}</text>` : ''); };
+  let h = atom(ax) + atom(bx);
+  h += `<text x="${ax}" y="14" text-anchor="middle" font-size="10.5" font-weight="800" fill="${lop ? '#b83d63' : '#23704f'}">${lop ? `lopsided by ${diff}: a temporary dipole` : 'even split: no dipole'}</text><text x="${bx}" y="14" text-anchor="middle" font-size="10.5" font-weight="800" fill="${lop ? '#b83d63' : '#23704f'}">${lop ? 'pushed the same way' : 'not disturbed'}</text>`;
+  h += `<text x="${ax}" y="${cy + rad + 17}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#1f2a44">Atom 1: ${L} left, ${R} right</text><text x="${bx}" y="${cy + rad + 17}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#1f2a44">Atom 2: ${L} left, ${R} right</text>`;
+  /* the pull between the facing sides: thicker when the clouds are more lopsided */
+  const x0 = ax + rad + 5, x1 = bx - rad - 5, mid = (x0 + x1) / 2;
+  h += lop ? `<path d="M${x0} ${cy}H${x1}" stroke="#2f5fb8" stroke-width="${f1(Math.min(9, 2 + diff * 0.7))}" stroke-dasharray="3 6" stroke-linecap="round"/><text x="${mid}" y="${cy - 12}" text-anchor="middle" font-size="11" font-weight="800" fill="#2f5fb8">attract</text><text x="${mid}" y="${cy + 22}" text-anchor="middle" font-size="10" font-weight="700" fill="#4f5a74">${lop === 'left' ? 'δ+ · · · δ−' : 'δ− · · · δ+'}</text>` : `<text x="${mid}" y="${cy + 4}" text-anchor="middle" font-size="11" font-weight="800" fill="#5c667f">no pull</text><text x="${mid}" y="${cy + 18}" text-anchor="middle" font-size="10" font-weight="700" fill="#5c667f">this instant</text>`;
   /* table: electrons, exact chance of an even split, boiling point */
-  const tx = 222; h += `<text x="${tx}" y="34" font-size="10.5" font-weight="800" fill="#4f5a74">Gas</text><text x="${tx + 42}" y="34" font-size="10.5" font-weight="800" fill="#4f5a74">e⁻</text><text x="${tx + 70}" y="34" font-size="10.5" font-weight="800" fill="#4f5a74">even split</text><text x="${tx + 132}" y="34" font-size="10.5" font-weight="800" fill="#4f5a74">boils</text>`;
-  NOBLE.forEach((g, i) => { const y = 54 + i * 24, on = g.e === n; h += (on ? `<rect x="${tx - 6}" y="${y - 15}" width="170" height="22" rx="6" fill="#efecfd" stroke="#5b4fd1" stroke-width="1.5"/>` : '') + `<text x="${tx}" y="${y}" font-size="12" font-weight="800" fill="#1f2a44">${g.f}</text><text x="${tx + 42}" y="${y}" font-size="12" font-weight="700" fill="#1f2a44">${g.e}</text><text x="${tx + 70}" y="${y}" font-size="12" font-weight="700" fill="#1f2a44">${(evenSplit(g.e) * 100).toFixed(1)}%</text><text x="${tx + 132}" y="${y}" font-size="12" font-weight="700" fill="#1f2a44">${g.bpK} K</text>`; });
-  h += `<text x="${tx}" y="186" font-size="11" font-weight="800" fill="#4f5a74">Your flips: ${cf.flips}</text><text x="${tx}" y="203" font-size="11" font-weight="800" fill="#4f5a74">Even splits: ${cf.even}${cf.flips ? ` (${(cf.even / cf.flips * 100).toFixed(0)}%)` : ''}</text>`;
-  return `<svg class="cg-svg" viewBox="0 0 400 212" role="img" aria-label="An atom with ${n} electrons: ${L} on the left and ${R} on the right. Table of noble gases with electron count, chance of an even split and boiling point.">${h}</svg>`;
+  const tx = 16, ty = 200; h += `<text x="${tx}" y="${ty}" font-size="10.5" font-weight="800" fill="#4f5a74">Gas</text><text x="${tx + 42}" y="${ty}" font-size="10.5" font-weight="800" fill="#4f5a74">e⁻</text><text x="${tx + 70}" y="${ty}" font-size="10.5" font-weight="800" fill="#4f5a74">even split</text><text x="${tx + 132}" y="${ty}" font-size="10.5" font-weight="800" fill="#4f5a74">boils</text>`;
+  NOBLE.forEach((g, i) => { const y = ty + 19 + i * 19, on = g.e === n; h += (on ? `<rect x="${tx - 6}" y="${y - 14}" width="176" height="19" rx="6" fill="#efecfd" stroke="#5b4fd1" stroke-width="1.5"/>` : '') + `<text x="${tx}" y="${y}" font-size="12" font-weight="800" fill="#1f2a44">${g.f}</text><text x="${tx + 42}" y="${y}" font-size="12" font-weight="700" fill="#1f2a44">${g.e}</text><text x="${tx + 70}" y="${y}" font-size="12" font-weight="700" fill="#1f2a44">${(evenSplit(g.e) * 100).toFixed(1)}%</text><text x="${tx + 132}" y="${y}" font-size="12" font-weight="700" fill="#1f2a44">${g.bpK} K</text>`; });
+  const sx = 214; h += `<text x="${sx}" y="${ty + 19}" font-size="11.5" font-weight="800" fill="#4f5a74">Your flips: ${cf.flips}</text><text x="${sx}" y="${ty + 38}" font-size="11.5" font-weight="800" fill="#4f5a74">Even splits: ${cf.even}${cf.flips ? ` (${(cf.even / cf.flips * 100).toFixed(0)}%)` : ''}</text><text x="${sx}" y="${ty + 62}" font-size="11.5" font-weight="800" fill="${lop ? '#2f5fb8' : '#5c667f'}">Pull this instant:</text><text x="${sx}" y="${ty + 79}" font-size="11.5" font-weight="800" fill="${lop ? '#2f5fb8' : '#5c667f'}">${lop ? `yes, lopsided by ${diff}` : 'none'}</text>`;
+  return `<svg class="cg-svg" viewBox="0 0 400 302" role="img" aria-label="Two atoms with ${n} electrons each, side by side. In each, ${L} electrons are on the left and ${R} on the right. ${lop ? 'The clouds are lopsided the same way, so the positive side of one faces the negative side of the other and the atoms attract.' : 'The split is even, so there is no dipole and no pull at this instant.'} Below: a table of noble gases with electron count, chance of an even split and boiling point.">${h}</svg>`;
 }
 const cfLab = mkLab({ key: 'cf', title: 'Electron Coin-Flip', label: 'Electron Coin-Flip · a teaching model', topic: 'coinlab', video: 'p2', preds: COIN_PRED,
   side: `<fieldset><legend>Atom</legend><div class="lab-mols" id="cfAtoms">${NOBLE.map(g => `<button type="button" data-cfn="${g.e}">${g.f}</button>`).join('')}</div></fieldset><div class="lab-btns"><button type="button" class="btn" data-cfflip="1">Flip once</button><button type="button" class="btn" data-cfflip="100">Flip 100 times</button></div><div class="hc-read cl-read" style="grid-template-columns:1fr"><div><small>Chance of an exactly even split</small><b id="cfP"></b></div></div>`,
-  note: 'A teaching model. Real electrons are not coins, but the idea holds: at any instant an electron cloud is slightly lopsided, which makes a temporary dipole. Bigger clouds are lopsided more often and by more, so dispersion forces grow with the number of electrons, which goes up with molar mass.',
+  note: 'A teaching model. Real electrons are not coins, but the idea holds: at any instant an electron cloud is slightly lopsided, which makes a temporary dipole. That dipole pushes the electrons of the atom next to it the same way (an induced dipole), so the two atoms attract. Bigger clouds are lopsided more often and by more, and are easier to push, so dispersion forces grow with the number of electrons, which goes up with molar mass.',
   preset: pr => { cf.n = pr.n; cf.flips = 0; cf.even = 0; cf.sides = Array.from({ length: cf.n }, (_, i) => i % 2 === 0); cf.left = cf.sides.filter(x => x).length; },
-  paint: () => { $('cfFig').innerHTML = cfSvg(); $('cfP').textContent = (evenSplit(cf.n) * 100).toFixed(1) + '%'; document.querySelectorAll('#cfAtoms button').forEach(b => { b.classList.toggle('on', +b.dataset.cfn === cf.n); b.setAttribute('aria-pressed', +b.dataset.cfn === cf.n); }); const g = NOBLE.find(x => x.e === cf.n); $('cfCaption').textContent = `${g.f}: ${cf.n} electrons. An exactly even split happens ${(evenSplit(cf.n) * 100).toFixed(1)}% of the time, so the cloud is lopsided the other ${(100 - evenSplit(cf.n) * 100).toFixed(1)}%. ${g.f} boils at ${g.bpK} K.`; },
+  paint: () => { $('cfFig').innerHTML = cfSvg(); $('cfP').textContent = (evenSplit(cf.n) * 100).toFixed(1) + '%'; document.querySelectorAll('#cfAtoms button').forEach(b => { b.classList.toggle('on', +b.dataset.cfn === cf.n); b.setAttribute('aria-pressed', +b.dataset.cfn === cf.n); }); const g = NOBLE.find(x => x.e === cf.n); $('cfCaption').textContent = `${g.f}: ${cf.n} electrons. An exactly even split happens ${(evenSplit(cf.n) * 100).toFixed(1)}% of the time, so the cloud is lopsided the other ${(100 - evenSplit(cf.n) * 100).toFixed(1)}%. ${cf.left * 2 === cf.n ? 'Right now the split is even, so there is no pull between the two atoms at this instant.' : 'Right now atom 1 is lopsided. Its electrons push atom 2’s electrons the same way, so a δ+ side faces a δ− side and the atoms attract.'} ${g.f} boils at ${g.bpK} K.`; },
   click: e => { const a = e.target.closest('[data-cfn]'); if (a) { cf.n = +a.dataset.cfn; cf.flips = 0; cf.even = 0; cf.sides = Array.from({ length: cf.n }, (_, i) => i % 2 === 0); cf.left = cf.n / 2; return cfLab.paint(); } const f = e.target.closest('[data-cfflip]'); if (f) { cfFlip(+f.dataset.cfflip); cfLab.paint(); } } });
 
 /* ---------- Mixing Beaker (§6.6): predict before every drop ---------- */
