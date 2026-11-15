@@ -1,3 +1,4 @@
+load(arguments[0] + '/../../games/brand/chemparse.v1.js'); /* shared number reader (games repo, cloned next to this one) */
 load(arguments[0] + '/logic.js');
 let fails = 0, n = 0; const seen = {};
 const bad = (t, m, q) => { fails++; const k = t + '|' + m; seen[k] = (seen[k] || 0) + 1; if (seen[k] <= 2) print('FAIL ' + t + ': ' + m + (q ? '\n   ' + String(q).slice(0, 260) : '')); };

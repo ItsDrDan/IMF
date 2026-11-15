@@ -1,8 +1,12 @@
+load(arguments[0] + '/../../games/brand/chemparse.v1.js'); /* shared number reader (games repo, cloned next to this one) */
 load(arguments[0] + '/logic.js');
 let f = 0; const eq = (a, b, m) => { if (!(a === b || (a !== a && b !== b))) { f++; print('FAIL ' + m + ': got ' + a + ' want ' + b); } };
 // parsing
 [['7.84 atm', 7.84], ['7.84atm', 7.84], ['1.2×10³', 1200], ['1.2 x 10^3', 1200], ['1.2e3', 1200], ['1.2E-3', 0.0012], ['1.2×10⁻³', 0.0012], ['1.2x103', NaN], ['2x100', NaN], ['-3.72 °C', -3.72], ['−3.72', -3.72], ['12.5%', 12.5], ['0.500 mol/kg', 0.5], ['1,200', 1200], ['.5', 0.5], ['5.', 5], ['abc', NaN], ['7.84E0', 7.84], ['3.2 x 10^3 torr', 3200], ['1.5 M', 1.5], ['e3', NaN], ['12 x', NaN], ['7.84 e', NaN], ['', NaN], ['1.2e3 mol', 1200], ['25.0 °C', 25], ['5 kg', 5]].forEach(([s, v]) => eq(parseNum(s), v, 'parse ' + s));
 [['7.84 atm', 3], ['100.', 3], ['100', 1], ['0.050', 2], ['1.20×10³', 3], ['1.20e1 mol', 3], ['12.50%', 4], ['-3.70 °C', 3]].forEach(([s, n]) => eq(countSF(s), n, 'sf ' + s));
+// decimal commas are not numbers (shared reader); thousands separators still are
+[['2,5', NaN], ['0,493', NaN], ['2,5 mg', NaN], ['1,200', 1200], ['1,000 mL', 1000], ['12,500.5', 12500.5]].forEach(([s, v]) => eq(parseNum(s), v, 'comma ' + s));
+eq(checkNum({ answer: 2.5, sf: 2 }, '2,5').why.indexOf('period') >= 0, true, 'comma message');
 // sig-fig message instead of a calc error
 const F3 = { answer: 11.52, sf: 3 };
 eq(checkNum(F3, '12').slip, 'sig-figs', '12 for 11.52'); eq(checkNum(F3, '11.5').ok, true, '11.5'); eq(checkNum(F3, '11').slip, 'calc', '11 (wrong rounding)'); eq(checkNum(F3, '13').slip, 'calc', '13');
