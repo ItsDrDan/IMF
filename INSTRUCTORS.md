@@ -4,8 +4,12 @@ Fun name **Sticky Molecules**. Repo and hub label: **Intermolecular Forces**. Re
 
 - **Courses:** CHEM 3A (default), CHEM 1A and CHEM 3B. Link with `?course=3A`, `?course=1A` or `?course=3B`. Topics and labs outside a course are hidden for that course. Progress is saved separately per course on the student's device.
 - **Spec:** `CONCEPT-MAP.md` in this repo. The game follows it; where it departs, the difference is listed under "Differences from the spec" below.
-- **Current file:** `index.html`, published from the working build `sticky-molecules-v23.html` (version in the file name only; working builds stay local).
+- **Current file:** `index.html`, published from the working build `sticky-molecules-v24.html` (version in the file name only; working builds stay local).
 - **Status:** live at https://itsdrdan.github.io/IMF/ since 2026-11-12. The values listed under "Values that still need Dr. Dan's review" had not been reviewed when it went live.
+
+## New in v24 (2026-11-14)
+
+- **Mixing Beaker and Solutions Lab open in CHEM 3A.** Both labs are now listed for 3A, and `?course=3A&mode=mix` / `?course=3A&mode=solutions` open them directly (for the CHEM 3A textbook, Sections 11.1 and 11.6). In 3A the Solutions Lab shows the freezing-point model only (no Raoult's law, which is beyond CHEM 3A). This also fixes 3A "Lab: mixing beaker" practice questions, which showed no lab underneath.
 
 ## New in v23 (2026-11-13)
 
@@ -193,10 +197,10 @@ Each is labeled on screen as a teaching model, with its simplifications stated. 
 | H-Bond Lab | all | §6.1 | 4 to 26 molecules (the student chooses; 12 to start) of H₂O, NH₃, HF, CH₃OH or CH₄ with a temperature slider. Shows a crystal layer below the melting point, a level pool of liquid, and a gas above the boiling point. Dashed hydrogen bonds form H → lone pair, flicker and break. Counter of hydrogen bonds per molecule. | `?mode=lab` |
 | Energy Well | 3A, 1A | §6.3 | Potential energy curve for a pair. Raise the kinetic energy above the top of the well and the pair separates. Ion–dipole well in 1A only. Relative depths, no numbers. | `?mode=well` |
 | Electron Coin-Flip | 1A | §6.5 | Two atoms of He, Ne, Ar, Kr or Xe. Flip the electrons of atom 1 left or right; atom 2's cloud is pushed the same way and the two attract. Even-split chance beside each boiling point. | `?mode=coin` |
-| Mixing Beaker | 1A, 3B | §6.6 | Drop a substance into water or hexane. A prediction is required before every drop. | `?mode=mix` |
+| Mixing Beaker | 3A, 1A, 3B | §6.6 (3A textbook §11.1) | Drop a substance into water or hexane. A prediction is required before every drop. | `?mode=mix` |
 | Heating Curve Lab | 3A, 1A | §6.2 | Curve beside a box of 18 water molecules. Add or remove heat; the thermometer holds on each plateau while attractions break or form. | `?mode=curve` |
 | Phase Diagram Explorer | 3A, 1A | §6.4 | Drag a state point on water or CO₂ (hydrazine added in 1A). Reports each change and where it happened. Sealed-tube picture in 1A. | `?mode=diagram` |
-| Solutions Lab | 1A | §6.7, §6.8 | Three beakers at equal molality (ethylene glycol, NaCl, K₃PO₄) that freeze as you cool them; and a Raoult's-law mixer for two volatile liquids. | `?mode=solutions` |
+| Solutions Lab | 3A, 1A | §6.7, §6.8 (3A textbook §11.6) | Three beakers at equal molality (ethylene glycol, NaCl, K₃PO₄) that freeze as you cool them; and (1A only) a Raoult's-law mixer for two volatile liquids. In 3A the Experiment tabs and Raoult's-law predictions are hidden, so it is the freezing-point model only. | `?mode=solutions` |
 | Cell Lab | all | §6.9 | Red blood cell or plant cell in six baths, with water-in and water-out counts. Π = iMRT line and the osmosis chamber picture in 1A only. | `?mode=cell` |
 | Protein Fold Lab | 3B | §2 (3B examples) | A made-up chain of 12 amino acids. Heating breaks the attractions; the peptide and disulfide bonds stay. | `?mode=fold` |
 

@@ -657,7 +657,7 @@ svg.cg-svg{width:100%;max-width:560px;height:auto}
      </div>
     </div>
    </div>
-   <p class="note-small">Teaching models using the ideal equations: ΔT<sub>f</sub> = i K<sub>f</sub> m with K<sub>f</sub> = 1.86 °C kg mol⁻¹ and ideal van’t Hoff factors (real solutions come in slightly lower because of ion pairing), and Raoult’s law, P = X P°, for each liquid. Pure vapor pressures are handbook values at the temperature shown.</p>
+   <p class="note-small" id="cgNote">Teaching models using the ideal equations: ΔT<sub>f</sub> = i K<sub>f</sub> m with K<sub>f</sub> = 1.86 °C kg mol⁻¹ and ideal van’t Hoff factors (real solutions come in slightly lower because of ion pairing), and Raoult’s law, P = X P°, for each liquid. Pure vapor pressures are handbook values at the temperature shown.</p>
    <div class="ex-actions"><button type="button" class="btn primary" id="cgNew">New prediction <span data-icon="arrow" aria-hidden="true"></span></button></div>
   </section>
   <section id="flBox" class="example" hidden>
@@ -2280,7 +2280,7 @@ const TOPICS = {
   simhb: { label: 'Lab: hydrogen bonds', tile: 't1', gen: () => genSim('simhb'), video: 'p3', courses: ALL, lab: true },
   simwell: { label: 'Lab: energy well', tile: 't1', gen: () => genSim('simwell'), video: 'p1', courses: ['3A', '1A'], lab: true },
   simcoin: { label: 'Lab: electron coin-flip', tile: 't2', gen: () => genSim('simcoin'), video: 'p2', courses: ['1A'], lab: true },
-  simmix: { label: 'Lab: mixing beaker', tile: 't3', gen: genSimMix, video: 'p3', courses: ['1A', '3B'], lab: true },
+  simmix: { label: 'Lab: mixing beaker', tile: 't3', gen: genSimMix, video: 'p3', courses: ['3A', '1A', '3B'], lab: true },
   simcurve: { label: 'Lab: heating curve', tile: 't4', gen: () => genSim('simcurve'), video: 'phase', courses: ['3A', '1A'], lab: true },
   simpd: { label: 'Lab: phase diagram', tile: 't4', gen: () => genSim('simpd'), video: 'phase', courses: ['3A', '1A'], lab: true },
   simcell: { label: 'Lab: cells in a bath', tile: 't5', gen: () => genSim('simcell'), video: 'collig', courses: ALL, lab: true },
@@ -3234,10 +3234,13 @@ function openCG() {
   $('emptyBox').hidden = true; $('playArea').hidden = true; $('learnBox').hidden = true; $('reportBox').hidden = true; $('skipBtn').hidden = true; $('cgBox').hidden = false;
   $('playTitle').textContent = 'Solutions Lab'; setMood('chilly');
   $('cgPairs').innerHTML = PAIRS_V.map(p => `<button type="button" data-cgpair="${p.k}">${cap(p.a)} + ${p.b}</button>`).join('');
+  const only3A = state.course === '3A'; $('cgTabs').closest('fieldset').hidden = only3A;   /* CHEM 3A: freezing point only; Raoult's law is beyond the course */
+  if (!cg.note) cg.note = $('cgNote').innerHTML;
+  $('cgNote').innerHTML = only3A ? 'Teaching model using the ideal equation ΔT<sub>f</sub> = i K<sub>f</sub> m with K<sub>f</sub> = 1.86 °C kg mol⁻¹ and ideal van’t Hoff factors (real solutions come in slightly lower because of ion pairing).' : cg.note;
   cgPrediction(); renderChooser(); paintIcons($('cgBox')); setVideoFor('collig');
 }
 function cgPrediction() {
-  const pr = drawBag('cgpred', CG_PRED); cg.pred = { id: pr.id, test: pr.test, choices: shuffle(pr.c.map(([h, ok, why, slip]) => opt(h, ok, why, slip))) }; cg.locked = true; cg.tab = pr.sim; cg.m = 1; cg.T = 2; cg.pair = 'pent'; cg.X = pr.id === 'equal' || pr.id === 'vapor' ? 0.2 : 0.5;
+  const only3A = state.course === '3A', pr = drawBag(only3A ? 'cgpred3A' : 'cgpred', only3A ? CG_PRED.filter(x => x.sim === 'fp') : CG_PRED); cg.pred = { id: pr.id, test: pr.test, choices: shuffle(pr.c.map(([h, ok, why, slip]) => opt(h, ok, why, slip))) }; cg.locked = true; cg.tab = pr.sim; cg.m = 1; cg.T = 2; cg.pair = 'pent'; cg.X = pr.id === 'equal' || pr.id === 'vapor' ? 0.2 : 0.5;
   $('cgPredict').innerHTML = `<div class="pnum">Predict first</div><div class="ask">${pr.q}</div><div class="choices">${cg.pred.choices.map((c, k) => `<button type="button" class="choice" data-cgchoice="${k}">${c.html}</button>`).join('')}</div>`;
   $('cgFeedback').className = 'feedback'; $('cgFeedback').innerHTML = ''; cgControls(); cgPaint();
 }
@@ -3582,10 +3585,10 @@ const LABS = [
   { k: 'lab', name: 'H-Bond Lab', icon: 'flask', blurb: 'Hydrogen bonds form and break as you heat the box.', courses: ALL, open: () => openLab(), on: () => lab.open },
   { k: 'ew', name: 'Energy Well', icon: 'wave', blurb: 'How much energy pulls two molecules apart?', courses: ['3A', '1A'], open: () => ewLab.openIt(), on: () => ewLab.open, url: 'well' },
   { k: 'cf', name: 'Electron Coin-Flip', icon: 'dice', blurb: 'Why bigger atoms have stronger dispersion forces.', courses: ['1A'], open: () => cfLab.openIt(), on: () => cfLab.open, url: 'coin' },
-  { k: 'mx', name: 'Mixing Beaker', icon: 'beaker', blurb: 'Drop it in water or hexane: does it mix?', courses: ['1A', '3B'], open: () => openMX(), on: () => mx.open, url: 'mix' },
+  { k: 'mx', name: 'Mixing Beaker', icon: 'beaker', blurb: 'Drop it in water or hexane: does it mix?', courses: ['3A', '1A', '3B'], open: () => openMX(), on: () => mx.open, url: 'mix' },
   { k: 'hc', name: 'Heating Curve Lab', icon: 'thermometer', blurb: 'Heat ice to steam and see where the heat goes.', courses: ['3A', '1A'], open: () => openHC(), on: () => hc.open },
   { k: 'pd', name: 'Phase Diagram Explorer', icon: 'map', blurb: 'Drag a point across the lines.', courses: ['3A', '1A'], open: () => openPD(), on: () => pd.open },
-  { k: 'cg', name: 'Solutions Lab', icon: 'levels', blurb: 'Freeze three solutions, or mix two liquids.', courses: ['1A'], open: () => openCG(), on: () => cg.open },
+  { k: 'cg', name: 'Solutions Lab', icon: 'levels', get blurb() { return state.course === '3A' ? 'Freeze three solutions and compare their freezing points.' : 'Freeze three solutions, or mix two liquids.'; }, courses: ['3A', '1A'], open: () => openCG(), on: () => cg.open },
   { k: 'cl', name: 'Cell Lab', icon: 'droplet', blurb: 'Water moves in and out of a cell.', courses: ALL, open: () => openCL(), on: () => cl.open },
   { k: 'fl', name: 'Protein Fold Lab', icon: 'loop', blurb: 'Heat a folded chain: which links let go?', courses: ['3B'], open: () => openFL(), on: () => fl.open }
 ];
@@ -3675,7 +3678,7 @@ function init() {
   if (!COURSES.includes(c)) c = '3A';
   bind(); bindLab(); bindHC(); bindPD(); bindCL(); bindCG(); bindFL(); GEN_LABS.forEach(L => L.mount()); mountMX(); $('hintBox').insertAdjacentHTML('afterend', '<div id="simSlot" hidden></div>'); $('clChamberFig').innerHTML = OSMO_SVG; setCourse(c); paintIcons();
   let m = ''; try { m = (new URLSearchParams(location.search).get('mode') || '').toLowerCase(); } catch (e) {}
-  if (['daily', 'challenge'].includes(m)) startRound(m); else if (m === 'lab') openLab(); else if (m === 'curve' && TOPICS.curve.courses.includes(state.course)) openHC(); else if (m === 'diagram' && TOPICS.curve.courses.includes(state.course)) openPD(); else if (m === 'cell') openCL(); else if (m === 'solutions' && state.course === '1A') openCG(); else if (m === 'fold' && state.course === '3B') openFL(); else if (LABS.some(x => x.url === m && x.courses.includes(state.course))) LABS.find(x => x.url === m).open(); else if (m === 'learn' || m === 'practice') setMode(m);
+  if (['daily', 'challenge'].includes(m)) startRound(m); else if (m === 'lab') openLab(); else if (m === 'curve' && TOPICS.curve.courses.includes(state.course)) openHC(); else if (m === 'diagram' && TOPICS.curve.courses.includes(state.course)) openPD(); else if (m === 'cell') openCL(); else if (m === 'solutions' && ['3A', '1A'].includes(state.course)) openCG(); else if (m === 'fold' && state.course === '3B') openFL(); else if (LABS.some(x => x.url === m && x.courses.includes(state.course))) LABS.find(x => x.url === m).open(); else if (m === 'learn' || m === 'practice') setMode(m);
   if (state.ch || (!inlineLab && LABS.some(L => L.on()))) setFocus(true);   /* not for a lab that is only showing under a practice question */
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
